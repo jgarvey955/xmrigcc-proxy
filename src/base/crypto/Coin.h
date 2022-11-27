@@ -39,6 +39,8 @@ public:
         KEVA,
         RAVEN,
         WOWNERO,
+        LOZZAX,
+        XDAG,
         MAX
     };
 

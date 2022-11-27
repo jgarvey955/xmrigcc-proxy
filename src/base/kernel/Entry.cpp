@@ -42,7 +42,7 @@
 
 #include "base/kernel/Entry.h"
 #include "base/kernel/Process.h"
-#include "crypto/common/Algorithm.h"
+#include "base/crypto/Algorithm.h"
 #include "core/config/usage.h"
 #include "version.h"
 
@@ -134,10 +134,10 @@ static int exportTopology(const Process &)
 static int printAlgorithms()
 {
     printf("Supported algorithms:\n\n");
-    
-    for (int id = Algorithm::CN_0; id <Algorithm::Id::MAX; id++)
+
+    auto algos = Algorithm::all();
+    for (const auto algo : algos)
     {
-        Algorithm algo(static_cast<Algorithm::Id>(id));
         printf ("\t%s\n", algo.name());
     }
 
@@ -189,7 +189,7 @@ int xmrig::Entry::exec(const Process &process, Id id)
         return showVersion();
 
     case Algorithms:
-	return printAlgorithms();
+	      return printAlgorithms();
 
 #   ifdef XMRIG_FEATURE_HWLOC
     case Topo:
