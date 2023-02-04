@@ -7,7 +7,7 @@
 
 Extremely high performance Monero (XMR) Stratum protocol proxy, can easily handle over 100K connections on cheap $5 (1024 MB) virtual machine. Reduce number of pool connections up to 256 times, 100K workers become just 391 worker on pool side. Written on C++/libuv same as [XMRigCC](https://github.com/bendr0id/xmrigCC) miner.
 
-**This proxy is compatible with all algos supported by latest version of XMRigCC**
+**This proxy is compatible with XMRigCC**
 
 ## Compatibility
 
