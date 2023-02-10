@@ -1,3 +1,25 @@
+# 3.3.2
+* Synched changed to XMRigCC 3.3.2 / xmrig-proxy 6.19.1-dev
+    * cryptonight (0/1/2/r/fast/half/xao/rto/gpu/rwz/zls/double/conceal)
+    * cryptonight-lite (0/1)
+    * cryptonight-heavy (0/tube/xhv)
+    * cryptonight-pico (0/tlo)
+    * cryptonight-extremelite (upx2)
+    * randomx (0/wow/arq/sfx/keva/lozzax/xdag)
+    * argon2/chukwa
+    * argon2/chukwav2
+    * argon2/chukwa-lite (ninja)
+# 3.3.1
+* Synched changed to XMRigCC 3.3.1 / xmrig-proxy 6.18.1-dev
+    * cryptonight (0/1/2/r/fast/half/xao/rto/gpu/rwz/zls/double/conceal)
+    * cryptonight-lite (0/1)
+    * cryptonight-heavy (0/tube/xhv)
+    * cryptonight-pico (0/tlo)
+    * cryptonight-extremelite (upx2)
+    * randomx (0/wow/arq/sfx/keva/lozzax/xdag)
+    * argon2/chukwa
+    * argon2/chukwav2
+    * argon2/chukwa-lite (ninja)
 # 2.8.4
 * Synched changes to support XMRigCC 2.8.4
     * cryptonight (0/1/2/r/fast/half/xao/rto/gpu/rwz/zls/double/conceal/cache_hash)
