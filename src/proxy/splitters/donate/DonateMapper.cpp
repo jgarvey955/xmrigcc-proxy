@@ -36,11 +36,18 @@ xmrig::DonateMapper::DonateMapper(uint64_t id, LoginEvent *event, const Pool &po
     m_miner(event->miner()),
     m_id(id)
 {
-    const rapidjson::Value &algo = event->params["algo"];
+    const rapidjson::Value& algo = event->params["algo"];
     if (algo.IsArray()) {
-        for (const rapidjson::Value &value : algo.GetArray()) {
-            m_algorithms.emplace_back(value.GetString());
-        }
+      for (const rapidjson::Value &value : algo.GetArray()) {
+        m_algorithms.emplace_back(value.GetString());
+      }
+    }
+
+    const rapidjson::Value& supports = event->params["supports"];
+    if (supports.IsArray()) {
+      for (const rapidjson::Value &value : supports.GetArray()) {
+        m_supports.emplace_back(value.GetString());
+      }
     }
 
     m_miner->setRouteId(0);
@@ -104,6 +111,14 @@ void xmrig::DonateMapper::onLogin(IClient *, rapidjson::Document &doc, rapidjson
     }
 
     params.AddMember("algo", algo, allocator);
+
+    rapidjson::Value supports(kArrayType);
+
+    for (const String &s : m_supports) {
+      supports.PushBack(s.toJSON(), allocator);
+    }
+
+    params.AddMember("supports", supports, allocator);
 }
 
 

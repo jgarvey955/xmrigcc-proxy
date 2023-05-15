@@ -70,6 +70,7 @@ private:
     IClient *m_client;
     Miner *m_miner;
     std::vector<String> m_algorithms;
+    std::vector<String> m_supports;
     uint64_t m_diff = 0;
     uint64_t m_id;
 };
