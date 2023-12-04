@@ -41,6 +41,7 @@ public:
         WOWNERO,
         LOZZAX,
         XDAG,
+        ZEPHYR,
         MAX
     };
 
