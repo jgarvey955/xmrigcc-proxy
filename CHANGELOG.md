@@ -1,3 +1,6 @@
+# 3.4.0
+* Synched changed to XMRigCC 3.4.0
+* Support for Zephyr
 # 3.3.3
 * Synched changed to XMRigCC 3.3.3
 # 3.3.2
