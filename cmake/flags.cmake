@@ -38,6 +38,10 @@ if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     endif()
 
+    if (BUILD_STATIC)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+    endif()
+
 elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     set(CMAKE_C_FLAGS_RELEASE "/MT /O2 /Oi /DNDEBUG /GL")
     set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Oi /DNDEBUG /GL")
@@ -52,4 +56,7 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-overloaded-virtual")
 
+    if (BUILD_STATIC)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+    endif()
 endif()

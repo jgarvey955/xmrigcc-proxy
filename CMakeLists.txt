@@ -7,7 +7,7 @@ option(WITH_DEBUG_LOG       "Enable debug log output" OFF)
 option(WITH_HTTP            "HTTP protocol support (client/server)" ON)
 option(WITH_TLS             "Enable OpenSSL support"  ON)
 option(WITH_ENV_VARS        "Enable environment variables support in config file" ON)
-
+option(BUILD_STATIC         "Build static binary" OFF)
 
 include (CheckIncludeFile)
 include (cmake/os.cmake)
