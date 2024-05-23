@@ -73,7 +73,7 @@ Use [config.xmrig.com](https://config.xmrig.com/proxy) to generate, edit or shar
       --tls-ciphersuites=S set list of available TLSv1.3 ciphersuites 
   -h, --help               display this help and exit
   -V, --version            output version information and exit
-      --algoritms          prints out a list of supported algos
+      --algorithms         prints out a list of supported algos
 ```
 
 ## Contact

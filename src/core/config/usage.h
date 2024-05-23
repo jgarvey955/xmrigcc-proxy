@@ -124,6 +124,7 @@ static inline const std::string &usage()
     u += "  -V, --version                 output version information and exit\n";
     u += "  -h, --help                    display this help and exit\n";
     u += "      --dry-run                 test configuration and exit\n";
+    u += "      --algorithms              prints out a list of supported algos\n";
 
     return u;
 }
