@@ -1,3 +1,6 @@
+# 3.4.2
+* Synched changes to XMRigCC 3.4.2
+* Support for RandomXEQ (Equilibria)
 # 3.4.1
 * Synched changes to XMRigCC 3.4.1
 * Support for RandomTuske

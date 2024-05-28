@@ -43,6 +43,7 @@ public:
         ZEPHYR,
         TOWNFORGE,
         TUSKE,
+        XEQ,
         MAX
     };
 
