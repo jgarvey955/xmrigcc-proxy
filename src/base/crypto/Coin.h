@@ -39,11 +39,13 @@ public:
         KEVA,
         RAVEN,
         WOWNERO,
+        YADA,
         XDAG,
         ZEPHYR,
         TOWNFORGE,
         TUSKE,
         XEQ,
+        SALVIUM,
         MAX
     };
 

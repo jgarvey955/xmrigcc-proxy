@@ -73,12 +73,14 @@ public:
         CN_GR_4         = 0x63120104,   // "cn/turtle"        GhostRider
         CN_GR_5         = 0x63120105,   // "cn/turtle-lite"   GhostRider
         GHOSTRIDER_RTM  = 0x6c150000,   // "ghostrider"       GhostRider
+        GHOSTRIDER_MIKE = 0x6c15006d,   // "ghostrider/mike"  GhostRider variant Mike/VKAX
         RX_0            = 0x72151200,   // "rx/0"             RandomX (reference configuration).
         RX_WOW          = 0x72141177,   // "rx/wow"           RandomWOW (Wownero).
         RX_ARQ          = 0x72121061,   // "rx/arq"           RandomARQ (Arqma).
         RX_GRAFT        = 0x72151267,   // "rx/graft"         RandomGRAFT (Graft).
         RX_SFX          = 0x72151273,   // "rx/sfx"           RandomSFX (Safex Cash).
         RX_KEVA         = 0x7214116b,   // "rx/keva"          RandomKEVA (Keva).
+        RX_YADA         = 0x72151279,   // "rx/yada"          RandomYADA (Yada).
         RX_XDAG         = 0x72151278,   // "rx/xdag"          RandomXDAG (xdagger).
         RX_TUSKE        = 0x72151274,   // "rx/tuske"         RandomTuske (TUSKE).
         RX_XEQ          = 0x72121078,   // "rx/xeq"           RandomXEQ (Equilibria).
@@ -152,6 +154,7 @@ public:
     static const char *kRX_GRAFT;
     static const char *kRX_SFX;
     static const char *kRX_KEVA;
+    static const char *kRX_YADA;
     static const char *kRX_XDAG;
     static const char *kRX_TUSKE;
     static const char *kRX_XEQ;
@@ -172,6 +175,7 @@ public:
 #   ifdef XMRIG_ALGO_GHOSTRIDER
     static const char* kGHOSTRIDER;
     static const char* kGHOSTRIDER_RTM;
+    static const char* kGHOSTRIDER_MIKE;
 #   endif
 
     inline Algorithm() = default;
@@ -193,8 +197,8 @@ public:
     inline Id id() const                                    { return m_id; }
     inline size_t l2() const                                { return l2(m_id); }
     inline uint32_t family() const                          { return family(m_id); }
-    inline uint32_t minIntensity() const                    { return ((m_id == GHOSTRIDER_RTM) ? 8 : 1); };
-    inline uint32_t maxIntensity() const                    { return isCN() ? 5 : ((m_id == GHOSTRIDER_RTM) ? 8 : 1); };
+    inline uint32_t minIntensity() const                    { return ((m_id == GHOSTRIDER_RTM || m_id == GHOSTRIDER_MIKE) ? 8 : 1); };
+    inline uint32_t maxIntensity() const                    { return isCN() ? 5 : ((m_id == GHOSTRIDER_RTM || m_id == GHOSTRIDER_MIKE) ? 8 : 1); };
 
     inline size_t l3() const                                { return l3(m_id); }
 
