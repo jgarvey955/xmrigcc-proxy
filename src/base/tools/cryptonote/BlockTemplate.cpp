@@ -23,6 +23,7 @@
 #include "base/crypto/keccak.h"
 #include "base/tools/cryptonote/BlobReader.h"
 #include "base/tools/Cvt.h"
+#include "base/io/log/Log.h"
 
 
 void xmrig::BlockTemplate::calculateMinerTxHash(const uint8_t *prefix_begin, const uint8_t *prefix_end, uint8_t *hash)
@@ -180,6 +181,13 @@ void xmrig::BlockTemplate::generateHashingBlob(Buffer &out) const
 
 bool xmrig::BlockTemplate::parse(bool hashes)
 {
+    auto fail = [this](const char* reason) {
+        if (m_coin == Coin::SALVIUM) {
+            LOG_ERR("Salvium block template parse failed: %s", reason);
+        }
+        return false;
+    };
+
     BlobReader<true> ar(m_blob.data(), m_blob.size());
 
     // Block header
@@ -214,16 +222,16 @@ bool xmrig::BlockTemplate::parse(bool hashes)
 
     ar(m_numInputs);
 
-    // must be 1 input
-    if (m_numInputs != 1) {
-        return false;
+    // must be 1 input (except tolerate slips on Salvium)
+    if (m_numInputs != 1 && m_coin != Coin::SALVIUM) {
+        return fail("unexpected inputs");
     }
 
     ar(m_inputType);
 
-    // input type must be txin_gen (0xFF)
-    if (m_inputType != 0xFF) {
-        return false;
+    // input type must be txin_gen (0xFF) for all but Salvium which may embed extras
+    if (m_inputType != 0xFF && m_coin != Coin::SALVIUM) {
+        return fail("unexpected input type");
     }
 
     ar(m_height);
@@ -231,25 +239,25 @@ bool xmrig::BlockTemplate::parse(bool hashes)
 
     if (m_coin == Coin::ZEPHYR) {
         if (m_numOutputs < 2) {
-            return false;
+            return fail("zephyr outputs < 2");
         }
     }
     else if (m_coin == Coin::SALVIUM) {
         // Carrot-era Salvium templates contain a second treasury output; allow up to 2.
         if (m_numOutputs == 0 || m_numOutputs > 2) {
-            return false;
+            return fail("salvium outputs out of range");
         }
     }
     else if (m_numOutputs != 1) {
-        return false;
+        return fail("unexpected outputs");
     }
 
     ar(m_amount);
     ar(m_outputType);
 
-    // output type must be txout_to_key (2) or txout_to_tagged_key (3)
-    if ((m_outputType != 2) && (m_outputType != 3)) {
-        return false;
+    // output type must be txout_to_key (2) or txout_to_tagged_key (3) unless we relax for Salvium
+    if ((m_outputType != 2) && (m_outputType != 3) && (m_coin != Coin::SALVIUM)) {
+        return fail("unexpected output type");
     }
 
     setOffset(EPH_PUBLIC_KEY_OFFSET, ar.index());
@@ -258,7 +266,7 @@ bool xmrig::BlockTemplate::parse(bool hashes)
 
     if (m_coin == Coin::ZEPHYR) {
         if (m_outputType != 2) {
-            return false;
+            return fail("zephyr output type");
         }
 
         uint64_t asset_type_len;
@@ -289,6 +297,9 @@ bool xmrig::BlockTemplate::parse(bool hashes)
     else if (m_outputType == 3) {
         ar(m_viewTag);
     }
+    else if (m_coin == Coin::SALVIUM) {
+        // Salvium may not use tagged outputs for miner tx; nothing extra to read.
+    }
 
     if (m_coin == Coin::SALVIUM && (m_numOutputs > 1)) {
         for (uint64_t k = 1; k < m_numOutputs; ++k) {
@@ -298,7 +309,7 @@ bool xmrig::BlockTemplate::parse(bool hashes)
             uint8_t output_type2;
             ar(output_type2);
             if ((output_type2 != 2) && (output_type2 != 3)) {
-                return false;
+                return fail("salvium output type");
             }
 
             Span key2;
@@ -364,7 +375,7 @@ bool xmrig::BlockTemplate::parse(bool hashes)
         case 0x04: // TX_EXTRA_ADDITIONAL_PUBKEYS
             ar_extra(size);
             if ((size % kKeySize) != 0) {
-                return false;
+                return fail("additional pubkeys size");
             }
             ar_extra.skip(size);
             break;
@@ -372,10 +383,10 @@ bool xmrig::BlockTemplate::parse(bool hashes)
         default:
             // Best-effort skip unknown tags that follow the "tag + varint size + data" pattern.
             if (!ar_extra(size)) {
-                return false;
+                return fail("unknown extra tag size");
             }
             if (!ar_extra.skip(size)) {
-                return false;
+                return fail("unknown extra tag skip");
             }
             break;
         }
@@ -400,17 +411,19 @@ bool xmrig::BlockTemplate::parse(bool hashes)
       return true;
     }
 
-    // must be RCTTypeNull (0)
-    if (vin_rct_type != 0) {
-        return false;
+    // must be RCTTypeNull (0) for classic; allow Salvium to diverge
+    if (vin_rct_type != 0 && m_coin != Coin::SALVIUM) {
+        return fail("unexpected rct type");
     }
 
     const size_t miner_tx_end = ar.index();
     // Miner transaction end
 
-    // Miner transaction must have exactly 1 byte with value 0 after the prefix
-    if ((miner_tx_end != offset(MINER_TX_PREFIX_END_OFFSET) + 1) || (*blob(MINER_TX_PREFIX_END_OFFSET) != 0)) {
-        return false;
+    // Miner transaction must have exactly 1 byte with value 0 after the prefix (relaxed for Salvium)
+    if (m_coin != Coin::SALVIUM) {
+        if ((miner_tx_end != offset(MINER_TX_PREFIX_END_OFFSET) + 1) || (*blob(MINER_TX_PREFIX_END_OFFSET) != 0)) {
+            return fail("miner tx padding");
+        }
     }
 
     // Other transaction hashes

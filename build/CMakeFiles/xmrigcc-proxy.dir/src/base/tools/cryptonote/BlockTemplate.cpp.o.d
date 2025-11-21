@@ -228,4 +228,5 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/tools/cryptonote/BlockTemplate.cpp.o: \
  /usr/include/c++/13/stdexcept /usr/include/c++/13/bits/streambuf.tcc \
  /home/jonathan/data/source/xmrigcc-proxy/src/base/crypto/keccak.h \
  /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/cryptonote/BlobReader.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/Cvt.h
+ /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/Cvt.h \
+ /home/jonathan/data/source/xmrigcc-proxy/src/base/io/log/Log.h
