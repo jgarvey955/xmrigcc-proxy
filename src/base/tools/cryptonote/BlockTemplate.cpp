@@ -416,6 +416,21 @@ bool xmrig::BlockTemplate::parse(bool hashes)
         return fail("unexpected rct type");
     }
 
+    // Salvium uses custom RCT data we don't need for hashing; skip the rest and synthesize hashes from miner tx only.
+    if (m_coin == Coin::SALVIUM) {
+        m_numHashes = 0;
+
+        if (hashes) {
+            m_hashes.resize(kHashSize);
+            calculateMinerTxHash(blob(MINER_TX_PREFIX_OFFSET), blob(MINER_TX_PREFIX_END_OFFSET), m_hashes.data());
+
+            memcpy(m_rootHash, m_hashes.data(), kHashSize);
+            m_minerTxMerkleTreeBranch.clear();
+        }
+
+        return true;
+    }
+
     const size_t miner_tx_end = ar.index();
     // Miner transaction end
 

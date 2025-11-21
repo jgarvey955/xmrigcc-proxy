@@ -23350,6 +23350,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/tools/cryptonote/BlockTemplate.cpp.o
  /home/jonathan/data/source/xmrigcc-proxy/src/base/crypto/Algorithm.h
  /home/jonathan/data/source/xmrigcc-proxy/src/base/crypto/Coin.h
  /home/jonathan/data/source/xmrigcc-proxy/src/base/crypto/keccak.h
+ /home/jonathan/data/source/xmrigcc-proxy/src/base/io/log/Log.h
  /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/Buffer.h
  /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/Cvt.h
  /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/Span.h
