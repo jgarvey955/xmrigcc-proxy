@@ -323,6 +323,7 @@ bool xmrig::BlockTemplate::parse(bool hashes)
     ar.skip(m_extraSize);
 
     bool pubkey_offset_first = true;
+    const uint8_t* extra_ptr = blob(TX_EXTRA_OFFSET);
 
     while (ar_extra.index() < m_extraSize) {
         uint64_t extra_tag  = 0;
@@ -331,6 +332,15 @@ bool xmrig::BlockTemplate::parse(bool hashes)
         ar_extra(extra_tag);
 
         switch (extra_tag) {
+        case 0x00: // TX_EXTRA_PADDING
+            {
+                size_t padding = 0;
+                while ((ar_extra.index() < m_extraSize) && extra_ptr[ar_extra.index()] == 0 && (padding < 255)) {
+                    ar_extra.skip(1);
+                    ++padding;
+                }
+            }
+            break;
         case 0x01: // TX_EXTRA_TAG_PUBKEY
             if (pubkey_offset_first) {
                 pubkey_offset_first = false;
@@ -360,7 +370,14 @@ bool xmrig::BlockTemplate::parse(bool hashes)
             break;
 
         default:
-            return false; // TODO(SChernykh): handle other tags
+            // Best-effort skip unknown tags that follow the "tag + varint size + data" pattern.
+            if (!ar_extra(size)) {
+                return false;
+            }
+            if (!ar_extra.skip(size)) {
+                return false;
+            }
+            break;
         }
     }
 
