@@ -178,6 +178,121 @@ void xmrig::BlockTemplate::generateHashingBlob(Buffer &out) const
     out.emplace_back(static_cast<uint8_t>(k));
 }
 
+bool xmrig::BlockTemplate::parseSalvium(bool hashes)
+{
+    auto fail = [this](const char* reason) {
+        LOG_ERR("Salvium block template parse failed: %s", reason);
+        return false;
+    };
+
+    try {
+        BlobReader<true> ar(m_blob.data(), m_blob.size());
+
+        // Block header
+        ar(m_version.first);
+        ar(m_version.second);
+        if (!ar(m_timestamp)) {
+            return fail("timestamp");
+        }
+        ar(m_prevId, kHashSize);
+
+        setOffset(NONCE_OFFSET, ar.index());
+        if (!ar.skip(kNonceSize)) {
+            return fail("nonce");
+        }
+
+        // Miner tx prefix
+        setOffset(MINER_TX_PREFIX_OFFSET, ar.index());
+
+        if (!ar(m_txVersion)) {
+            return fail("tx_version");
+        }
+        if (!ar(m_unlockTime)) {
+            return fail("unlock_time");
+        }
+        if (!ar(m_numInputs)) {
+            return fail("num_inputs");
+        }
+        if (!ar(m_inputType)) {
+            return fail("input_type");
+        }
+        if (!ar(m_height)) {
+            return fail("height");
+        }
+        if (!ar(m_numOutputs)) {
+            return fail("num_outputs");
+        }
+
+        // First output
+        if (!ar(m_amount)) {
+            return fail("amount1");
+        }
+        if (!ar(m_outputType)) {
+            return fail("output_type1");
+        }
+        setOffset(EPH_PUBLIC_KEY_OFFSET, ar.index());
+        if (!ar(m_ephPublicKey, kKeySize)) {
+            return fail("key1");
+        }
+        if (m_outputType == 3) {
+            if (!ar(m_viewTag)) {
+                return fail("viewtag1");
+            }
+        }
+
+        // Remaining outputs (if any)
+        for (uint64_t i = 1; i < m_numOutputs; ++i) {
+            uint64_t amt = 0;
+            uint8_t ot  = 0;
+            Span key;
+
+            if (!ar(amt)) {
+                return fail("amountN");
+            }
+            if (!ar(ot)) {
+                return fail("output_typeN");
+            }
+            if (!ar(key, kKeySize)) {
+                return fail("keyN");
+            }
+            if (ot == 3) {
+                uint8_t vt = 0;
+                if (!ar(vt)) {
+                    return fail("viewtagN");
+                }
+            }
+        }
+
+        if (!ar(m_extraSize)) {
+            return fail("extra_size");
+        }
+        setOffset(TX_EXTRA_OFFSET, ar.index());
+        if (!ar.skip(m_extraSize)) {
+            return fail("extra_skip");
+        }
+
+        setOffset(MINER_TX_PREFIX_END_OFFSET, ar.index());
+
+        // Skip RCT and tx hashes; Salvium hashing uses miner tx only.
+        m_numHashes = 0;
+
+        if (hashes) {
+            m_hashes.resize(kHashSize);
+            calculateMinerTxHash(blob(MINER_TX_PREFIX_OFFSET), blob(MINER_TX_PREFIX_END_OFFSET), m_hashes.data());
+            memcpy(m_rootHash, m_hashes.data(), kHashSize);
+            m_minerTxMerkleTreeBranch.clear();
+        }
+
+        return true;
+    }
+    catch (const std::exception &ex) {
+        return fail(ex.what());
+    }
+    catch (...) {
+        return fail("unknown exception");
+    }
+}
+
 
 bool xmrig::BlockTemplate::parse(bool hashes)
 {
@@ -189,6 +304,10 @@ bool xmrig::BlockTemplate::parse(bool hashes)
     };
 
     BlobReader<true> ar(m_blob.data(), m_blob.size());
+
+    if (m_coin == Coin::SALVIUM) {
+        return parseSalvium(hashes);
+    }
 
     // Block header
     ar(m_version.first);

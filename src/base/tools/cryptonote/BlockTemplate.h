@@ -118,6 +118,7 @@ private:
 
     inline void setOffset(Offset offset, size_t value)  { m_offsets[offset] = static_cast<uint32_t>(value); }
 
+    bool parseSalvium(bool hashes);
     bool parse(bool hashes);
 
     Buffer m_blob;
