@@ -1,5 +1,5 @@
 CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/api.c.o: \
- /home/jonathan/data/source/xmrigcc-proxy/src/3rdparty/llhttp/api.c \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/llhttp/api.c \
  /usr/include/stdc-predef.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -9,7 +9,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/api.c.o: \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -46,7 +46,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/api.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/stdio.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
@@ -61,8 +61,8 @@ CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/api.c.o: \
  /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/3rdparty/llhttp/llhttp.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/llhttp/llhttp.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h

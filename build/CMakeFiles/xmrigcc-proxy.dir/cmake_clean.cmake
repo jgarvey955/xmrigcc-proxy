@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/xmrigcc-proxy.dir/link.d"
   "CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/fmt/format.cc.o"
   "CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/fmt/format.cc.o.d"
   "CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/api.c.o"

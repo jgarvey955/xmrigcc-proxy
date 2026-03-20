@@ -1,5 +1,5 @@
 CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/http.c.o: \
- /home/jonathan/data/source/xmrigcc-proxy/src/3rdparty/llhttp/http.c \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/llhttp/http.c \
  /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -9,8 +9,8 @@ CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/http.c.o: \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
  /usr/include/x86_64-linux-gnu/bits/time64.h \
@@ -27,8 +27,8 @@ CMakeFiles/xmrigcc-proxy.dir/src/3rdparty/llhttp/http.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/3rdparty/llhttp/llhttp.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/llhttp/llhttp.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \

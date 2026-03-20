@@ -1,10 +1,10 @@
 CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
- /home/jonathan/data/source/xmrigcc-proxy/src/base/kernel/Platform.cpp \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/Platform.cpp \
  /usr/include/stdc-predef.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/base/kernel/Platform.h \
- /usr/include/c++/13/cstdint \
- /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/Platform.h \
+ /usr/include/c++/15/cstdint \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
  /usr/include/x86_64-linux-gnu/bits/timesize.h \
@@ -12,8 +12,8 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/cpu_defines.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
@@ -22,11 +22,11 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/String.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/3rdparty/rapidjson/fwd.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/3rdparty/rapidjson/rapidjson.h \
- /usr/include/c++/13/cstdlib /usr/include/stdlib.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/String.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/fwd.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/rapidjson.h \
+ /usr/include/c++/15/cstdlib /usr/include/stdlib.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -59,55 +59,56 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- /usr/include/c++/13/bits/std_abs.h /usr/include/c++/13/cstring \
- /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/15/bits/std_abs.h /usr/include/c++/15/cstring \
+ /usr/include/c++/15/bits/version.h /usr/include/string.h \
+ /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/inttypes.h /usr/include/c++/13/cassert \
- /usr/include/assert.h /usr/include/c++/13/utility \
- /usr/include/c++/13/bits/stl_relops.h \
- /usr/include/c++/13/bits/stl_pair.h /usr/include/c++/13/type_traits \
- /usr/include/c++/13/bits/move.h /usr/include/c++/13/bits/utility.h \
- /usr/include/c++/13/initializer_list /usr/include/c++/13/vector \
- /usr/include/c++/13/bits/requires_hosted.h \
- /usr/include/c++/13/bits/stl_algobase.h \
- /usr/include/c++/13/bits/functexcept.h \
- /usr/include/c++/13/bits/exception_defines.h \
- /usr/include/c++/13/bits/cpp_type_traits.h \
- /usr/include/c++/13/ext/type_traits.h \
- /usr/include/c++/13/ext/numeric_traits.h \
- /usr/include/c++/13/bits/stl_iterator_base_types.h \
- /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/13/bits/concept_check.h \
- /usr/include/c++/13/debug/assertions.h \
- /usr/include/c++/13/bits/stl_iterator.h \
- /usr/include/c++/13/bits/ptr_traits.h /usr/include/c++/13/debug/debug.h \
- /usr/include/c++/13/bits/predefined_ops.h \
- /usr/include/c++/13/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/13/bits/c++allocator.h \
- /usr/include/c++/13/bits/new_allocator.h /usr/include/c++/13/new \
- /usr/include/c++/13/bits/exception.h \
- /usr/include/c++/13/bits/memoryfwd.h \
- /usr/include/c++/13/bits/stl_construct.h \
- /usr/include/c++/13/bits/stl_uninitialized.h \
- /usr/include/c++/13/ext/alloc_traits.h \
- /usr/include/c++/13/bits/alloc_traits.h \
- /usr/include/c++/13/bits/stl_vector.h \
- /usr/include/c++/13/bits/stl_bvector.h \
- /usr/include/c++/13/bits/functional_hash.h \
- /usr/include/c++/13/bits/hash_bytes.h /usr/include/c++/13/bits/refwrap.h \
- /usr/include/c++/13/bits/invoke.h \
- /usr/include/c++/13/bits/stl_function.h \
- /usr/include/c++/13/backward/binders.h \
- /usr/include/c++/13/bits/range_access.h \
- /usr/include/c++/13/bits/vector.tcc /usr/include/uv.h \
+ /usr/include/inttypes.h /usr/include/c++/15/cassert \
+ /usr/include/assert.h /usr/include/c++/15/utility \
+ /usr/include/c++/15/bits/stl_relops.h \
+ /usr/include/c++/15/bits/stl_pair.h /usr/include/c++/15/type_traits \
+ /usr/include/c++/15/bits/move.h /usr/include/c++/15/bits/utility.h \
+ /usr/include/c++/15/initializer_list /usr/include/c++/15/vector \
+ /usr/include/c++/15/bits/requires_hosted.h \
+ /usr/include/c++/15/bits/stl_algobase.h \
+ /usr/include/c++/15/bits/functexcept.h \
+ /usr/include/c++/15/bits/exception_defines.h \
+ /usr/include/c++/15/bits/cpp_type_traits.h \
+ /usr/include/c++/15/ext/type_traits.h \
+ /usr/include/c++/15/ext/numeric_traits.h \
+ /usr/include/c++/15/bits/stl_iterator_base_types.h \
+ /usr/include/c++/15/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/15/bits/concept_check.h \
+ /usr/include/c++/15/debug/assertions.h \
+ /usr/include/c++/15/bits/stl_iterator.h \
+ /usr/include/c++/15/bits/ptr_traits.h /usr/include/c++/15/debug/debug.h \
+ /usr/include/c++/15/bits/predefined_ops.h \
+ /usr/include/c++/15/bits/allocator.h \
+ /usr/include/x86_64-linux-gnu/c++/15/bits/c++allocator.h \
+ /usr/include/c++/15/bits/new_allocator.h /usr/include/c++/15/new \
+ /usr/include/c++/15/bits/exception.h \
+ /usr/include/c++/15/bits/memoryfwd.h \
+ /usr/include/c++/15/bits/stl_construct.h \
+ /usr/include/c++/15/bits/stl_uninitialized.h \
+ /usr/include/c++/15/ext/alloc_traits.h \
+ /usr/include/c++/15/bits/alloc_traits.h \
+ /usr/include/c++/15/bits/stl_vector.h \
+ /usr/include/c++/15/bits/stl_bvector.h \
+ /usr/include/c++/15/bits/functional_hash.h \
+ /usr/include/c++/15/bits/hash_bytes.h /usr/include/c++/15/bits/refwrap.h \
+ /usr/include/c++/15/bits/invoke.h \
+ /usr/include/c++/15/bits/stl_function.h \
+ /usr/include/c++/15/backward/binders.h \
+ /usr/include/c++/15/bits/range_access.h \
+ /usr/include/c++/15/bits/vector.tcc /usr/include/uv.h \
  /usr/include/uv/errno.h /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
  /usr/include/uv/version.h /usr/include/stdio.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
@@ -155,7 +156,10 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
  /usr/include/x86_64-linux-gnu/bits/socket2.h /usr/include/netinet/in.h \
  /usr/include/x86_64-linux-gnu/bits/in.h /usr/include/netinet/tcp.h \
- /usr/include/arpa/inet.h /usr/include/netdb.h /usr/include/rpc/netdb.h \
+ /usr/include/arpa/inet.h \
+ /usr/include/x86_64-linux-gnu/bits/inet-fortified.h \
+ /usr/include/x86_64-linux-gnu/bits/inet-fortified-decl.h \
+ /usr/include/netdb.h /usr/include/rpc/netdb.h \
  /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
  /usr/include/x86_64-linux-gnu/bits/netdb.h /usr/include/termios.h \
@@ -164,16 +168,17 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/termios-c_cc.h \
  /usr/include/x86_64-linux-gnu/bits/termios-c_iflag.h \
  /usr/include/x86_64-linux-gnu/bits/termios-c_oflag.h \
- /usr/include/x86_64-linux-gnu/bits/termios-baud.h \
  /usr/include/x86_64-linux-gnu/bits/termios-c_cflag.h \
+ /usr/include/x86_64-linux-gnu/bits/termios-cbaud.h \
  /usr/include/x86_64-linux-gnu/bits/termios-c_lflag.h \
  /usr/include/x86_64-linux-gnu/bits/termios-tcflow.h \
  /usr/include/x86_64-linux-gnu/bits/termios-misc.h \
+ /usr/include/x86_64-linux-gnu/bits/termios-baud.h \
  /usr/include/x86_64-linux-gnu/sys/ttydefaults.h /usr/include/pwd.h \
  /usr/include/semaphore.h /usr/include/x86_64-linux-gnu/bits/semaphore.h \
  /usr/include/x86_64-linux-gnu/sys/param.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/signal.h \
@@ -209,6 +214,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/asm/param.h \
  /usr/include/asm-generic/param.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/linux/sched/types.h \
  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
  /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
@@ -222,8 +228,9 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/x86_64-linux-gnu/openssl/opensslconf.h \
  /usr/include/x86_64-linux-gnu/openssl/configuration.h \
  /usr/include/openssl/opensslv.h /usr/include/openssl/e_os2.h \
+ /usr/include/openssl/e_ostime.h /usr/include/x86_64-linux-gnu/sys/time.h \
  /usr/include/openssl/comp.h /usr/include/openssl/crypto.h \
- /usr/include/c++/13/stdlib.h /usr/include/openssl/safestack.h \
+ /usr/include/c++/15/stdlib.h /usr/include/openssl/safestack.h \
  /usr/include/openssl/stack.h /usr/include/openssl/types.h \
  /usr/include/openssl/cryptoerr.h /usr/include/openssl/symhacks.h \
  /usr/include/openssl/cryptoerr_legacy.h /usr/include/openssl/core.h \
@@ -231,25 +238,26 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/kernel/Platform.cpp.o: \
  /usr/include/openssl/bioerr.h /usr/include/openssl/x509.h \
  /usr/include/openssl/buffer.h /usr/include/openssl/buffererr.h \
  /usr/include/openssl/evp.h /usr/include/openssl/core_dispatch.h \
- /usr/include/openssl/evperr.h /usr/include/openssl/params.h \
+ /usr/include/openssl/indicator.h /usr/include/openssl/params.h \
  /usr/include/openssl/bn.h /usr/include/openssl/bnerr.h \
- /usr/include/openssl/objects.h /usr/include/openssl/obj_mac.h \
- /usr/include/openssl/asn1.h /usr/include/openssl/asn1err.h \
- /usr/include/openssl/objectserr.h /usr/include/openssl/ec.h \
- /usr/include/openssl/ecerr.h /usr/include/openssl/rsa.h \
- /usr/include/openssl/rsaerr.h /usr/include/openssl/dsa.h \
- /usr/include/openssl/dh.h /usr/include/openssl/dherr.h \
- /usr/include/openssl/dsaerr.h /usr/include/openssl/sha.h \
- /usr/include/openssl/x509err.h /usr/include/openssl/x509_vfy.h \
- /usr/include/openssl/lhash.h /usr/include/openssl/pkcs7.h \
- /usr/include/openssl/pkcs7err.h /usr/include/openssl/http.h \
- /usr/include/openssl/conf.h /usr/include/openssl/conferr.h \
- /usr/include/openssl/conftypes.h /usr/include/openssl/pem.h \
- /usr/include/openssl/pemerr.h /usr/include/openssl/hmac.h \
- /usr/include/openssl/async.h /usr/include/openssl/asyncerr.h \
- /usr/include/openssl/ct.h /usr/include/openssl/cterr.h \
- /usr/include/openssl/sslerr.h /usr/include/openssl/sslerr_legacy.h \
- /usr/include/openssl/prov_ssl.h /usr/include/openssl/ssl2.h \
- /usr/include/openssl/ssl3.h /usr/include/openssl/tls1.h \
- /usr/include/openssl/dtls1.h /usr/include/openssl/srtp.h \
+ /usr/include/openssl/evperr.h /usr/include/openssl/objects.h \
+ /usr/include/openssl/obj_mac.h /usr/include/openssl/asn1.h \
+ /usr/include/openssl/asn1err.h /usr/include/openssl/objectserr.h \
+ /usr/include/openssl/ec.h /usr/include/openssl/ecerr.h \
+ /usr/include/openssl/rsa.h /usr/include/openssl/rsaerr.h \
+ /usr/include/openssl/dsa.h /usr/include/openssl/dh.h \
+ /usr/include/openssl/dherr.h /usr/include/openssl/dsaerr.h \
+ /usr/include/openssl/sha.h /usr/include/openssl/x509err.h \
+ /usr/include/openssl/x509_vfy.h /usr/include/openssl/lhash.h \
+ /usr/include/openssl/pkcs7.h /usr/include/openssl/pkcs7err.h \
+ /usr/include/openssl/http.h /usr/include/openssl/conf.h \
+ /usr/include/openssl/conferr.h /usr/include/openssl/conftypes.h \
+ /usr/include/openssl/pem.h /usr/include/openssl/pemerr.h \
+ /usr/include/openssl/hmac.h /usr/include/openssl/async.h \
+ /usr/include/openssl/asyncerr.h /usr/include/openssl/ct.h \
+ /usr/include/openssl/cterr.h /usr/include/openssl/sslerr.h \
+ /usr/include/openssl/sslerr_legacy.h /usr/include/openssl/prov_ssl.h \
+ /usr/include/openssl/ssl2.h /usr/include/openssl/ssl3.h \
+ /usr/include/openssl/tls1.h /usr/include/openssl/dtls1.h \
+ /usr/include/openssl/srtp.h /usr/include/openssl/quic.h \
  /usr/include/openssl/err.h

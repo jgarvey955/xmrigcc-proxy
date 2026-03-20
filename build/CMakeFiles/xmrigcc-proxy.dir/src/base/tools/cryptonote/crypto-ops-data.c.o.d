@@ -1,7 +1,7 @@
 CMakeFiles/xmrigcc-proxy.dir/src/base/tools/cryptonote/crypto-ops-data.c.o: \
- /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/cryptonote/crypto-ops-data.c \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/cryptonote/crypto-ops-data.c \
  /usr/include/stdc-predef.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
@@ -17,4 +17,4 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/tools/cryptonote/crypto-ops-data.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /home/jonathan/data/source/xmrigcc-proxy/src/base/tools/cryptonote/crypto-ops.h
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/cryptonote/crypto-ops.h
