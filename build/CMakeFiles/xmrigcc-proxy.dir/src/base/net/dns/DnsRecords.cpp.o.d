@@ -223,38 +223,4 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/net/dns/DnsRecords.cpp.o: \
  /usr/include/c++/15/bits/stl_function.h \
  /usr/include/c++/15/backward/binders.h \
  /usr/include/c++/15/bits/range_access.h \
- /usr/include/c++/15/bits/vector.tcc \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/Dns.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsConfig.h \
- /usr/include/c++/15/map /usr/include/c++/15/bits/stl_tree.h \
- /usr/include/c++/15/ext/aligned_buffer.h \
- /usr/include/c++/15/bits/stl_map.h /usr/include/c++/15/tuple \
- /usr/include/c++/15/bits/uses_allocator.h \
- /usr/include/c++/15/bits/stl_multimap.h \
- /usr/include/c++/15/bits/erase_if.h /usr/include/c++/15/memory \
- /usr/include/c++/15/bits/stl_tempbuf.h \
- /usr/include/c++/15/bits/stl_raw_storage_iter.h \
- /usr/include/c++/15/bits/align.h /usr/include/c++/15/bit \
- /usr/include/c++/15/bits/unique_ptr.h \
- /usr/include/c++/15/bits/shared_ptr.h /usr/include/c++/15/iosfwd \
- /usr/include/c++/15/bits/stringfwd.h /usr/include/c++/15/bits/postypes.h \
- /usr/include/c++/15/cwchar /usr/include/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
- /usr/include/x86_64-linux-gnu/bits/wchar2.h \
- /usr/include/c++/15/bits/shared_ptr_base.h /usr/include/c++/15/typeinfo \
- /usr/include/c++/15/bits/allocated_ptr.h \
- /usr/include/c++/15/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/15/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/15/bits/gthr-default.h \
- /usr/include/x86_64-linux-gnu/c++/15/bits/atomic_word.h \
- /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
- /usr/include/c++/15/ext/concurrence.h /usr/include/c++/15/exception \
- /usr/include/c++/15/bits/exception_ptr.h \
- /usr/include/c++/15/bits/cxxabi_init_exception.h \
- /usr/include/c++/15/bits/nested_exception.h \
- /usr/include/c++/15/bits/shared_ptr_atomic.h \
- /usr/include/c++/15/bits/atomic_base.h \
- /usr/include/c++/15/bits/atomic_lockfree_defines.h \
- /usr/include/c++/15/backward/auto_ptr.h
+ /usr/include/c++/15/bits/vector.tcc

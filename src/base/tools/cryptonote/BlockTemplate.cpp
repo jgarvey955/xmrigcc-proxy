@@ -232,15 +232,15 @@ bool xmrig::BlockTemplate::parse(bool hashes)
 
     ar(m_numInputs);
 
-    // must be 1 input (except tolerate slips on Salvium)
-    if (m_numInputs != 1 && m_coin != Coin::SALVIUM) {
+    // must be 1 input
+    if (m_numInputs != 1) {
         return false;
     }
 
     ar(m_inputType);
 
-    // input type must be txin_gen (0xFF) for all but Salvium which may embed extras
-    if (m_inputType != 0xFF && m_coin != Coin::SALVIUM) {
+    // input type must be txin_gen (0xFF)
+    if (m_inputType != 0xFF) {
         return false;
     }
 
@@ -411,22 +411,22 @@ bool xmrig::BlockTemplate::parse(bool hashes)
                 return false;
             }
             ar_extra.skip(static_cast<size_t>(size));
-            break;
         }
     }
 
     if (m_coin == Coin::SALVIUM) {
-        uint8_t tx_type;
-        ar(tx_type);
 
-        if (tx_type != 1) {
-            return false;
-        }
+      uint8_t tx_type;
+      ar(tx_type);
 
-        uint64_t amount_burnt;
-        ar(amount_burnt);
-    }
-    else if (m_coin == Coin::ZEPHYR) {
+      if (tx_type != 1) {
+        return false;
+      }
+
+      uint64_t amount_burnt;
+      ar(amount_burnt);
+
+    } else if (m_coin == Coin::ZEPHYR) {
         uint64_t pricing_record_height, amount_burnt, amount_minted;
         ar(pricing_record_height);
         ar(amount_burnt);
@@ -445,6 +445,7 @@ bool xmrig::BlockTemplate::parse(bool hashes)
       return true;
     }
 
+    // must be RCTTypeNull (0)
     if (vin_rct_type != 0) {
         return false;
     }
@@ -452,90 +453,105 @@ bool xmrig::BlockTemplate::parse(bool hashes)
     const size_t miner_tx_end = ar.index();
     // Miner transaction end
 
+    // Miner transaction must have exactly 1 byte with value 0 after the prefix
     if ((miner_tx_end != offset(MINER_TX_PREFIX_END_OFFSET) + 1) || (*blob(MINER_TX_PREFIX_END_OFFSET) != 0)) {
         return false;
     }
 
     if (m_hasProtocolTx) {
-        setOffset(PROTOCOL_TX_PREFIX_OFFSET, ar.index());
 
-        uint64_t protocol_tx_version, protocol_tx_unlock_time, protocol_tx_num_inputs;
-        ar(protocol_tx_version);
-        const uint8_t expected_protocol_version =
-            (majorVersion() >= kSalviumTokensHF) ? kSalviumProtocolTxVersionTokens :
-            (majorVersion() >= kSalviumCarrotHF) ? kSalviumProtocolTxVersionCarrot : kSalviumProtocolTxVersionLegacy;
-        if (protocol_tx_version != expected_protocol_version) {
-            return false;
+      // Protocol transaction begin
+      // Prefix begin
+      setOffset(PROTOCOL_TX_PREFIX_OFFSET, ar.index());
+
+      // Parse/skip the protocol_tx
+      uint64_t protocol_tx_version, protocol_tx_unlock_time, protocol_tx_num_inputs;
+      ar(protocol_tx_version);
+      const uint8_t expected_protocol_version =
+        (majorVersion() >= kSalviumTokensHF) ? kSalviumProtocolTxVersionTokens :
+        (majorVersion() >= kSalviumCarrotHF) ? kSalviumProtocolTxVersionCarrot : kSalviumProtocolTxVersionLegacy;
+      if (protocol_tx_version != expected_protocol_version) {
+        return false;
+      }
+
+      ar(protocol_tx_unlock_time);
+      ar(protocol_tx_num_inputs);
+
+      // must be 1 input
+      if (protocol_tx_num_inputs != 1) {
+        return false;
+      }
+
+      uint8_t protocol_input_type;
+      ar(protocol_input_type);
+
+      // input type must be txin_gen (0xFF)
+      if (protocol_input_type != 0xFF) {
+        return false;
+      }
+
+      uint64_t protocol_height;
+      ar(protocol_height);
+
+      // height must match miner_tx
+      if (protocol_height != m_height) {
+        return false;
+      }
+
+      uint64_t protocol_num_outputs;
+      ar(protocol_num_outputs);
+
+      for (size_t protocol_output_idx=0; protocol_output_idx<protocol_num_outputs; ++protocol_output_idx) {
+
+        uint64_t out_amount;
+        ar(out_amount);
+
+        uint8_t out_type;
+        ar(out_type);
+
+        if ((out_type != kTxOutToKey) && (out_type != kTxOutToTaggedKey) && (out_type != kTxOutToCarrotV1)) {
+          return false;
         }
 
-        ar(protocol_tx_unlock_time);
-        ar(protocol_tx_num_inputs);
+        Span out_pubkey;
+        ar(out_pubkey, kKeySize);
 
-        if (protocol_tx_num_inputs != 1) {
-            return false;
+        if (!parseSalviumOutput(ar, out_type, false)) {
+          return false;
         }
+      }
 
-        uint8_t protocol_input_type;
-        ar(protocol_input_type);
+      uint64_t protocol_extra_size;
+      ar(protocol_extra_size);
+      ar.skip(protocol_extra_size);
 
-        if (protocol_input_type != 0xFF) {
-            return false;
-        }
+      uint8_t protocol_tx_type;
+      ar(protocol_tx_type);
+      if (protocol_tx_type != 2) {
+        return false;
+      }
 
-        uint64_t protocol_height;
-        ar(protocol_height);
+      setOffset(PROTOCOL_TX_PREFIX_END_OFFSET, ar.index());
+      // Prefix end
 
-        if (protocol_height != m_height) {
-            return false;
-        }
+      // RCT signatures (empty in protocol transaction)
+      uint8_t protocol_rct_type = 0;
+      ar(protocol_rct_type);
 
-        uint64_t protocol_num_outputs;
-        ar(protocol_num_outputs);
+      // must be RCTTypeNull (0)
+      if (protocol_rct_type != 0) {
+        return false;
+      }
 
-        for (size_t protocol_output_idx = 0; protocol_output_idx < protocol_num_outputs; ++protocol_output_idx) {
-            uint64_t out_amount;
-            ar(out_amount);
+      const size_t protocol_tx_end = ar.index();
+      // Protocol transaction end
 
-            uint8_t out_type;
-            ar(out_type);
-
-            if ((out_type != kTxOutToKey) && (out_type != kTxOutToTaggedKey) && (out_type != kTxOutToCarrotV1)) {
-                return false;
-            }
-
-            Span out_pubkey;
-            ar(out_pubkey, kKeySize);
-
-            if (!parseSalviumOutput(ar, out_type, false)) {
-                return false;
-            }
-        }
-
-        uint64_t protocol_extra_size;
-        ar(protocol_extra_size);
-        ar.skip(protocol_extra_size);
-
-        uint8_t protocol_tx_type;
-        ar(protocol_tx_type);
-        if (protocol_tx_type != 2) {
-            return false;
-        }
-
-        setOffset(PROTOCOL_TX_PREFIX_END_OFFSET, ar.index());
-
-        uint8_t protocol_rct_type = 0;
-        ar(protocol_rct_type);
-
-        if (protocol_rct_type != 0) {
-            return false;
-        }
-
-        const size_t protocol_tx_end = ar.index();
-
-        if ((protocol_tx_end != offset(PROTOCOL_TX_PREFIX_END_OFFSET) + 1) || (*blob(PROTOCOL_TX_PREFIX_END_OFFSET) != 0)) {
-            return false;
-        }
+      // Protocol transaction must have exactly 1 byte with value 0 after the prefix
+      if ((protocol_tx_end != offset(PROTOCOL_TX_PREFIX_END_OFFSET) + 1) || (*blob(PROTOCOL_TX_PREFIX_END_OFFSET) != 0)) {
+        return false;
+      }
     }
+
 
     // Other transaction hashes
     ar(m_numHashes);
@@ -543,6 +559,7 @@ bool xmrig::BlockTemplate::parse(bool hashes)
     if (hashes) {
         const uint64_t base_count = baseTransactionCount();
         m_hashes.resize((m_numHashes + base_count) * kHashSize);
+
         calculateMinerTxHash(blob(MINER_TX_PREFIX_OFFSET), blob(MINER_TX_PREFIX_END_OFFSET), m_hashes.data());
 
         uint64_t offset = 1;

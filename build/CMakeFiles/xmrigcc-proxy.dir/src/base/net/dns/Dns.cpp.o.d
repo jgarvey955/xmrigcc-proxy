@@ -159,13 +159,14 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/net/dns/Dns.cpp.o: \
  /usr/include/c++/15/bits/atomic_base.h \
  /usr/include/c++/15/bits/atomic_lockfree_defines.h \
  /usr/include/c++/15/backward/auto_ptr.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsUvBackend.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/interfaces/IDnsBackend.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsRequest.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/interfaces/IDnsListener.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/Object.h \
  /usr/include/c++/15/cstddef /usr/include/c++/15/cstdint \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsUvBackend.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/interfaces/IDnsBackend.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsRecords.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsRecord.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/tools/Storage.h \
- /usr/include/c++/15/queue /usr/include/c++/15/deque \
- /usr/include/c++/15/bits/stl_deque.h /usr/include/c++/15/bits/deque.tcc \
- /usr/include/c++/15/bits/stl_heap.h /usr/include/c++/15/bits/stl_queue.h
+ /usr/include/c++/15/deque /usr/include/c++/15/bits/stl_deque.h \
+ /usr/include/c++/15/bits/deque.tcc

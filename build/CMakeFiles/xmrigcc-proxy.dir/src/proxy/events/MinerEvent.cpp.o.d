@@ -3,7 +3,8 @@ CMakeFiles/xmrigcc-proxy.dir/src/proxy/events/MinerEvent.cpp.o: \
  /usr/include/stdc-predef.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/events/MinerEvent.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/events/Event.h \
- /usr/include/c++/15/new \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/interfaces/IEvent.h \
+ /usr/include/c++/15/cstdint \
  /usr/include/x86_64-linux-gnu/c++/15/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -14,9 +15,6 @@ CMakeFiles/xmrigcc-proxy.dir/src/proxy/events/MinerEvent.cpp.o: \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
  /usr/include/x86_64-linux-gnu/c++/15/bits/cpu_defines.h \
- /usr/include/c++/15/bits/exception.h /usr/include/c++/15/bits/version.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/interfaces/IEvent.h \
- /usr/include/c++/15/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
@@ -31,7 +29,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/proxy/events/MinerEvent.cpp.o: \
  /usr/include/c++/15/bits/functexcept.h \
  /usr/include/c++/15/bits/exception_defines.h \
  /usr/include/c++/15/bits/cpp_type_traits.h \
- /usr/include/c++/15/ext/type_traits.h \
+ /usr/include/c++/15/bits/version.h /usr/include/c++/15/ext/type_traits.h \
  /usr/include/c++/15/ext/numeric_traits.h \
  /usr/include/c++/15/bits/stl_pair.h /usr/include/c++/15/type_traits \
  /usr/include/c++/15/bits/move.h /usr/include/c++/15/bits/utility.h \
@@ -46,7 +44,8 @@ CMakeFiles/xmrigcc-proxy.dir/src/proxy/events/MinerEvent.cpp.o: \
  /usr/include/c++/15/bits/algorithmfwd.h \
  /usr/include/c++/15/initializer_list /usr/include/c++/15/bits/stl_heap.h \
  /usr/include/c++/15/bits/uniform_int_dist.h \
- /usr/include/c++/15/bits/stl_tempbuf.h \
+ /usr/include/c++/15/bits/stl_tempbuf.h /usr/include/c++/15/new \
+ /usr/include/c++/15/bits/exception.h \
  /usr/include/c++/15/bits/stl_construct.h /usr/include/c++/15/cstdlib \
  /usr/include/stdlib.h /usr/lib/gcc/x86_64-linux-gnu/15/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \

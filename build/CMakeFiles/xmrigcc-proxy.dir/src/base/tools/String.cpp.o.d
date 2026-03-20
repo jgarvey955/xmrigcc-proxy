@@ -157,7 +157,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/tools/String.cpp.o: \
  /usr/include/c++/15/bits/shared_ptr_atomic.h \
  /usr/include/c++/15/bits/atomic_base.h \
  /usr/include/c++/15/bits/atomic_lockfree_defines.h \
- /usr/include/c++/15/backward/auto_ptr.h \
+ /usr/include/c++/15/backward/auto_ptr.h /usr/include/c++/15/limits \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/stream.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/encodings.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/encodedstream.h \
@@ -172,7 +172,6 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/tools/String.cpp.o: \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/biginteger.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/diyfp.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/clzll.h \
- /usr/include/c++/15/limits \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/pow10.h \
  /usr/include/c++/15/climits \
  /usr/lib/gcc/x86_64-linux-gnu/15/include/limits.h \

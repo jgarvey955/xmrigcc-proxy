@@ -397,7 +397,6 @@ bool xmrig::DaemonClient::parseJob(const rapidjson::Value &params, int *code)
     }
 
     if (!m_blocktemplate.parse(blocktemplate, m_coin)) {
-        LOG_ERR("%s blocktemplate parse failed: len=%zu coin=%s", tag(), blocktemplate.size(), m_coin.isValid() ? m_coin.name() : "unknown");
         return jobError("Invalid block template received from daemon.");
     }
 

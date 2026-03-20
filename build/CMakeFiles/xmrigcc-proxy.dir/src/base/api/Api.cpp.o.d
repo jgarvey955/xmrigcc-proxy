@@ -253,6 +253,32 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/api/Api.cpp.o: \
  /usr/include/inttypes.h /usr/include/c++/15/cassert \
  /usr/include/assert.h /usr/include/c++/15/utility \
  /usr/include/c++/15/bits/stl_relops.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/writer.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/stream.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/encodings.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/clzll.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../rapidjson.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/meta.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/stack.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../allocators.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../rapidjson.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../internal/meta.h \
+ /usr/include/c++/15/limits \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/swap.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/strfunc.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../stream.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/dtoa.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/itoa.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/diyfp.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/clzll.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/ieee754.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/itoa.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/stringbuffer.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/emmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/xmmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/mmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/15/include/mm_malloc.h \
+ /usr/include/c++/15/stdlib.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/api/interfaces/IApiListener.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/api/requests/HttpApiRequest.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/api/requests/ApiRequest.h \
@@ -261,34 +287,14 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/api/Api.cpp.o: \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/document.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/reader.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/allocators.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/meta.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../rapidjson.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/stream.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/encodings.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/encodedstream.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/memorystream.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/clzll.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/stack.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../allocators.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/swap.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/strtod.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/ieee754.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/biginteger.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/diyfp.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/clzll.h \
- /usr/include/c++/15/limits \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/pow10.h \
  /usr/include/c++/15/climits \
- /usr/lib/gcc/x86_64-linux-gnu/15/include/emmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/15/include/xmmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/15/include/mmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/15/include/mm_malloc.h \
- /usr/include/c++/15/stdlib.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/error/error.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/error/../rapidjson.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/strfunc.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../stream.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/rapidjson/internal/../rapidjson.h \
  /usr/include/c++/15/iterator /usr/include/c++/15/bits/stream_iterator.h \
  /usr/include/c++/15/bits/streambuf_iterator.h \
  /usr/include/c++/15/streambuf /usr/include/c++/15/bits/localefwd.h \
@@ -353,7 +359,6 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/api/Api.cpp.o: \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/interfaces/IEventListener.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/workers/Worker.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/TickingCounter.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/core/Controller.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/version.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/api/Httpd.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/http/HttpListener.h \

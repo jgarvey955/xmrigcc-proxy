@@ -262,12 +262,10 @@ CMakeFiles/xmrigcc-proxy.dir/src/base/net/dns/DnsUvBackend.cpp.o: \
  /usr/include/c++/15/map /usr/include/c++/15/bits/stl_tree.h \
  /usr/include/c++/15/bits/stl_map.h \
  /usr/include/c++/15/bits/stl_multimap.h \
- /usr/include/c++/15/bits/erase_if.h /usr/include/c++/15/queue \
- /usr/include/c++/15/deque /usr/include/c++/15/bits/stl_deque.h \
- /usr/include/c++/15/bits/deque.tcc /usr/include/c++/15/bits/stl_heap.h \
- /usr/include/c++/15/bits/stl_queue.h \
+ /usr/include/c++/15/bits/erase_if.h /usr/include/c++/15/deque \
+ /usr/include/c++/15/bits/stl_deque.h /usr/include/c++/15/bits/deque.tcc \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/interfaces/IDnsListener.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsRequest.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/dns/DnsConfig.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/Chrono.h \
  /usr/include/c++/15/chrono /usr/include/c++/15/bits/chrono.h \
  /usr/include/c++/15/ratio /usr/include/c++/15/limits \

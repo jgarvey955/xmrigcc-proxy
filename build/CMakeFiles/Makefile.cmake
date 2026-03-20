@@ -13,6 +13,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.31.6/CMakeSystem.cmake"
   "/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/cmake/FindUV.cmake"
   "/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/cmake/OpenSSL.cmake"
+  "/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/cmake/cpu.cmake"
   "/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/cmake/flags.cmake"
   "/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/cmake/os.cmake"
   "/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/base.cmake"

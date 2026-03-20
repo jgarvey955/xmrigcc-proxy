@@ -1,0 +1,6 @@
+.idea/
+/build
+CMakeFiles/
+/CMakeLists.txt.user
+cmake-build-debug
+.cmake/api/v1/query
