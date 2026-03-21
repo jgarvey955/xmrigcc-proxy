@@ -35,7 +35,7 @@
  * Percentage of your hashing power that you want to donate to the developer, can be 0 if you don't want to do that.
  *
  * If you plan on changing this setting to 0 please consider making a one off donation to my wallet:
- * XMR: 48edfHu7V9Z84YzzMa6fUueoELZ9ZRXq9VetWzYGzKt52XU5xvqgzYnDK9URnRoJMk1j8nLwEVsaSWJ4fhdUyZijBGUicoD
+ * XMR: SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
  * BTC: 1P7ujsXeX7GxQwHNnJsRMgAdNkFZmNVqJT
  *
  * How it works:

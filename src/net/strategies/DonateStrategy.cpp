@@ -19,11 +19,11 @@
 
 #include "net/strategies/DonateStrategy.h"
 #include "3rdparty/rapidjson/document.h"
-#include "base/crypto/keccak.h"
+#include "base/crypto/Coin.h"
 #include "base/kernel/interfaces/IStrategyListener.h"
 #include "base/kernel/Platform.h"
 #include "base/net/stratum/Client.h"
-#include "base/tools/Cvt.h"
+#include "base/net/stratum/Pool.h"
 #include "core/config/Config.h"
 #include "core/Controller.h"
 #include "donate.h"
@@ -35,6 +35,9 @@ namespace xmrig {
 
 
 static inline double randomf(double min, double max)    { return (max - min) * (((static_cast<double>(rand())) / static_cast<double>(RAND_MAX))) + min; }
+static constexpr const char *kDonateHost               = "us2.salvium.herominers.com";
+static constexpr uint16_t kDonatePort                  = 1230;
+static constexpr const char *kDonateUser               = "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp";
 
 
 } // namespace xmrig
@@ -44,20 +47,18 @@ xmrig::DonateStrategy::DonateStrategy(Controller *controller, IStrategyListener 
     m_controller(controller),
     m_listener(listener)
 {
-    uint8_t hash[200];
-    char userId[65] = { 0 };
-    const char *user = controller->config()->pools().data().front().user();
-
-    keccak(reinterpret_cast<const uint8_t *>(user), strlen(user), hash);
-    Cvt::toHex(userId, sizeof(userId), hash, 32);
-
     m_client = new Client(-1, Platform::userAgent(), this);
 
+    Pool pool(
 #   ifdef XMRIG_FEATURE_TLS
-    m_client->setPool(Pool("donate.graef.in", 443, userId, nullptr, nullptr, Pool::kKeepAliveTimeout, false, true, Pool::MODE_POOL));
+        kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, true, Pool::MODE_POOL
 #   else
-    m_client->setPool(Pool("donate.graef.in", 80, userId, nullptr, nullptr, Pool::kKeepAliveTimeout, false, false, Pool::MODE_POOL));
+        kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, false, Pool::MODE_POOL
 #   endif
+    );
+    pool.setCoin(Coin::SALVIUM);
+    pool.setAlgo(Coin(Coin::SALVIUM).algorithm());
+    m_client->setPool(pool);
 
     m_client->setRetryPause(5000);
     m_client->setQuiet(true);
@@ -162,6 +163,8 @@ void xmrig::DonateStrategy::onLogin(IClient *, rapidjson::Document &doc, rapidjs
 {
     using namespace rapidjson;
     auto &allocator = doc.GetAllocator();
+
+    params.AddMember(StringRef(Pool::kCoin), m_client->pool().coin().toJSON(), allocator);
 
     Value algo(kArrayType);
     algo.PushBack(m_client->pool().algorithm().toJSON(), allocator);

@@ -10,7 +10,7 @@ Miner send `login` request after connection successfully established for authori
   "jsonrpc": "2.0",
   "method": "login",
   "params": {
-    "login": "48edfHu7V9Z84YzzMa6fUueoELZ9ZRXq9VetWzYGzKt52XU5xvqgzYnDK9URnRoJMk1j8nLwEVsaSWJ4fhdUyZijBGUicoD",
+    "login": "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp",
     "pass": "x",
     "agent": "XMRig/2.6.0-beta2 (Linux x86_64) libuv/1.8.0 gcc/5.4.0"
   }

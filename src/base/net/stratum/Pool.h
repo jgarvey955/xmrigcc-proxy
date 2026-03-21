@@ -116,6 +116,7 @@ public:
     inline uint64_t pollInterval() const                { return m_pollInterval; }
     inline uint64_t jobTimeout() const                  { return m_jobTimeout; }
     inline void setAlgo(const Algorithm &algorithm)     { m_algorithm = algorithm; }
+    inline void setCoin(const Coin &coin)               { m_coin = coin; }
     inline void setUrl(const char *url)                 { m_url = Url(url); }
     inline void setPassword(const String &password)     { m_password = password; }
     inline void setProxy(const ProxyUrl &proxy)         { m_proxy = proxy; }

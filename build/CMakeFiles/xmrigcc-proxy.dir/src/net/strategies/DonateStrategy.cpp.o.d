@@ -232,7 +232,7 @@ CMakeFiles/xmrigcc-proxy.dir/src/net/strategies/DonateStrategy.cpp.o: \
  /usr/include/c++/15/system_error \
  /usr/include/x86_64-linux-gnu/c++/15/bits/error_constants.h \
  /usr/include/c++/15/stdexcept /usr/include/c++/15/bits/streambuf.tcc \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/crypto/keccak.h \
+ /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/crypto/Coin.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/interfaces/IStrategyListener.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/Platform.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/stratum/Client.h \
@@ -323,7 +323,6 @@ CMakeFiles/xmrigcc-proxy.dir/src/net/strategies/DonateStrategy.cpp.o: \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/stratum/BaseClient.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/interfaces/IClient.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/stratum/Pool.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/crypto/Coin.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/stratum/ProxyUrl.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/stratum/Url.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/Chrono.h \
@@ -333,13 +332,6 @@ CMakeFiles/xmrigcc-proxy.dir/src/net/strategies/DonateStrategy.cpp.o: \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/stratum/SubmitResult.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/tools/LineReader.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/net/tools/Storage.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/Cvt.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/tools/Span.h \
- /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/3rdparty/epee/span.h \
- /usr/include/c++/15/algorithm /usr/include/c++/15/bits/stl_algo.h \
- /usr/include/c++/15/bits/algorithmfwd.h \
- /usr/include/c++/15/bits/stl_heap.h \
- /usr/include/c++/15/bits/uniform_int_dist.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/core/config/Config.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/config/BaseConfig.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/base/kernel/config/Title.h \
@@ -361,5 +353,9 @@ CMakeFiles/xmrigcc-proxy.dir/src/net/strategies/DonateStrategy.cpp.o: \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/donate.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/Counters.h \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/StatsData.h \
- /usr/include/c++/15/array /usr/include/c++/15/compare \
+ /usr/include/c++/15/algorithm /usr/include/c++/15/bits/stl_algo.h \
+ /usr/include/c++/15/bits/algorithmfwd.h \
+ /usr/include/c++/15/bits/stl_heap.h \
+ /usr/include/c++/15/bits/uniform_int_dist.h /usr/include/c++/15/array \
+ /usr/include/c++/15/compare \
  /home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/src/proxy/interfaces/ISplitter.h
