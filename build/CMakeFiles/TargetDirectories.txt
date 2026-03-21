@@ -1,3 +1,0 @@
-/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/build/CMakeFiles/xmrigcc-proxy.dir
-/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/build/CMakeFiles/edit_cache.dir
-/home/jonathan/data/source/salvium-xmrig/xmrigcc-proxy/build/CMakeFiles/rebuild_cache.dir

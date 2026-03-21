@@ -23,6 +23,7 @@
  */
 
 #include "proxy/splitters/donate/DonateSplitter.h"
+#include "base/crypto/Coin.h"
 #include "base/io/json/Json.h"
 #include "base/net/stratum/Pool.h"
 #include "core/config/Config.h"
@@ -32,6 +33,15 @@
 #include "proxy/events/SubmitEvent.h"
 #include "proxy/Miner.h"
 #include "proxy/splitters/donate/DonateMapper.h"
+
+
+namespace {
+
+static constexpr const char *kDonateHost = "us2.salvium.herominers.com";
+static constexpr uint16_t kDonatePort    = 1230;
+static constexpr const char *kDonateUser = "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp";
+
+} // namespace
 
 
 xmrig::DonateSplitter::DonateSplitter(xmrig::Controller *controller) :
@@ -82,14 +92,10 @@ void xmrig::DonateSplitter::login(LoginEvent *event)
     }
 #   endif
 
-    Pool pool(url);
-    if (!pool.isValid()) {
-        return reject(event);
-    }
-
-    pool.setUser(miner->user());
+    Pool pool(kDonateHost, kDonatePort, kDonateUser, "proxy", nullptr, Pool::kKeepAliveTimeout, false, false, Pool::MODE_POOL);
+    pool.setCoin(Coin::SALVIUM);
+    pool.setAlgo(Coin(Coin::SALVIUM).algorithm());
     pool.setRigId(miner->rigId());
-    pool.setPassword("proxy");
 
     auto mapper = new DonateMapper(m_sequence++, event, pool);
     m_mappers[mapper->id()] = mapper;
@@ -138,4 +144,3 @@ void xmrig::DonateSplitter::submit(SubmitEvent *event)
         mapper->submit(event);
     }
 }
-

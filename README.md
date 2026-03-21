@@ -1,4 +1,6 @@
-# XMRig Proxy
+# XMRig ProxyUpdated to work with SALVIUM
+to Donate SAL1 -> SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
+
 [![Github All Releases](https://img.shields.io/github/downloads/bendr0id/xmrigcc-proxy/total.svg)](https://github.com/bendr0id/xmrigcc-proxy/releases)
 [![Github Latest](https://img.shields.io/github/downloads/bendr0id/xmrigCC-proxy/latest/total.svg)](https://github.com/bendr0id/xmrigcc-proxy/releases)
 [![GitHub release](https://img.shields.io/github/release/bendr0id/xmrigcc-proxy/all.svg)](https://github.com/bendr0id/xmrigcc-proxy/releases)
