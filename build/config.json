@@ -1,0 +1,110 @@
+{
+    "access-log-file": null,
+    "access-password": null,
+    "algo-ext": false,
+    "api": {
+        "id": null,
+        "worker-id": null
+    },
+    "http": {
+        "enabled": true,
+        "host": "192.168.0.221",
+        "port": 50112,
+        "access-token": "fbljhvbqerfubqeriufgbqleqleiru",
+        "restricted": false
+    },
+    "background": false,
+    "bind": [
+        {
+            "host": "0.0.0.0",
+            "port": 50111,
+            "tls": true
+        }//,
+        //{
+         //   "host": "::",
+         //   "port": 3333,
+         //   "tls": false
+        //}
+    ],
+    "colors": true,
+    "title": false,
+    "custom-diff": 0,
+    "custom-diff-stats": false,
+    "donate-level": 0,
+    "log-file": "/home/jonathan/proxy.log",
+    "mode": "nicehash",
+    "pools": [
+        
+        {
+            "algo": "rx/0",
+            "coin": null,
+            "url": "192.168.0.22:19081",
+            "user": "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp",
+            "pass": null,
+            "rig-id": "RP1",
+            "nicehash": false,
+            "keepalive": true,
+            "enabled": true,
+            "tls": false,
+            "sni": null,
+            "tls-fingerprint": null,
+            "daemon": true,
+            "socks5": null,
+            "self-select": null,
+            "submit-to-origin": false
+        },
+        {
+            "algo": "rx/0",
+            "coin": null,
+            "url": "192.168.0.30:19081",
+            "user": "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp",
+            "pass": null,
+            "rig-id": "RP1",
+            "nicehash": false,
+            "keepalive": true,
+            "enabled": true,
+            "tls": false,
+            "sni": null,
+            "tls-fingerprint": null,
+            "daemon": true,
+            "socks5": null,
+            "self-select": null,
+            "submit-to-origin": false
+        },
+        {
+            "algo": "rx/0",
+            "coin": null,
+            "url": "us2.salvium.herominers.com:1230",
+            "user": "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp=1",
+            "pass": "RP1",
+            "rig-id": null,
+            "nicehash": false,
+            "keepalive": true,
+            "enabled": true,
+            "tls": true,
+            "sni": false,
+            "tls-fingerprint": null,
+            "daemon": false,
+            "socks5": null,
+            "self-select": null,
+            "submit-to-origin": false
+        }
+    ],
+    "retries": 0,
+    "retry-pause": 1,
+    "reuse-timeout": 0,
+    "tls": {
+        "enabled": true,
+        "protocols": null,
+        "cert": null,
+        "cert_key": null,
+        "ciphers": null,
+        "ciphersuites": null,
+        "dhparam": null
+    },
+    "user-agent": null,
+    "syslog": true,
+    "verbose": true,
+    "watch": true,
+    "workers": true
+}

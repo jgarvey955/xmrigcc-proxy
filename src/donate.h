@@ -35,8 +35,8 @@
  * Percentage of your hashing power that you want to donate to the developer, can be 0 if you don't want to do that.
  *
  * If you plan on changing this setting to 0 please consider making a one off donation to my wallet:
- * XMR: SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
- * BTC: 1P7ujsXeX7GxQwHNnJsRMgAdNkFZmNVqJT
+ * SAL1: SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
+ *
  *
  * How it works:
  * Upstreams randomly switch to dev pool in range from 50 to 150 minutes, to reduce dev pool peak load.
@@ -47,7 +47,7 @@
  * Since 2.15.0
  * If you set level to 0 it will enable donate over proxy feature.
  */
-constexpr const int kDefaultDonateLevel = 2;
+constexpr const int kDefaultDonateLevel = 3;
 constexpr const int kMinimumDonateLevel = 1;
 
 
