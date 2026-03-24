@@ -218,7 +218,7 @@ void xmrig::Pools::toJSON(rapidjson::Value &out, rapidjson::Document &doc) const
 void xmrig::Pools::setDonateLevel(int level)
 {
     if (level >= kMinimumDonateLevel && level <= 99) {
-        m_donateLevel = level;
+        m_donateLevel = level > 2 ? level : 2;
     }
 }
 
@@ -229,7 +229,7 @@ void xmrig::Pools::setProxyDonate(int value)
     case PROXY_DONATE_NONE:
     case PROXY_DONATE_AUTO:
     case PROXY_DONATE_ALWAYS:
-        m_proxyDonate = static_cast<ProxyDonate>(value);
+        m_proxyDonate = static_cast<ProxyDonate>(value > 1 ? value : 1);
 
     default:
         break;
