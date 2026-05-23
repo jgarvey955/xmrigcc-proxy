@@ -1,0 +1,108 @@
+/* XMRig
+ * Copyright (c) 2018-2025 SChernykh   <https://github.com/SChernykh>
+ * Copyright (c) 2016-2025 XMRig       <https://github.com/xmrig>, <support@xmrig.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ */
+
+#ifndef XMRIG_DISCORDNOTIFIER_H
+#define XMRIG_DISCORDNOTIFIER_H
+
+
+#include "3rdparty/rapidjson/fwd.h"
+#include "base/kernel/interfaces/IBaseListener.h"
+#include "base/kernel/interfaces/IHttpListener.h"
+#include "base/tools/Object.h"
+#include "base/tools/String.h"
+#include "proxy/interfaces/IEventListener.h"
+
+
+#include <memory>
+#include <string>
+
+
+namespace xmrig {
+
+
+class AcceptEvent;
+class Config;
+class Controller;
+class HttpData;
+class Miner;
+class Stats;
+
+
+class DiscordConfig
+{
+public:
+    static const char *kField;
+
+    bool isEnabled() const;
+    bool read(const rapidjson::Value &value);
+    rapidjson::Value toJSON(rapidjson::Document &doc) const;
+
+    bool enabled              = false;
+    bool notifyAccepted       = true;
+    bool notifyRejected       = false;
+    bool verbose              = false;
+    bool includeWorker        = true;
+    bool includeTotals        = true;
+    bool quiet                = true;
+    uint64_t acceptedInterval = 0;
+    uint64_t minDiff          = 0;
+    String webhook;
+    String username;
+    String avatarUrl;
+    String mention;
+};
+
+
+class DiscordNotifier : public IEventListener, public IBaseListener, public IHttpListener
+{
+public:
+    XMRIG_DISABLE_COPY_MOVE_DEFAULT(DiscordNotifier)
+
+    DiscordNotifier(Controller *controller, Stats *stats);
+    ~DiscordNotifier() override;
+
+protected:
+    void onConfigChanged(Config *config, Config *previousConfig) override;
+    void onEvent(IEvent *event) override;
+    void onHttpData(const HttpData &data) override;
+    void onRejectedEvent(IEvent *event) override;
+
+private:
+    struct WebhookTarget
+    {
+        bool tls = true;
+        uint16_t port = 443;
+        String host;
+        String path;
+    };
+
+    bool parseWebhook(WebhookTarget &target) const;
+    const char *workerName(const Miner *miner) const;
+    std::string acceptedMessage(const AcceptEvent *event) const;
+    std::string rejectedMessage(const AcceptEvent *event) const;
+    std::string summaryMessage(const AcceptEvent *event, uint64_t count, uint64_t seconds) const;
+    void accept(const AcceptEvent *event);
+    void flushSummary(const AcceptEvent *event, uint64_t now);
+    void reject(const AcceptEvent *event);
+    void send(const std::string &content) const;
+
+    Controller *m_controller;
+    std::shared_ptr<IHttpListener> m_httpListener;
+    Stats *m_stats;
+    uint64_t m_windowAccepted = 0;
+    uint64_t m_windowDiff = 0;
+    uint64_t m_windowStart = 0;
+};
+
+
+} /* namespace xmrig */
+
+
+#endif /* XMRIG_DISCORDNOTIFIER_H */

@@ -43,6 +43,7 @@ set(HEADERS
     src/proxy/interfaces/IEventListener.h
     src/proxy/interfaces/ISplitter.h
     src/proxy/log/AccessLog.h
+    src/proxy/log/DiscordNotifier.h
     src/proxy/log/ShareLog.h
     src/proxy/Login.h
     src/proxy/Miner.h
@@ -88,6 +89,7 @@ set(SOURCES
     src/proxy/events/Event.cpp
     src/proxy/events/MinerEvent.cpp
     src/proxy/log/AccessLog.cpp
+    src/proxy/log/DiscordNotifier.cpp
     src/proxy/log/ShareLog.cpp
     src/proxy/Login.cpp
     src/proxy/Miner.cpp

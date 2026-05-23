@@ -37,7 +37,6 @@
  * If you plan on changing this setting to 0 please consider making a one off donation to my wallet:
  * SAL1: SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
  *
- *
  * How it works:
  * Upstreams randomly switch to dev pool in range from 50 to 150 minutes, to reduce dev pool peak load.
  * Stays on dev pool at least kDonateLevel minutes.

@@ -32,6 +32,7 @@ namespace xmrig
 {
 
 static const char *kBind = "bind";
+static const char *kDiscord = "discord";
 
 #ifdef XMRIG_FEATURE_TLS
 static const char *kTls  = "tls";
@@ -71,10 +72,16 @@ void xmrig::ConfigTransform::transform(rapidjson::Document &doc, int key, const 
 
     case IConfig::CustomDiffStatsKey: /* --custom-diff-stats */
     case IConfig::DebugKey:   /* --debug */
+    case IConfig::DiscordKey: /* --discord */
+    case IConfig::DiscordRejectedKey: /* --discord-rejected */
+    case IConfig::DiscordVerboseKey: /* --discord-verbose */
+    case IConfig::DiscordQuietKey: /* --discord-log-errors */
         return transformBoolean(doc, key, true);
 
     case IConfig::WorkersKey: /* --no-workers */
     case IConfig::AlgoExtKey: /* --no-algo-ext */
+    case IConfig::DiscordNoWorkerKey: /* --discord-no-worker */
+    case IConfig::DiscordNoTotalsKey: /* --discord-no-totals */
         return transformBoolean(doc, key, false);
 
     case IConfig::WorkersAdvKey:
@@ -82,10 +89,25 @@ void xmrig::ConfigTransform::transform(rapidjson::Document &doc, int key, const 
 
     case IConfig::CustomDiffKey: /* --custom-diff */
     case IConfig::ReuseTimeoutKey: /* --reuse-timeout */
+    case IConfig::DiscordAcceptedIntervalKey: /* --discord-accepted-interval */
+    case IConfig::DiscordMinDiffKey: /* --discord-min-diff */
         return transformUint64(doc, key, static_cast<uint64_t>(strtol(arg, nullptr, 10)));
 
     case IConfig::LoginFileKey: /* --login-file */
         return set(doc, "login-file", arg);
+
+    case IConfig::DiscordWebhookKey: /* --discord-webhook */
+        set(doc, kDiscord, "webhook", arg);
+        return set(doc, kDiscord, "enabled", true);
+
+    case IConfig::DiscordUsernameKey: /* --discord-username */
+        return set(doc, kDiscord, "username", arg);
+
+    case IConfig::DiscordAvatarUrlKey: /* --discord-avatar-url */
+        return set(doc, kDiscord, "avatar-url", arg);
+
+    case IConfig::DiscordMentionKey: /* --discord-mention */
+        return set(doc, kDiscord, "mention", arg);
 
     default:
         break;
@@ -108,6 +130,24 @@ void xmrig::ConfigTransform::transformBoolean(rapidjson::Document &doc, int key,
     case IConfig::AlgoExtKey: /* --no-algo-ext */
         return set(doc, "algo-ext", enable);
 
+    case IConfig::DiscordKey: /* --discord */
+        return set(doc, kDiscord, "enabled", enable);
+
+    case IConfig::DiscordRejectedKey: /* --discord-rejected */
+        return set(doc, kDiscord, "notify-rejected", enable);
+
+    case IConfig::DiscordVerboseKey: /* --discord-verbose */
+        return set(doc, kDiscord, "verbose", enable);
+
+    case IConfig::DiscordNoWorkerKey: /* --discord-no-worker */
+        return set(doc, kDiscord, "include-worker", enable);
+
+    case IConfig::DiscordNoTotalsKey: /* --discord-no-totals */
+        return set(doc, kDiscord, "include-totals", enable);
+
+    case IConfig::DiscordQuietKey: /* --discord-log-errors */
+        return set(doc, kDiscord, "quiet", !enable);
+
     default:
         break;
     }
@@ -122,6 +162,12 @@ void xmrig::ConfigTransform::transformUint64(rapidjson::Document &doc, int key, 
 
     case IConfig::ReuseTimeoutKey: /* --reuse-timeout */
         return set(doc, "reuse-timeout", arg);
+
+    case IConfig::DiscordAcceptedIntervalKey: /* --discord-accepted-interval */
+        return set(doc, kDiscord, "accepted-interval", arg);
+
+    case IConfig::DiscordMinDiffKey: /* --discord-min-diff */
+        return set(doc, kDiscord, "min-diff", arg);
 
     default:
         break;

@@ -1,6 +1,29 @@
-.idea/
+# Build outputs
+/build/
 build/
+/cmake-build-*/
 CMakeFiles/
-/CMakeLists.txt.user
-cmake-build-debug
+CMakeCache.txt
+Makefile
+compile_commands.json
+cmake_install.cmake
+
+# IDE/editor state
+/.idea/
+/.vscode/
+*.user
+*.swp
+*~
+
+# Generated runtime files and local secrets
+/cert.pem
+/cert_key.pem
+/**/cert.pem
+/**/cert_key.pem
+/*.log
+/**/*.log
+/config.json
+/build/config.json
+
+# CMake file API scratch data
 .cmake/api/v1/query

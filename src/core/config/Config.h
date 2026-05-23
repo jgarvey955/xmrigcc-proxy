@@ -24,6 +24,7 @@
 #include "base/kernel/config/BaseConfig.h"
 #include "base/tools/String.h"
 #include "proxy/BindHost.h"
+#include "proxy/log/DiscordNotifier.h"
 #include "proxy/workers/Workers.h"
 
 
@@ -64,6 +65,7 @@ public:
     inline bool isShouldSave() const               { return m_upgrade && isAutoSave(); }
     inline const BindHosts &bind() const           { return m_bind; }
     inline const String &accessLog() const         { return m_accessLog; }
+    inline const DiscordConfig &discord() const     { return m_discord; }
     inline const String &password() const          { return m_password; }
     inline int mode() const                        { return m_mode; }
     inline int reuseTimeout() const                { return m_reuseTimeout; }
@@ -83,6 +85,7 @@ private:
     int m_mode                  = NICEHASH_MODE;
     int m_reuseTimeout          = 0;
     String m_accessLog;
+    DiscordConfig m_discord;
     String m_password;
     uint64_t m_diff             = 0;
     Workers::Mode m_workersMode = Workers::RigID;
