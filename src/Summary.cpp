@@ -60,6 +60,38 @@ static void print_bind(xmrig::Controller *controller)
 }
 
 
+static void print_discord(xmrig::Controller *controller)
+{
+    const DiscordConfig &discord = controller->config()->discord();
+
+    if (!discord.enabled) {
+        Log::print(GREEN_BOLD(" * ") WHITE_BOLD("%-13s") RED_BOLD("disabled"), "DISCORD");
+        return;
+    }
+
+    if (discord.webhook.isEmpty()) {
+        Log::print(GREEN_BOLD(" * ") WHITE_BOLD("%-13s") YELLOW_BOLD("enabled") WHITE_BOLD(" webhook ") RED_BOLD("missing"), "DISCORD");
+        return;
+    }
+
+    const char *trigger = discord.acceptedInterval == 0 ? "per-accept" : "batched";
+    if (discord.acceptedInterval == 0) {
+        Log::print(GREEN_BOLD(" * ") WHITE_BOLD("%-13s") GREEN_BOLD("enabled") WHITE_BOLD(" %s%s%s%s"),
+                   "DISCORD", trigger,
+                   discord.verbose ? " verbose" : "",
+                   discord.includeWorker ? " worker" : "",
+                   discord.notifyRejected ? " rejected" : "");
+    }
+    else {
+        Log::print(GREEN_BOLD(" * ") WHITE_BOLD("%-13s") GREEN_BOLD("enabled") WHITE_BOLD(" %s %" PRIu64 "s%s%s%s"),
+                   "DISCORD", trigger, discord.acceptedInterval,
+                   discord.verbose ? " verbose" : "",
+                   discord.includeWorker ? " worker" : "",
+                   discord.notifyRejected ? " rejected" : "");
+    }
+}
+
+
 static void print_commands(xmrig::Controller *)
 {
     if (Log::isColors()) {
@@ -83,5 +115,6 @@ void Summary::print(xmrig::Controller *controller)
     print_mode(controller);
     controller->config()->pools().print();
     print_bind(controller);
+    print_discord(controller);
     print_commands(controller);
 }
