@@ -47,7 +47,7 @@
  * If you set level to 0 it will enable donate over proxy feature.
  */
 constexpr const int kDefaultDonateLevel = 3;
-constexpr const int kMinimumDonateLevel = 1;
+constexpr const int kMinimumDonateLevel = 3;
 
 
 #endif /* XMRIG_DONATE_H */
