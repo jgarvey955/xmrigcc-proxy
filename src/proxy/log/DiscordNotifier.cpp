@@ -264,6 +264,11 @@ std::string xmrig::DiscordNotifier::acceptedMessage(const AcceptEvent *event) co
         out = std::string(config.mention.data()) + " " + out;
     }
 
+    if (event->result.height > 0) {
+        snprintf(line, sizeof(line) - 1, "\nHeight: %" PRIu64, event->result.height);
+        out += line;
+    }
+
     if (config.includeWorker) {
         appendLine(out, "Worker", workerName(event->miner()));
     }
@@ -314,6 +319,11 @@ std::string xmrig::DiscordNotifier::summaryMessage(const AcceptEvent *event, uin
 
     if (config.includeWorker && event) {
         appendLine(out, "Last worker", workerName(event->miner()));
+    }
+
+    if (event && event->result.height > 0) {
+        snprintf(line, sizeof(line) - 1, "\nLast height: %" PRIu64, event->result.height);
+        out += line;
     }
 
     if (config.includeTotals) {

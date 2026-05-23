@@ -126,9 +126,9 @@ int64_t xmrig::EthStratumClient::submit(const JobResult& result)
     actual_diff = actual_diff ? (uint64_t(-1) / actual_diff) : 0;
 
 #   ifdef XMRIG_PROXY_PROJECT
-    m_results[m_sequence] = SubmitResult(m_sequence, result.diff, actual_diff, result.id, 0);
+    m_results[m_sequence] = SubmitResult(m_sequence, result.diff, actual_diff, result.id, 0, result.height);
 #   else
-    m_results[m_sequence] = SubmitResult(m_sequence, result.diff, actual_diff, 0, result.backend);
+    m_results[m_sequence] = SubmitResult(m_sequence, result.diff, actual_diff, 0, result.backend, result.height);
 #   endif
 
     return send(doc);
