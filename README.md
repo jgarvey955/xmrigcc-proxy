@@ -33,14 +33,42 @@ This proxy is designed to handle donation traffic from XMRig. No other solution 
 
 The upstream `cmake .. && make -j*` instructions are for Unix-like shells with
 dependencies installed in default system paths. With Visual Studio on Windows,
-point CMake at the XMRigCC dependency bundle and build through CMake:
+point CMake at the latest XMRig static dependency bundle and build through CMake:
 
 ```
+sh scripts/update_deps.sh msvc2022/x64
 mkdir build
 cd build
-cmake .. -DXMRIG_DEPS=C:\xmrigcc-deps
+cmake .. -DXMRIG_DEPS=../scripts/deps
 cmake --build . --config Release
 ```
+
+For MSYS2, use the matching bundled profile instead:
+
+```
+sh scripts/update_deps.sh gcc/x64
+mkdir -p build
+cd build
+cmake .. -DXMRIG_DEPS=../scripts/deps -DBUILD_STATIC=ON
+make -j$(nproc)
+```
+
+## Static build on Linux
+
+Linux builds the latest upstream releases of libuv, hwloc, and OpenSSL from
+source into `scripts/deps`:
+
+```
+scripts/build_deps.sh
+mkdir -p build
+cd build
+cmake .. -DXMRIG_DEPS=../scripts/deps -DBUILD_STATIC=ON
+make -j$(nproc)
+```
+
+The helper scripts also accept explicit version overrides when you need a
+reproducible rebuild, for example `UV_VERSION=1.52.1` or
+`HWLOC_VERSION=2.13.0` or `OPENSSL_VERSION=4.0.0`.
   
 ## Usage
 :boom: If you are using Linux and need to manage over **1000 connections**, you must [increase the limits on open files](https://github.com/xmrig/xmrig-proxy/wiki/Ubuntu-setup).

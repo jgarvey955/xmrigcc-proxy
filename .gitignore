@@ -2,6 +2,8 @@
 /build/
 build/
 /cmake-build-*/
+/scripts/build/
+/scripts/deps/
 CMakeFiles/
 CMakeCache.txt
 Makefile

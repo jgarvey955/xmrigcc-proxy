@@ -18,6 +18,11 @@ find_library(
 
 find_library(UV_LIBRARY NAMES libuv.a uv libuv)
 
+if (XMRIG_DEPS)
+    set(UV_INCLUDE_DIR "${XMRIG_DEPS}/include" CACHE PATH "libuv include directory" FORCE)
+    set(UV_LIBRARY "${XMRIG_DEPS}/lib/libuv.a" CACHE FILEPATH "libuv library" FORCE)
+endif()
+
 set(UV_LIBRARIES ${UV_LIBRARY})
 set(UV_INCLUDE_DIRS ${UV_INCLUDE_DIR})
 

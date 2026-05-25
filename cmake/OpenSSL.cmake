@@ -1,5 +1,11 @@
 if (WITH_TLS)
-    set(OPENSSL_ROOT_DIR ${XMRIG_DEPS})
+    if (XMRIG_DEPS)
+        set(OPENSSL_ROOT_DIR ${XMRIG_DEPS})
+        set(OPENSSL_USE_STATIC_LIBS TRUE)
+        set(OPENSSL_INCLUDE_DIR "${XMRIG_DEPS}/include" CACHE PATH "OpenSSL include directory" FORCE)
+        set(OPENSSL_SSL_LIBRARY "${XMRIG_DEPS}/lib/libssl.a" CACHE FILEPATH "OpenSSL SSL library" FORCE)
+        set(OPENSSL_CRYPTO_LIBRARY "${XMRIG_DEPS}/lib/libcrypto.a" CACHE FILEPATH "OpenSSL crypto library" FORCE)
+    endif()
 
     if (WIN32)
         set(OPENSSL_USE_STATIC_LIBS TRUE)
@@ -10,7 +16,15 @@ if (WITH_TLS)
         set(OPENSSL_USE_STATIC_LIBS TRUE)
     endif()
 
+    if (BUILD_STATIC)
+        set(OPENSSL_USE_STATIC_LIBS TRUE)
+    endif()
+
     find_package(OpenSSL)
+
+    if (OPENSSL_FOUND AND XMRIG_DEPS)
+        set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+    endif()
 
     if (OPENSSL_FOUND)
         set(TLS_SOURCES

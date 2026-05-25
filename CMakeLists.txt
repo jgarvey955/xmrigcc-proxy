@@ -9,6 +9,11 @@ option(WITH_TLS             "Enable OpenSSL support"  ON)
 option(WITH_ENV_VARS        "Enable environment variables support in config file" ON)
 option(BUILD_STATIC         "Build static binary" OFF)
 
+if (XMRIG_DEPS AND NOT IS_ABSOLUTE "${XMRIG_DEPS}")
+    get_filename_component(XMRIG_DEPS "${CMAKE_BINARY_DIR}/${XMRIG_DEPS}" ABSOLUTE)
+    set(XMRIG_DEPS "${XMRIG_DEPS}" CACHE PATH "Path to static dependencies" FORCE)
+endif()
+
 include(CheckIncludeFile)
 include(cmake/cpu.cmake)
 include(cmake/os.cmake)
