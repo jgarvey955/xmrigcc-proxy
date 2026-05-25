@@ -28,6 +28,19 @@ This proxy is designed to handle donation traffic from XMRig. No other solution 
 * Binary releases: https://github.com/bendr0id/xmrigcc-proxy/releases
 * Git tree: https://github.com/bendr0id/xmrigcc-proxy.git
   * Clone with `git clone https://github.com/bendr0id/xmrigcc-proxy.git` :hammer: [Build instructions](https://github.com/xmrig/xmrig-proxy/wiki/Build).
+
+## Build on Windows
+
+The upstream `cmake .. && make -j*` instructions are for Unix-like shells with
+dependencies installed in default system paths. With Visual Studio on Windows,
+point CMake at the XMRigCC dependency bundle and build through CMake:
+
+```
+mkdir build
+cd build
+cmake .. -DXMRIG_DEPS=C:\xmrigcc-deps
+cmake --build . --config Release
+```
   
 ## Usage
 :boom: If you are using Linux and need to manage over **1000 connections**, you must [increase the limits on open files](https://github.com/xmrig/xmrig-proxy/wiki/Ubuntu-setup).
