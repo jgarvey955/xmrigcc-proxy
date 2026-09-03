@@ -53,6 +53,7 @@ private:
     void getHashrate(rapidjson::Value &reply, rapidjson::Document &doc) const;
     void getIdentify(rapidjson::Value &reply, rapidjson::Document &doc) const;
     void getMiner(rapidjson::Value &reply, rapidjson::Document &doc) const;
+    void getMapping(rapidjson::Value &reply, rapidjson::Document &doc) const;
     void getMiners(rapidjson::Value &reply, rapidjson::Document &doc) const;
     void getMinersSummary(rapidjson::Value &reply, rapidjson::Document &doc) const;
     void getResults(rapidjson::Value &reply, rapidjson::Document &doc) const;

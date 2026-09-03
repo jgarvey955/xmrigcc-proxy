@@ -17,6 +17,18 @@ Extremely high performance Monero (XMR) Stratum protocol proxy, can easily handl
 
 **Nicehash support must be enabled on miner side, it mandatory.**
 
+In the default `nicehash` proxy mode, every connected miner on an upstream is
+assigned a different high byte of the 32-bit nonce. This divides each job into
+256 non-overlapping ranges of 16,777,216 nonces. Run miners with `--nicehash`.
+The proxy rejects a submitted nonce outside the miner's assigned range.
+
+With the HTTP API enabled, `GET /1/mapping` reports the live assignments and
+their `mapper_id`, `nonce_prefix`, `nonce_start`, and `nonce_end`. A healthy
+mapping reports zero `collisions`, zero `overlap_percent`, and 100 percent
+`partition_efficiency_percent`. These values prove assignment uniqueness; they
+do not claim that every nonce was actually hashed or that a fast miner did not
+wrap its 24-bit range before the next job.
+
 * Compatible with any Monero, Electroneum, Sumokoin and AEON pools, except **nicehash.com**.
 * Any miner with nicehash support, `--nicehash` option for [XMRig(CC)](https://github.com/bendr0id/xmrigCC), `"nicehash_nonce": true,` for xmr-stak-cpu.
 * [Comparison](https://github.com/xmrig/xmrig-proxy/wiki/Comparison) with other proxies.
