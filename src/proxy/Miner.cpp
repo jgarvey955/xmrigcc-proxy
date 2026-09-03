@@ -456,6 +456,11 @@ void xmrig::Miner::sendJob(const char *blob, const char *jobId, const char *targ
     params.AddMember("target", StringRef(target), allocator);
     params.AddMember("algo",   StringRef(algo), allocator);
 
+    if (hasExtension(EXT_NICEHASH) && m_mapperId >= 0) {
+        params.AddMember("proxy_mapper_id", static_cast<int64_t>(m_mapperId), allocator);
+        params.AddMember("nonce_prefix", m_fixedByte, allocator);
+    }
+
     if (height) {
         params.AddMember("height", height, allocator);
     }
