@@ -20,6 +20,7 @@
 #include "base/net/stratum/Tls.h"
 #include "base/io/log/Log.h"
 #include "base/net/stratum/Client.h"
+#include "base/net/tls/TlsContext.h"
 #include "base/tools/Cvt.h"
 
 
@@ -35,7 +36,7 @@
 xmrig::Client::Tls::Tls(Client *client) :
     m_client(client)
 {
-    m_ctx = SSL_CTX_new(SSLv23_method());
+    m_ctx = TlsContext::createContext(false);
     assert(m_ctx != nullptr);
 
     if (!m_ctx) {
@@ -44,7 +45,6 @@ xmrig::Client::Tls::Tls(Client *client) :
 
     m_write = BIO_new(BIO_s_mem());
     m_read  = BIO_new(BIO_s_mem());
-    SSL_CTX_set_options(m_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 }
 
 

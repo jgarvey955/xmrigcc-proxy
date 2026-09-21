@@ -41,8 +41,7 @@ public:
     static const char *kProtocols;
 
     enum Versions {
-        TLSv1   = 1,
-        TLSv1_1 = 2,
+        // Preserve the existing bit values for supported protocols.
         TLSv1_2 = 4,
         TLSv1_3 = 8
     };
@@ -63,7 +62,7 @@ public:
     inline void setCipherSuites(const char *ciphers) { m_cipherSuites = ciphers; }
     inline void setDH(const char *dhparam)           { m_dhparam = dhparam; }
     inline void setKey(const char *key)              { m_key = key; }
-    inline void setProtocols(uint32_t protocols)     { m_protocols = protocols; }
+    inline void setProtocols(uint32_t protocols)     { m_protocols = protocols & (TLSv1_2 | TLSv1_3); }
 
     bool generate(const char *commonName = nullptr);
     rapidjson::Value toJSON(rapidjson::Document &doc) const;

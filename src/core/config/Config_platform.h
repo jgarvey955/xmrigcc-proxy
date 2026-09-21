@@ -51,6 +51,7 @@ static struct option const options[] = {
     { "http-port",         1, nullptr, IConfig::HttpPort          },
     { "http-no-restricted",0, nullptr, IConfig::HttpRestrictedKey },
     { "daemon",            0, nullptr, IConfig::DaemonKey         },
+    { "rpc-login",         1, nullptr, IConfig::RpcLoginKey       },
     { "daemon-poll-interval", 1, nullptr, IConfig::DaemonPollKey  },
     { "daemon-job-timeout", 1, nullptr, IConfig::DaemonJobTimeoutKey },
     { "self-select",       1, nullptr, IConfig::SelfSelectKey     },

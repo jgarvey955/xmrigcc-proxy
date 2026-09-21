@@ -265,16 +265,20 @@ void xmrig::HttpContext::attach(llhttp_settings_t *settings)
 
     settings->on_message_complete = [](llhttp_t *parser) -> int
     {
-        auto ctx      = static_cast<HttpContext*>(parser->data);
-        auto listener = ctx->httpListener();
-
-        if (listener) {
-            listener->onHttpData(*ctx);
-            ctx->m_listener.reset();
-        }
+        static_cast<HttpContext*>(parser->data)->onMessageComplete();
 
         return 0;
     };
+}
+
+
+void xmrig::HttpContext::onMessageComplete()
+{
+    auto listener = httpListener();
+    if (listener) {
+        listener->onHttpData(*this);
+        m_listener.reset();
+    }
 }
 
 

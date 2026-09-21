@@ -64,6 +64,7 @@ const String Pool::kDefaultUser           = "x";
 const char *Pool::kAlgo                   = "algo";
 const char *Pool::kCoin                   = "coin";
 const char *Pool::kDaemon                 = "daemon";
+const char *Pool::kRpcLogin               = "rpc-login";
 const char *Pool::kDaemonPollInterval     = "daemon-poll-interval";
 const char *Pool::kDaemonJobTimeout       = "daemon-job-timeout";
 const char *Pool::kDaemonZMQPort          = "daemon-zmq-port";
@@ -125,6 +126,7 @@ xmrig::Pool::Pool(const rapidjson::Value &object) :
     m_user           = Json::getString(object, kUser);
     m_spendSecretKey = Json::getString(object, kSpendSecretKey);
     m_password       = Json::getString(object, kPass);
+    m_rpcLogin       = Json::getString(object, kRpcLogin);
     m_rigId          = Json::getString(object, kRigId);
     m_fingerprint    = Json::getString(object, kFingerprint);
     m_pollInterval   = Json::getUint64(object, kDaemonPollInterval, kDefaultPollInterval);
@@ -210,6 +212,7 @@ bool xmrig::Pool::isEqual(const Pool &other) const
             && m_mode         == other.m_mode
             && m_fingerprint  == other.m_fingerprint
             && m_password     == other.m_password
+            && m_rpcLogin     == other.m_rpcLogin
             && m_rigId        == other.m_rigId
             && m_url          == other.m_url
             && m_user         == other.m_user
@@ -307,6 +310,7 @@ rapidjson::Value xmrig::Pool::toJSON(rapidjson::Document &doc) const
     obj.AddMember(StringRef(kSOCKS5),       m_proxy.toJSON(doc), allocator);
 
     if (m_mode == MODE_DAEMON) {
+        obj.AddMember(StringRef(kRpcLogin), m_rpcLogin.toJSON(), allocator);
         obj.AddMember(StringRef(kDaemonPollInterval), m_pollInterval, allocator);
         obj.AddMember(StringRef(kDaemonJobTimeout), m_jobTimeout, allocator);
         obj.AddMember(StringRef(kDaemonZMQPort), m_zmqPort, allocator);

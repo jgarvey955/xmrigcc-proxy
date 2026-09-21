@@ -38,6 +38,7 @@
 #include "base/net/dns/DnsRecords.h"
 #include "base/net/http/Fetch.h"
 #include "base/net/http/HttpData.h"
+#include "base/net/http/HttpDigestAuth.h"
 #include "base/net/http/HttpListener.h"
 #include "base/net/stratum/SubmitResult.h"
 #include "base/net/tools/NetBuffer.h"
@@ -202,6 +203,16 @@ void xmrig::DaemonClient::connect()
 
     setState(ConnectingState);
 
+    if (!m_pool.rpcLogin().isEmpty()) {
+#       ifdef XMRIG_FEATURE_TLS
+        if (!HttpDigestAuth::isValidLogin(m_pool.rpcLogin().data())) {
+            return connectError("Invalid rpc-login: expected username:password.");
+        }
+#       else
+        return connectError("rpc-login requires a build with WITH_TLS=ON (OpenSSL).");
+#       endif
+    }
+
     if (!m_coin.isValid() && !m_pool.algorithm().isValid()) {
         return connectError("Invalid algorithm.");
     }
@@ -250,6 +261,9 @@ void xmrig::DaemonClient::onHttpData(const HttpData &data)
     m_httpStarted = 0;
 
     if (data.status != 200) {
+        if (!isQuiet() && data.status == 401) {
+            LOG_ERR("%s " RED("daemon RPC authentication failed (HTTP 401); check rpc-login."), tag());
+        }
         return retry();
     }
 
@@ -576,6 +590,7 @@ int64_t xmrig::DaemonClient::rpcSend(const rapidjson::Document &doc, const std::
     }
 
     FetchRequest req(HTTP_POST, m_pool.host(), m_pool.port(), kJsonRPC, doc, m_pool.isTLS(), isQuiet());
+    req.rpcLogin = m_pool.rpcLogin();
     req.fingerprint = m_pool.fingerprint();
     req.timeout = httpTimeout();
     for (const auto &header : headers) {
@@ -624,6 +639,7 @@ void xmrig::DaemonClient::send(const char *path)
     }
 
     FetchRequest req(HTTP_GET, m_pool.host(), m_pool.port(), path, m_pool.isTLS(), isQuiet());
+    req.rpcLogin = m_pool.rpcLogin();
     req.fingerprint = m_pool.fingerprint();
     req.timeout = httpTimeout();
     m_httpActive = true;

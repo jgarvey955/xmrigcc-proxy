@@ -41,6 +41,7 @@ public:
     ~TlsContext();
 
     static TlsContext *create(const TlsConfig &config);
+    static SSL_CTX *createContext(bool server);
 
     inline SSL_CTX *ctx() const { return m_ctx; }
 

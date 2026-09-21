@@ -55,6 +55,7 @@ public:
     std::map<const std::string, const std::string> headers;
     std::string body;
     String fingerprint;
+    String rpcLogin;
     String host;
     String path;
     uint16_t port           = 0;
