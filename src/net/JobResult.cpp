@@ -25,7 +25,7 @@
 #include <cstdio>
 
 
-xmrig::JobResult::JobResult(int64_t id, const char *jobId, const char *nonce, const char *result, const xmrig::Algorithm &algorithm, const char* sig, const char* sig_data, uint8_t view_tag, int64_t extra_nonce) :
+xmrig::JobResult::JobResult(int64_t id, const char *jobId, const char *nonce, const char *result, const xmrig::Algorithm &algorithm, const char* sig, const char* sig_data, uint8_t view_tag, int64_t extra_nonce, uint64_t height) :
     algorithm(algorithm),
     nonce(nonce),
     result(result),
@@ -34,7 +34,8 @@ xmrig::JobResult::JobResult(int64_t id, const char *jobId, const char *nonce, co
     view_tag(view_tag),
     id(id),
     extra_nonce(extra_nonce),
-    jobId(jobId)
+    jobId(jobId),
+    height(height)
 {
     if (result && strlen(result) == 64) {
         uint64_t target = 0;

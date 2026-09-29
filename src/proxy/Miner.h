@@ -153,6 +153,7 @@ private:
     uint64_t m_customDiff   = 0;
     uint64_t m_diff         = 0;
     uint64_t m_expire;
+    uint64_t m_height       = 0;
     uint64_t m_rx           = 0;
     uint64_t m_timestamp;
     uint64_t m_tx           = 0;

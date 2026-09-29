@@ -133,7 +133,7 @@ class Worker:
 def rpc_tests(binary, root, mode):
     template = json.loads((pathlib.Path(__file__).parent / 'zecnero-template.json').read_text())
     state = {'template': template, 'cookie': 'test:secret', 'response': {'result': None},
-             'submissions': [], 'auth': [], 'sync': False, 'requests': 0}
+             'submissions': [], 'auth': [], 'sync': False, 'requests': 0, 'notifications': []}
     cookie = root / (mode + '.cookie')
     cookie.write_text(state['cookie'])
 
@@ -143,6 +143,12 @@ def rpc_tests(binary, root, mode):
 
         def do_POST(self):
             data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+            if self.path == '/discord-test':
+                state['notifications'].append(data['content'])
+                self.send_response(204)
+                self.send_header('Content-Length', '0')
+                self.end_headers()
+                return
             auth = self.headers.get('Authorization')
             state['auth'].append(auth)
             expected = 'Basic ' + base64.b64encode(state['cookie'].encode()).decode()
@@ -177,7 +183,10 @@ def rpc_tests(binary, root, mode):
             upstream = {'algo': 'randomx/zecnero', 'url': f'127.0.0.1:{rpc_port}',
                         'daemon': True, 'user': 'x', 'daemon-cookie-file': str(cookie),
                         'daemon-poll-interval': 1000, 'daemon-job-timeout': 15000}
-            proc = launch(binary, root, 'rpc-' + mode, proxy_config(upstream, listen, mode))
+            config = proxy_config(upstream, listen, mode)
+            config['discord'] = {'enabled': True, 'webhook': f'http://127.0.0.1:{rpc_port}/discord-test',
+                                 'notify-accepted': True, 'notify-rejected': False, 'accepted-interval': 0}
+            proc = launch(binary, root, 'rpc-' + mode, config)
             a = Worker(listen)
             workers.append(a)
             b = Worker(listen)
@@ -216,6 +225,7 @@ def rpc_tests(binary, root, mode):
             state['response'] = {'result': None}
             old = dict(a.job)
             assert not a.submit(algo=False).get('error'), 'Valid candidate rejected'
+            wait_for(lambda: any('Height: 1\n' in message for message in state['notifications']))
             a.next_job(old['job_id'])
             assert a.submit(job=old).get('error'), 'Stale candidate accepted'
             assert state['auth'][-1] == 'Basic ' + base64.b64encode(b'test:rotated').decode()
@@ -227,6 +237,7 @@ def rpc_tests(binary, root, mode):
             a.next_job(previous)
             assert a.job['algo'] == 'rx/zecnero2'
             assert not a.submit().get('error')
+            wait_for(lambda: any('Height: 2\n' in message for message in state['notifications']))
             a.next_job(a.job['job_id'])
 
             state['sync'] = True
@@ -236,7 +247,7 @@ def rpc_tests(binary, root, mode):
             state['sync'] = False
             a.next_job(a.job['job_id'])
             assert not a.submit().get('error')
-            print(f'PASS RPC {mode}: worker isolation, exact block encoding, rejection replies, cookie rotation, v1/v2, sync recovery')
+            print(f'PASS RPC {mode}: worker isolation, exact block encoding, rejection replies, cookie rotation, v1/v2, sync recovery, notification heights')
         finally:
             for worker in workers:
                 worker.close()

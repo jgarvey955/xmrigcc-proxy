@@ -40,6 +40,7 @@
 #include "core/Controller.h"
 #include "Counters.h"
 #include "log/AccessLog.h"
+#include "log/DiscordNotifier.h"
 #include "log/ShareLog.h"
 #include "proxy/Events.h"
 #include "proxy/events/ConnectionEvent.h"
@@ -92,6 +93,7 @@ xmrig::Proxy::Proxy(Controller *controller) :
     m_splitter  = splitter;
     m_donate    = new DonateSplitter(controller);
     m_stats     = new Stats(controller);
+    m_discord   = new DiscordNotifier(controller, m_stats);
     m_shareLog  = new ShareLog(controller, m_stats);
     m_accessLog = new AccessLog(controller);
     m_workers   = new Workers(controller);
@@ -127,6 +129,7 @@ xmrig::Proxy::Proxy(Controller *controller) :
     Events::subscribe(IEvent::SubmitType, m_workers);
 
     Events::subscribe(IEvent::AcceptType, m_stats);
+    Events::subscribe(IEvent::AcceptType, m_discord);
     Events::subscribe(IEvent::AcceptType, m_shareLog);
     Events::subscribe(IEvent::AcceptType, m_workers);
 
@@ -151,6 +154,7 @@ xmrig::Proxy::~Proxy()
 #   endif
 
     delete m_donate;
+    delete m_discord;
     delete m_login;
     delete m_miners;
     delete m_splitter;

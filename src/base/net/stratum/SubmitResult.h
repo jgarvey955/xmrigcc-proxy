@@ -37,12 +37,13 @@ class SubmitResult
 public:
     SubmitResult() = default;
 
-    inline SubmitResult(int64_t seq, uint64_t diff, uint64_t actualDiff, int64_t reqId, uint32_t backend) :
+    inline SubmitResult(int64_t seq, uint64_t diff, uint64_t actualDiff, int64_t reqId, uint32_t backend, uint64_t height = 0) :
         reqId(reqId),
         seq(seq),
         backend(backend),
         actualDiff(actualDiff),
         diff(diff),
+        height(height),
         m_start(Chrono::steadyMSecs())
     {}
 
@@ -53,6 +54,7 @@ public:
     uint32_t backend        = 0;
     uint64_t actualDiff     = 0;
     uint64_t diff           = 0;
+    uint64_t height         = 0;
     uint64_t elapsed        = 0;
 
 private:

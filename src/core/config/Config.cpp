@@ -69,6 +69,7 @@ bool xmrig::Config::read(const IJsonReader &reader, const char *fileName)
     m_reuseTimeout = reader.getInt("reuse-timeout", m_reuseTimeout);
     m_accessLog    = reader.getString("access-log-file");
     m_password     = reader.getString("access-password");
+    m_discord.read(reader.getObject(DiscordConfig::kField));
 
     setCustomDiff(reader.getUint64("custom-diff", m_diff));
     setMode(reader.getString("mode"));
@@ -133,6 +134,7 @@ void xmrig::Config::getJSON(rapidjson::Document &doc) const
     doc.AddMember(StringRef(Pools::kDonateLevel),   m_pools.donateLevel(), allocator);
     doc.AddMember(StringRef(kLogFile),              m_logFile.toJSON(), allocator);
     doc.AddMember("mode",                           StringRef(modeName()), allocator);
+    doc.AddMember(StringRef(DiscordConfig::kField),  m_discord.toJSON(doc), allocator);
     doc.AddMember(StringRef(Pools::kPools),         m_pools.toJSON(doc), allocator);
     doc.AddMember(StringRef(Pools::kRetries),       m_pools.retries(), allocator);
     doc.AddMember(StringRef(Pools::kRetryPause),    m_pools.retryPause(), allocator);

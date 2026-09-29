@@ -87,6 +87,20 @@ static inline const std::string &usage()
     u += "      --access-password=P       set password to restrict connections to the proxy\n";
     u += "      --no-algo-ext             disable \"algo\" protocol extension\n";
 
+    u += "\nDiscord:\n";
+    u += "      --discord                 enable Discord webhook notifications\n";
+    u += "      --discord-webhook=URL     Discord webhook URL (also enables Discord notifications)\n";
+    u += "      --discord-accepted-interval=N batch accepted notifications every N seconds, 0 sends each accept\n";
+    u += "      --discord-rejected        send rejected share/block notifications too\n";
+    u += "      --discord-verbose         include worker IP, user, rig ID and agent\n";
+    u += "      --discord-min-diff=N      only notify accepted shares/blocks at or above diff N\n";
+    u += "      --discord-username=NAME   override Discord webhook username\n";
+    u += "      --discord-avatar-url=URL  override Discord webhook avatar URL\n";
+    u += "      --discord-mention=TEXT    prefix messages with a mention or text\n";
+    u += "      --discord-no-worker       omit worker name from Discord messages\n";
+    u += "      --discord-no-totals       omit accepted/rejected/invalid totals from Discord messages\n";
+    u += "      --discord-log-errors      log Discord webhook HTTP errors locally\n";
+
 #   ifdef XMRIG_FEATURE_HTTP
     u += "\nAPI:\n";
     u += "      --api-worker-id=ID        custom worker-id for API\n";

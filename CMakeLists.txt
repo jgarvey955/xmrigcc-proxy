@@ -10,6 +10,11 @@ option(WITH_ENV_VARS        "Enable environment variables support in config file
 option(BUILD_STATIC         "Build static binary" OFF)
 option(WITH_ZECNERO_TESTS   "Enable local Zecnero protocol integration tests" OFF)
 
+if (XMRIG_DEPS AND NOT IS_ABSOLUTE "${XMRIG_DEPS}")
+    get_filename_component(XMRIG_DEPS "${CMAKE_BINARY_DIR}/${XMRIG_DEPS}" ABSOLUTE)
+    set(XMRIG_DEPS "${XMRIG_DEPS}" CACHE PATH "Path to static dependencies" FORCE)
+endif()
+
 include(CheckIncludeFile)
 include(cmake/cpu.cmake)
 include(cmake/os.cmake)
@@ -44,6 +49,7 @@ set(HEADERS
     src/proxy/interfaces/IEventListener.h
     src/proxy/interfaces/ISplitter.h
     src/proxy/log/AccessLog.h
+    src/proxy/log/DiscordNotifier.h
     src/proxy/log/ShareLog.h
     src/proxy/Login.h
     src/proxy/Miner.h
@@ -89,6 +95,7 @@ set(SOURCES
     src/proxy/events/Event.cpp
     src/proxy/events/MinerEvent.cpp
     src/proxy/log/AccessLog.cpp
+    src/proxy/log/DiscordNotifier.cpp
     src/proxy/log/ShareLog.cpp
     src/proxy/Login.cpp
     src/proxy/Miner.cpp
