@@ -19,6 +19,7 @@
 
 
 #include "base/net/http/HttpClient.h"
+#include "base/net/http/HttpDigestAuth.h"
 #include "3rdparty/llhttp/llhttp.h"
 #include "base/io/log/Log.h"
 #include "base/kernel/Platform.h"
@@ -47,9 +48,7 @@ xmrig::HttpClient::HttpClient(const char *tag, FetchRequest &&req, const std::we
     m_req(std::move(req))
 {
     method  = m_req.method;
-    url     = std::move(m_req.path);
-    body    = std::move(m_req.body);
-    headers = std::move(m_req.headers);
+    url     = m_req.path.data();
 
     if (m_req.timeout) {
         m_timer = std::make_shared<Timer>(this, m_req.timeout, 0);
@@ -93,27 +92,61 @@ void xmrig::HttpClient::onTimer(const Timer *)
 
 void xmrig::HttpClient::handshake()
 {
-    headers.insert({ "Host",       host() });
-    headers.insert({ "Connection", "close" });
-    headers.insert({ "User-Agent", Platform::userAgent().data() });
+    sendRequest();
+}
 
-    if (!body.empty()) {
-        headers.insert({ "Content-Length", std::to_string(body.size()) });
+
+void xmrig::HttpClient::sendRequest(const std::string &authorization)
+{
+    auto requestHeaders = m_req.headers;
+    requestHeaders.insert({ "Host", host() });
+    // Salvium's Digest nonce belongs to this TCP connection. Keep the initial
+    // request alive so the authenticated retry can use the same connection.
+    requestHeaders.insert({ "Connection", !m_req.rpcLogin.isEmpty() && authorization.empty() ? "keep-alive" : "close" });
+    requestHeaders.insert({ "User-Agent", Platform::userAgent().data() });
+
+    if (!m_req.body.empty()) {
+        requestHeaders.insert({ "Content-Length", std::to_string(m_req.body.size()) });
+    }
+    if (!authorization.empty()) {
+        requestHeaders.insert({ "Authorization", authorization });
     }
 
     std::stringstream ss;
     ss << llhttp_method_name(static_cast<llhttp_method>(method)) << " " << url << " HTTP/1.1" << kCRLF;
 
-    for (auto &header : headers) {
+    for (auto &header : requestHeaders) {
         ss << header.first << ": " << header.second << kCRLF;
     }
 
-    ss << kCRLF;
+    ss << kCRLF << m_req.body;
 
     headers.clear();
+    body.clear();
+    write(ss.str(), false);
+}
 
-    body.insert(0, ss.str());
-    write(std::move(body), false);
+
+void xmrig::HttpClient::onMessageComplete()
+{
+    if (status == 401 && !m_req.rpcLogin.isEmpty() && m_authRetries == 0) {
+        const auto challenge = headers.find("www-authenticate");
+        const std::string authorization = challenge == headers.end() ? std::string() :
+            HttpDigestAuth::authorization(challenge->second, m_req.rpcLogin.data(), methodName(), url);
+
+        if (!authorization.empty()) {
+            ++m_authRetries;
+            sendRequest(authorization);
+            return;
+        }
+
+        if (!isQuiet()) {
+            LOG_ERR("%s " RED("daemon RPC returned an unsupported or invalid Digest challenge."), tag());
+        }
+    }
+
+    HttpContext::onMessageComplete();
+    close();
 }
 
 

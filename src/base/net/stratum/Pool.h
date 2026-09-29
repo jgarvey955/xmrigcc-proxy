@@ -60,6 +60,7 @@ public:
     static const char *kDaemon;
     static const char *kDaemonCookieFile;
     static const char *kDaemonRpcUser;
+    static const char *kRpcLogin;
     static const char *kDaemonPollInterval;
     static const char *kDaemonJobTimeout;
     static const char *kEnabled;
@@ -106,6 +107,7 @@ public:
     inline const String &fingerprint() const            { return m_fingerprint; }
     inline const String &host() const                   { return m_url.host(); }
     inline const String &password() const               { return !m_password.isNull() ? m_password : kDefaultPassword; }
+    inline const String &rpcLogin() const               { return m_rpcLogin; }
     inline const String &rigId() const                  { return m_rigId; }
     inline const String &url() const                    { return m_url.url(); }
     inline const String &user() const                   { return !m_user.isNull() ? m_user : kDefaultUser; }
@@ -165,6 +167,7 @@ private:
     String m_daemonCookieFile;
     String m_daemonRpcUser;
     String m_password;
+    String m_rpcLogin;
     String m_rigId;
     String m_user;
     String m_spendSecretKey;

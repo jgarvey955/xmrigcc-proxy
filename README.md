@@ -21,6 +21,18 @@ is described in [doc/ZECNERO.md](doc/ZECNERO.md), with an
 
 **Nicehash support must be enabled on miner side, it mandatory.**
 
+In the default `nicehash` proxy mode, every connected miner on an upstream is
+assigned a different high byte of the 32-bit nonce. This divides each job into
+256 non-overlapping ranges of 16,777,216 nonces. Run miners with `--nicehash`.
+The proxy rejects a submitted nonce outside the miner's assigned range.
+
+With the HTTP API enabled, `GET /1/mapping` reports the live assignments and
+their `mapper_id`, `nonce_prefix`, `nonce_start`, and `nonce_end`. A healthy
+mapping reports zero `collisions`, zero `overlap_percent`, and 100 percent
+`partition_efficiency_percent`. These values prove assignment uniqueness; they
+do not claim that every nonce was actually hashed or that a fast miner did not
+wrap its 24-bit range before the next job.
+
 * Compatible with any Monero, Electroneum, Sumokoin and AEON pools, except **nicehash.com**.
 * Any miner with nicehash support, `--nicehash` option for [XMRig(CC)](https://github.com/bendr0id/xmrigCC), `"nicehash_nonce": true,` for xmr-stak-cpu.
 * [Comparison](https://github.com/xmrig/xmrig-proxy/wiki/Comparison) with other proxies.
@@ -76,6 +88,95 @@ reproducible rebuild, for example `UV_VERSION=1.52.1` or
   
 ## Usage
 :boom: If you are using Linux and need to manage over **1000 connections**, you must [increase the limits on open files](https://github.com/xmrig/xmrig-proxy/wiki/Ubuntu-setup).
+
+### Direct daemon mining with RPC login
+
+Set `daemon` and `rpc-login` on the individual entry in `pools`. The `user`
+field remains your payout wallet address. `rpc-login` supplies the daemon's
+HTTP Digest credentials, matching its `--rpc-login user:password` setting.
+The password may contain colons; the first colon separates the username.
+Omit `rpc-login` (or set it to `null`) when the daemon does not require login.
+
+For example, a local Salvium daemon followed by an ordinary pool as a backup:
+
+```json
+{
+    "mode": "nicehash",
+    "pools": [
+        {
+            "coin": "SAL",
+            "url": "127.0.0.1:19081",
+            "user": "YOUR_SALVIUM_WALLET_ADDRESS",
+            "daemon": true,
+            "rpc-login": "rpcuser:rpcpassword"
+        },
+        {
+            "coin": "SAL",
+            "url": "us2.salvium.herominers.com:1230",
+            "user": "YOUR_SALVIUM_WALLET_ADDRESS",
+            "pass": "x",
+            "daemon": false
+        }
+    ]
+}
+```
+
+Entries use the existing pool order and failover behavior. Credentials from the
+daemon entry are never used for the Stratum pool. Keep `mode` set to `nicehash`
+or `simple` when mixing daemon and pool entries; `extra_nonce` requires every
+entry to be a daemon. With `nicehash` mode, miners still need `--nicehash`.
+
+The command-line equivalent for a daemon entry is:
+
+```sh
+./xmrigcc-proxy -o 127.0.0.1:19081 --daemon --coin SAL \
+    -u YOUR_SALVIUM_WALLET_ADDRESS --rpc-login 'rpcuser:rpcpassword'
+```
+
+RPC authentication uses OpenSSL and requires a build with `WITH_TLS=ON` (the
+default), including when the daemon uses plain HTTP. Set `tls: true` on the
+daemon entry if its RPC endpoint uses HTTPS. A `WITH_TLS=OFF` build reports an
+explicit error when `rpc-login` is configured. This feature covers direct
+daemon mining; self-select mode is unchanged.
+
+If an existing build was configured without TLS, reconfigure it with
+`cmake -S . -B build -DWITH_TLS=ON`, then run `cmake --build build -j4`.
+The updated executable is `build/xmrigcc-proxy`.
+
+To run the integration test, provide a proxy binary and a Salvium daemon binary
+(Python `requests` and the `openssl` command are required):
+
+```sh
+python3 scripts/test_rpc_login.py --proxy build/xmrigcc-proxy \
+    --daemon /path/to/salviumd
+```
+
+The test starts its own offline regtest daemons with fresh temporary data,
+temporary configurations, and unused loopback ports. It checks authentication,
+an accepted difficulty-1 test block through the proxy, height polling, the CLI
+option, bad credentials, a local Stratum failover fixture, and unauthenticated
+daemon compatibility. It also tests HTTPS with certificate pinning. Add
+`--notls-proxy /path/to/xmrigcc-proxy-notls` to check the error from a build
+without OpenSSL. It stops only the processes it starts and never connects to an
+existing daemon.
+
+`python3 scripts/test_http_digest_auth.py` separately checks Digest calculations
+against Python's `hashlib` and verifies malformed-challenge rejection. That test
+requires a C++ compiler and OpenSSL development libraries.
+
+### TLS versions
+
+All encrypted connections require TLS 1.2 or newer: incoming miners, the HTTPS
+API, upstream pools, and outgoing HTTPS requests (including daemon RPC).
+TLS 1.0 and 1.1 are disabled, following [RFC 8996](https://www.rfc-editor.org/rfc/rfc8996.html).
+The server `tls.protocols` setting and `--tls-protocols` accept `TLSv1.2` and
+`TLSv1.3`. Legacy selections are ignored and cannot lower the minimum, including
+when `protocols` is `null` or contains only legacy names.
+
+Run `python3 scripts/test_tls_versions.py` to verify incoming miner/API and
+outgoing Stratum/HTTPS handshakes using the normal `build/xmrigcc-proxy` binary.
+The test uses temporary certificates and local endpoints only; it requires
+Python with TLS 1.3 support and the `openssl` command.
   
 ### Options
 ```
@@ -85,8 +186,11 @@ reproducible rebuild, for example `UV_VERSION=1.52.1` or
   -m, --mode=MODE          proxy mode, nicehash (default) or simple
   -o, --url=URL            URL of mining server
   -O, --userpass=U:P       username:password pair for mining server
-  -u, --user=USERNAME      username for mining server
+  -u, --user=USERNAME      pool username or daemon payout wallet address
   -p, --pass=PASSWORD      password for mining server
+      --daemon            use daemon RPC instead of a pool for solo mining
+      --rpc-login=USER:PASS  HTTP Digest credentials for the current daemon entry
+                            requires a TLS-enabled build; set after its --url
   -r, --retries=N          number of times to retry before switch to backup server (default: 1)
   -R, --retry-pause=N      time to pause between retries (default: 1 second)
       --custom-diff=N      override pool diff
@@ -113,8 +217,8 @@ reproducible rebuild, for example `UV_VERSION=1.52.1` or
       --tls-cert=FILE      load TLS certificate chain from a file in the PEM format
       --tls-cert-key=FILE  load TLS certificate private key from a file in the PEM format
       --tls-dhparam=FILE   load DH parameters for DHE ciphers from a file in the PEM format
-      --tls-protocols=N    enable specified TLS protocols, example: "TLSv1 TLSv1.1 TLSv1.2 TLSv1.3"
-      --tls-ciphers=S      set list of available ciphers (TLSv1.2 and below)
+      --tls-protocols=N    server TLS protocols: "TLSv1.2 TLSv1.3" (TLS 1.2 minimum)
+      --tls-ciphers=S      set list of available TLSv1.2 ciphers
       --tls-ciphersuites=S set list of available TLSv1.3 ciphersuites 
   -h, --help               display this help and exit
   -V, --version            output version information and exit

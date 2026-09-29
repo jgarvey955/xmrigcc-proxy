@@ -36,8 +36,6 @@ const char *TlsConfig::kDhparam         = "dhparam";
 const char *TlsConfig::kGen             = "gen";
 const char *TlsConfig::kProtocols       = "protocols";
 
-static const char *kTLSv1               = "TLSv1";
-static const char *kTLSv1_1             = "TLSv1.1";
 static const char *kTLSv1_2             = "TLSv1.2";
 static const char *kTLSv1_3             = "TLSv1.3";
 
@@ -48,7 +46,7 @@ static const char *kTLSv1_3             = "TLSv1.3";
 /**
  * "cert"         load TLS certificate chain from file.
  * "cert_key"     load TLS private key from file.
- * "ciphers"      set list of available ciphers (TLSv1.2 and below).
+ * "ciphers"      set list of available TLSv1.2 ciphers.
  * "ciphersuites" set list of available TLSv1.3 ciphersuites.
  * "dhparam"      load DH parameters for DHE ciphers from file.
  */
@@ -126,14 +124,6 @@ rapidjson::Value xmrig::TlsConfig::toJSON(rapidjson::Document &doc) const
     if (m_protocols > 0) {
         std::vector<String> protocols;
 
-        if (m_protocols & TLSv1) {
-            protocols.emplace_back(kTLSv1);
-        }
-
-        if (m_protocols & TLSv1_1) {
-            protocols.emplace_back(kTLSv1_1);
-        }
-
         if (m_protocols & TLSv1_2) {
             protocols.emplace_back(kTLSv1_2);
         }
@@ -160,16 +150,11 @@ rapidjson::Value xmrig::TlsConfig::toJSON(rapidjson::Document &doc) const
 
 void xmrig::TlsConfig::setProtocols(const char *protocols)
 {
+    m_protocols = 0;
     const std::vector<String> vec = String(protocols).split(' ');
 
     for (const String &value : vec) {
-        if (value == kTLSv1) {
-            m_protocols |= TLSv1;
-        }
-        else if (value == kTLSv1_1) {
-            m_protocols |= TLSv1_1;
-        }
-        else if (value == kTLSv1_2) {
+        if (value == kTLSv1_2) {
             m_protocols |= TLSv1_2;
         }
         else if (value == kTLSv1_3) {

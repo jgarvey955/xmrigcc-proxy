@@ -90,6 +90,7 @@ public:
         DaemonJobTimeoutKey  = 1059,
         DaemonCookieFileKey  = 1060,
         DaemonRpcUserKey     = 1064,
+        RpcLoginKey          = 1065,
 
         // xmrig common
         CPUPriorityKey       = 1021,

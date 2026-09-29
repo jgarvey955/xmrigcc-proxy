@@ -54,6 +54,8 @@ bool xmrig::ServerTls::isTLS(const char *data, size_t size)
 {
     assert(size > 0);
 
+    // Modern ClientHello records may still use the legacy record version.
+    // TlsContext enforces TLS 1.2 or newer for the negotiated protocol.
     static const uint8_t test[3] = { 0x16, 0x03, 0x01 };
 
     return size > 0 && memcmp(data, test, std::min(size, sizeof(test))) == 0;

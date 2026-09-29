@@ -44,7 +44,7 @@ static inline const std::string &usage()
     u += "  -o, --url=URL                 URL of mining server\n";
     u += "  -a, --algo=ALGO               mining algorithm --algorithms to print supported\n";
     u += "      --coin=COIN               specify coin instead of algorithm\n";
-    u += "  -u, --user=USERNAME           username for mining server\n";
+    u += "  -u, --user=USERNAME           pool username or daemon payout wallet address\n";
     u += "  -p, --pass=PASSWORD           password for mining server\n";
     u += "  -O, --userpass=U:P            username:password pair for mining server\n";
     u += "  -x, --proxy=HOST:PORT         connect through a SOCKS5 proxy\n";
@@ -62,6 +62,8 @@ static inline const std::string &usage()
 
 #   ifdef XMRIG_FEATURE_HTTP
     u += "      --daemon                  use daemon RPC instead of pool for solo mining\n";
+    u += "      --rpc-login=USER:PASS     HTTP Digest credentials for the current daemon entry\n";
+    u += "                               requires a TLS-enabled build; set after its --url\n";
     u += "      --daemon-zmq-port         daemon's zmq-pub port number (only use it if daemon has it enabled)\n";
     u += "      --daemon-poll-interval=N  daemon poll interval in milliseconds (default: 1000)\n";
     u += "      --daemon-job-timeout=N    daemon job timeout in milliseconds (default: 15000)\n";
@@ -118,8 +120,8 @@ static inline const std::string &usage()
     u += "      --tls-cert=FILE           load TLS certificate chain from a file in the PEM format\n";
     u += "      --tls-cert-key=FILE       load TLS certificate private key from a file in the PEM format\n";
     u += "      --tls-dhparam=FILE        load DH parameters for DHE ciphers from a file in the PEM format\n";
-    u += "      --tls-protocols=N         enable specified TLS protocols, example: \"TLSv1 TLSv1.1 TLSv1.2 TLSv1.3\"\n";
-    u += "      --tls-ciphers=S           set list of available ciphers (TLSv1.2 and below)\n";
+    u += "      --tls-protocols=N         server TLS protocols: \"TLSv1.2 TLSv1.3\" (TLS 1.2 minimum)\n";
+    u += "      --tls-ciphers=S           set list of available TLSv1.2 ciphers\n";
     u += "      --tls-ciphersuites=S      set list of available TLSv1.3 ciphersuites\n";
 #   endif
 

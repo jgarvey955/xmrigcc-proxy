@@ -61,6 +61,7 @@
             "sni": false,
             "tls-fingerprint": null,
             "daemon": false,
+            "rpc-login": null,
             "socks5": null,
             "self-select": null,
             "submit-to-origin": false
@@ -71,7 +72,7 @@
     "reuse-timeout": 0,
     "tls": {
         "enabled": true,
-        "protocols": null,
+        "protocols": "TLSv1.2 TLSv1.3",
         "cert": null,
         "cert_key": null,
         "ciphers": null,

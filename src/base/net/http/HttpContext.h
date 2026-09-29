@@ -71,6 +71,7 @@ public:
     static void closeAll();
 
 protected:
+    virtual void onMessageComplete();
     uv_tcp_t *m_tcp;
 
 private:
