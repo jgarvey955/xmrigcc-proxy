@@ -288,6 +288,12 @@ def run(args, root):
             assert "new job" not in log.read_text()
             print("PASS: incorrect credentials rejected without issuing a mining job", flush=True)
 
+        with proxy_process(args.proxy, root / "missing-login", [daemon_pool(daemon, None)]) as (_, log):
+            wait_for(lambda: "authentication required (HTTP 401); set rpc-login in this pool entry" in log.read_text())
+            assert f"127.0.0.1:{daemon.port}" in log.read_text()
+            assert "new job" not in log.read_text()
+            print("PASS: missing credentials identify the daemon entry and required rpc-login setting", flush=True)
+
         if args.notls_proxy:
             with proxy_process(args.notls_proxy, root / "notls-login", [daemon_pool(daemon)]) as (_, log):
                 wait_for(lambda: "rpc-login requires a build with WITH_TLS=ON" in log.read_text())

@@ -126,9 +126,32 @@ xmrig::TlsContext *xmrig::TlsContext::create(const TlsConfig &config)
 }
 
 
+SSL_CTX *xmrig::TlsContext::createContext(bool server)
+{
+    auto ctx = SSL_CTX_new(server ? SSLv23_server_method() : SSLv23_client_method());
+    if (!ctx) {
+        return nullptr;
+    }
+
+    // Enforce the same protocol floor for every client and server, independent
+    // of OpenSSL's defaults and the optional server protocol selection.
+#   ifdef SSL_CTRL_SET_MIN_PROTO_VERSION
+    if (SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION) != 1) {
+        LOG_ERR("Unable to require TLS 1.2 or newer");
+        SSL_CTX_free(ctx);
+        return nullptr;
+    }
+#   else
+    SSL_CTX_set_options(ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1);
+#   endif
+
+    return ctx;
+}
+
+
 bool xmrig::TlsContext::load(const TlsConfig &config)
 {
-    m_ctx = SSL_CTX_new(SSLv23_server_method());
+    m_ctx = createContext(true);
     if (m_ctx == nullptr) {
         LOG_ERR("Unable to create SSL context");
 
@@ -149,7 +172,6 @@ bool xmrig::TlsContext::load(const TlsConfig &config)
         return false;
     }
 
-    SSL_CTX_set_options(m_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
     SSL_CTX_set_options(m_ctx, SSL_OP_CIPHER_SERVER_PREFERENCE);
 
 #   if OPENSSL_VERSION_NUMBER >= 0x1010100fL && !defined(LIBRESSL_VERSION_NUMBER)
@@ -267,17 +289,6 @@ void xmrig::TlsContext::setProtocols(uint32_t protocols)
     if (protocols == 0) {
         return;
     }
-
-    if (!(protocols & TlsConfig::TLSv1)) {
-        SSL_CTX_set_options(m_ctx, SSL_OP_NO_TLSv1);
-    }
-
-#   ifdef SSL_OP_NO_TLSv1_1
-    SSL_CTX_clear_options(m_ctx, SSL_OP_NO_TLSv1_1);
-    if (!(protocols & TlsConfig::TLSv1_1)) {
-        SSL_CTX_set_options(m_ctx, SSL_OP_NO_TLSv1_1);
-    }
-#   endif
 
 #   ifdef SSL_OP_NO_TLSv1_2
     SSL_CTX_clear_options(m_ctx, SSL_OP_NO_TLSv1_2);

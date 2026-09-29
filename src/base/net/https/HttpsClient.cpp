@@ -24,6 +24,7 @@
 
 
 #include "base/net/https/HttpsClient.h"
+#include "base/net/tls/TlsContext.h"
 #include "base/io/log/Log.h"
 #include "base/tools/Cvt.h"
 
@@ -36,7 +37,7 @@
 xmrig::HttpsClient::HttpsClient(const char *tag, FetchRequest &&req, const std::weak_ptr<IHttpListener> &listener) :
     HttpClient(tag, std::move(req), listener)
 {
-    m_ctx = SSL_CTX_new(SSLv23_method());
+    m_ctx = TlsContext::createContext(false);
     assert(m_ctx != nullptr);
 
     if (!m_ctx) {
@@ -45,7 +46,6 @@ xmrig::HttpsClient::HttpsClient(const char *tag, FetchRequest &&req, const std::
 
     m_write = BIO_new(BIO_s_mem());
     m_read  = BIO_new(BIO_s_mem());
-    SSL_CTX_set_options(m_ctx, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 }
 
 

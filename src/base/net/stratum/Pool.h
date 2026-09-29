@@ -58,9 +58,9 @@ public:
     static const char *kAlgo;
     static const char *kCoin;
     static const char *kDaemon;
-    static const char *kRpcLogin;
     static const char *kDaemonCookieFile;
     static const char *kDaemonRpcUser;
+    static const char *kRpcLogin;
     static const char *kDaemonPollInterval;
     static const char *kDaemonJobTimeout;
     static const char *kEnabled;

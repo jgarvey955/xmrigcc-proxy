@@ -36,6 +36,8 @@
 
 #include <cmath>
 #include <cstring>
+#include <map>
+#include <utility>
 #include <uv.h>
 
 
@@ -66,6 +68,7 @@ void xmrig::ApiRouter::onRequest(IApiRequest &request)
             getMiner(request.reply(), request.doc());
             getHashrate(request.reply(), request.doc());
             getMinersSummary(request.reply(), request.doc());
+            getMapping(request.reply(), request.doc());
             getResults(request.reply(), request.doc());
         }
         else if (request.url() == "/1/workers") {
@@ -75,6 +78,11 @@ void xmrig::ApiRouter::onRequest(IApiRequest &request)
         }
         else if (request.url() == "/1/miners") {
             request.accept();
+            getMiners(request.reply(), request.doc());
+        }
+        else if (request.url() == "/1/mapping") {
+            request.accept();
+            getMapping(request.reply(), request.doc());
             getMiners(request.reply(), request.doc());
         }
     }
@@ -145,6 +153,10 @@ void xmrig::ApiRouter::getMiners(rapidjson::Value &reply, rapidjson::Document &d
         value.PushBack(miner->password().toJSON(), allocator);
         value.PushBack(miner->rigId().toJSON(),    allocator);
         value.PushBack(miner->agent().toJSON(),    allocator);
+        value.PushBack(static_cast<int64_t>(miner->mapperId()), allocator);
+        value.PushBack(miner->fixedByte(),         allocator);
+        value.PushBack(static_cast<uint64_t>(miner->fixedByte()) << 24, allocator);
+        value.PushBack(static_cast<uint64_t>((static_cast<uint64_t>(miner->fixedByte()) << 24) | 0xFFFFFFU), allocator);
 
         miners.PushBack(value, allocator);
     }
@@ -160,9 +172,53 @@ void xmrig::ApiRouter::getMiners(rapidjson::Value &reply, rapidjson::Document &d
     format.PushBack("password", allocator);
     format.PushBack("rig_id",   allocator);
     format.PushBack("agent",    allocator);
+    format.PushBack("mapper_id", allocator);
+    format.PushBack("nonce_prefix", allocator);
+    format.PushBack("nonce_start", allocator);
+    format.PushBack("nonce_end", allocator);
 
     reply.AddMember("format", format, allocator);
     reply.AddMember("miners", miners, allocator);
+}
+
+
+void xmrig::ApiRouter::getMapping(rapidjson::Value &reply, rapidjson::Document &doc) const
+{
+    using namespace rapidjson;
+
+    auto &allocator = doc.GetAllocator();
+    const bool enabled = m_base->config()->mode() == Config::NICEHASH_MODE;
+    auto miners = static_cast<Controller *>(m_base)->miners();
+    std::map<std::pair<ssize_t, uint8_t>, uint64_t> assignments;
+    uint64_t mapped = 0;
+    uint64_t collisions = 0;
+
+    if (enabled) {
+        for (const Miner *miner : miners) {
+            if (miner->mapperId() < 0 || miner->routeId() != -1) {
+                continue;
+            }
+
+            mapped++;
+            const auto key = std::make_pair(miner->mapperId(), miner->fixedByte());
+            if (++assignments[key] > 1) {
+                collisions++;
+            }
+        }
+    }
+
+    Value mapping(kObjectType);
+    mapping.AddMember("enabled", enabled, allocator);
+    mapping.AddMember("scheme", StringRef(enabled ? "fixed-high-byte" : "none"), allocator);
+    mapping.AddMember("mapped_miners", mapped, allocator);
+    mapping.AddMember("unique_partitions", static_cast<uint64_t>(assignments.size()), allocator);
+    mapping.AddMember("collisions", collisions, allocator);
+    mapping.AddMember("overlap_percent", collisions == 0 ? 0.0 : normalize(100.0 * collisions / mapped), allocator);
+    mapping.AddMember("partition_efficiency_percent", mapped == 0 ? 0.0 : normalize(100.0 * (mapped - collisions) / mapped), allocator);
+    mapping.AddMember("nonces_per_partition", static_cast<uint64_t>(0x1000000U), allocator);
+    mapping.AddMember("partitions_per_upstream", 256, allocator);
+
+    reply.AddMember("mapping", mapping, allocator);
 }
 
 

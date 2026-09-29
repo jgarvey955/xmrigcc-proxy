@@ -262,7 +262,14 @@ void xmrig::DaemonClient::onHttpData(const HttpData &data)
 
     if (data.status != 200) {
         if (!isQuiet() && data.status == 401) {
-            LOG_ERR("%s " RED("daemon RPC authentication failed (HTTP 401); check rpc-login."), tag());
+            if (m_pool.rpcLogin().isEmpty()) {
+                LOG_ERR("%s [%s:%d] " RED("daemon RPC authentication required (HTTP 401); set rpc-login in this pool entry."),
+                        tag(), m_pool.host().data(), m_pool.port());
+            }
+            else {
+                LOG_ERR("%s [%s:%d] " RED("daemon RPC authentication failed (HTTP 401); check rpc-login."),
+                        tag(), m_pool.host().data(), m_pool.port());
+            }
         }
         return retry();
     }

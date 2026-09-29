@@ -324,9 +324,7 @@ rapidjson::Value xmrig::Pool::toJSON(rapidjson::Document &doc) const
             obj.AddMember(StringRef(kDaemonRpcUser), m_daemonRpcUser.toJSON(), allocator);
             obj.AddMember(StringRef(kPass), m_password.toJSON(), allocator);
         }
-        else {
-            obj.AddMember(StringRef(kRpcLogin), m_rpcLogin.toJSON(), allocator);
-        }
+        obj.AddMember(StringRef(kRpcLogin), m_rpcLogin.toJSON(), allocator);
         obj.AddMember(StringRef(kDaemonPollInterval), m_pollInterval, allocator);
         obj.AddMember(StringRef(kDaemonJobTimeout), m_jobTimeout, allocator);
         obj.AddMember(StringRef(kDaemonZMQPort), m_zmqPort, allocator);

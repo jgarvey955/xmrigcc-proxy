@@ -120,8 +120,8 @@ static inline const std::string &usage()
     u += "      --tls-cert=FILE           load TLS certificate chain from a file in the PEM format\n";
     u += "      --tls-cert-key=FILE       load TLS certificate private key from a file in the PEM format\n";
     u += "      --tls-dhparam=FILE        load DH parameters for DHE ciphers from a file in the PEM format\n";
-    u += "      --tls-protocols=N         enable specified TLS protocols, example: \"TLSv1 TLSv1.1 TLSv1.2 TLSv1.3\"\n";
-    u += "      --tls-ciphers=S           set list of available ciphers (TLSv1.2 and below)\n";
+    u += "      --tls-protocols=N         server TLS protocols: \"TLSv1.2 TLSv1.3\" (TLS 1.2 minimum)\n";
+    u += "      --tls-ciphers=S           set list of available TLSv1.2 ciphers\n";
     u += "      --tls-ciphersuites=S      set list of available TLSv1.3 ciphersuites\n";
 #   endif
 
