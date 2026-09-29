@@ -25,6 +25,8 @@
 #ifndef XMRIG_ERROR_H
 #define XMRIG_ERROR_H
 
+#include <cstdint>
+
 
 namespace xmrig {
 
@@ -43,10 +45,12 @@ public:
         IncompatibleAlgorithm,
         IncorrectAlgorithm,
         Forbidden,
-        RouteNotFound
+        RouteNotFound,
+        SubmissionPending
     };
 
     static const char *toString(int code);
+    static Code fromSubmitResult(int64_t result);
 };
 
 

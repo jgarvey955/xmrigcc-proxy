@@ -89,6 +89,8 @@ const char *Algorithm::kRX_XDAG         = "rx/xdag";
 const char *Algorithm::kRX_TUSKE        = "rx/tuske";
 const char *Algorithm::kRX_XEQ          = "rx/xeq";
 const char *Algorithm::kRX_YADA         = "rx/yada";
+const char *Algorithm::kRX_ZECNERO2     = "rx/zecnero2";
+const char *Algorithm::kRX_ZECNERO      = "rx/zecnero";
 const char *Algorithm::kRX_VRL          = "rx/vrl";
 #endif
 
@@ -163,6 +165,8 @@ static const std::map<uint32_t, const char *> kAlgorithmNames = {
     ALGO_NAME(RX_TUSKE),
     ALGO_NAME(RX_XEQ),
     ALGO_NAME(RX_YADA),
+    ALGO_NAME(RX_ZECNERO),
+    ALGO_NAME(RX_ZECNERO2),
     ALGO_NAME(RX_VRL),
 #   endif
 
@@ -290,6 +294,8 @@ static const std::map<const char *, Algorithm::Id, aliasCompare> kAlgorithmAlias
                                     ALGO_ALIAS(RX_XEQ,          "randomxeq"),
     ALGO_ALIAS_AUTO(RX_YADA),       ALGO_ALIAS(RX_YADA,         "randomx/yada"),
                                     ALGO_ALIAS(RX_YADA,         "randomyada"),
+    ALGO_ALIAS_AUTO(RX_ZECNERO2), ALGO_ALIAS(RX_ZECNERO2, "rx2/zecnero"), ALGO_ALIAS(RX_ZECNERO2, "randomx/zecnero2"),
+    ALGO_ALIAS_AUTO(RX_ZECNERO),    ALGO_ALIAS(RX_ZECNERO, "randomx/zecnero"),
     ALGO_ALIAS_AUTO(RX_VRL),        ALGO_ALIAS(RX_VRL,          "randomx/virel"),
                                     ALGO_ALIAS(RX_VRL,          "randomvirel"),
 #   endif
@@ -380,7 +386,7 @@ std::vector<xmrig::Algorithm> xmrig::Algorithm::all(const std::function<bool(con
         CN_PICO_0, CN_PICO_TLO,
         CN_UPX2,
         CN_GPU,
-        RX_0, RX_WOW, RX_ARQ, RX_GRAFT, RX_SFX, RX_XDAG, RX_TUSKE, RX_XEQ, RX_YADA, RX_VRL,
+        RX_0, RX_WOW, RX_ARQ, RX_GRAFT, RX_SFX, RX_XDAG, RX_TUSKE, RX_XEQ, RX_YADA, RX_VRL, RX_ZECNERO, RX_ZECNERO2,
         AR2_CHUKWA, AR2_CHUKWA_V2, AR2_WRKZ,
         KAWPOW_RVN,
         GHOSTRIDER_RTM

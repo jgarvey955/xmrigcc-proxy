@@ -38,10 +38,10 @@ xmrig::JobResult::JobResult(int64_t id, const char *jobId, const char *nonce, co
 {
     if (result && strlen(result) == 64) {
         uint64_t target = 0;
-        Cvt::fromHex(reinterpret_cast<uint8_t *>(&target), sizeof(target), result + 48, 16);
-
-        if (target > 0) {
-            m_actualDiff = Job::toDiff(target);
+        const auto hash = Cvt::fromHex(result, 64);
+        if (hash.size() == 32) {
+            memcpy(&target, hash.data() + 24, sizeof(target));
+            m_actualDiff = target ? Job::toDiff(target) : UINT64_MAX;
         }
     }
 }
@@ -64,5 +64,6 @@ bool xmrig::JobResult::isValid() const
         return false;
     }
 
-    return strlen(nonce) == 8 && !jobId.isNull();
+    uint8_t bytes[4];
+    return strlen(nonce) == 8 && Cvt::fromHex(bytes, sizeof(bytes), nonce, 8) && !jobId.isNull();
 }

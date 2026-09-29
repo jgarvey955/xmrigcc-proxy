@@ -172,10 +172,21 @@ void xmrig::Miner::setJob(Job &job, int64_t extra_nonce)
 
     if (extra_nonce >= 0) {
         m_extraNonce = extra_nonce;
-        job.setExtraNonceInMinerTx(static_cast<uint32_t>(m_extraNonce));
+        if (job.algorithm().isZecnero()) {
+            uint8_t bytes[4];
+            for (unsigned i = 0; i < 4; ++i) { bytes[i] = uint32_t(extra_nonce) >> (8 * i); }
+            tmp_blob = static_cast<const Job &>(job).rawBlob();
+            // Preserve the header roots and the remaining 24 bytes of entropy.
+            const auto encoded = Cvt::toHex(bytes, sizeof(bytes));
+            memcpy(tmp_blob.data() + (job.nonceOffset() + 4) * 2, encoded.data(), 8);
+            blob = tmp_blob;
+        }
+        else {
+            job.setExtraNonceInMinerTx(static_cast<uint32_t>(m_extraNonce));
+        }
     }
 
-    if (job.hasMinerSignature() || (extra_nonce >= 0)) {
+    if (!job.algorithm().isZecnero() && (job.hasMinerSignature() || (extra_nonce >= 0))) {
         job.generateHashingBlob(tmp_blob);
         blob = tmp_blob;
     }

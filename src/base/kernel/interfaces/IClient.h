@@ -43,6 +43,14 @@ class IClient
 public:
     XMRIG_DISABLE_COPY_MOVE(IClient)
 
+    // Negative submit results describe local rejections; nonnegative values are request IDs.
+    enum SubmitError {
+        SubmitUnavailable = -1,
+        SubmitPending = -2,
+        SubmitStale = -3,
+        SubmitLowDifficulty = -4
+    };
+
     enum Extension {
         EXT_ALGO,
         EXT_NICEHASH,

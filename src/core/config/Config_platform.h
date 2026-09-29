@@ -50,6 +50,8 @@ static struct option const options[] = {
     { "http-access-token", 1, nullptr, IConfig::HttpAccessTokenKey},
     { "http-port",         1, nullptr, IConfig::HttpPort          },
     { "http-no-restricted",0, nullptr, IConfig::HttpRestrictedKey },
+    { "daemon-cookie-file", 1, nullptr, IConfig::DaemonCookieFileKey },
+    { "daemon-rpc-user",    1, nullptr, IConfig::DaemonRpcUserKey    },
     { "daemon",            0, nullptr, IConfig::DaemonKey         },
     { "daemon-poll-interval", 1, nullptr, IConfig::DaemonPollKey  },
     { "daemon-job-timeout", 1, nullptr, IConfig::DaemonJobTimeoutKey },

@@ -58,6 +58,8 @@ public:
     static const char *kAlgo;
     static const char *kCoin;
     static const char *kDaemon;
+    static const char *kDaemonCookieFile;
+    static const char *kDaemonRpcUser;
     static const char *kDaemonPollInterval;
     static const char *kDaemonJobTimeout;
     static const char *kEnabled;
@@ -112,6 +114,8 @@ public:
     inline int keepAlive() const                        { return m_keepAlive; }
     inline Mode mode() const                            { return m_mode; }
     inline uint16_t port() const                        { return m_url.port(); }
+    inline const String &daemonCookieFile() const       { return m_daemonCookieFile; }
+    inline const String &daemonRpcUser() const          { return m_daemonRpcUser; }
     inline int zmq_port() const                         { return m_zmqPort; }
     inline uint64_t pollInterval() const                { return m_pollInterval; }
     inline uint64_t jobTimeout() const                  { return m_jobTimeout; }
@@ -158,6 +162,8 @@ private:
     ProxyUrl m_proxy;
     std::bitset<FLAG_MAX> m_flags   = 0;
     String m_fingerprint;
+    String m_daemonCookieFile;
+    String m_daemonRpcUser;
     String m_password;
     String m_rigId;
     String m_user;

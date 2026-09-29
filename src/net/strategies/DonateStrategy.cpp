@@ -122,6 +122,9 @@ void xmrig::DonateStrategy::stop()
 
 void xmrig::DonateStrategy::tick(uint64_t now)
 {
+    // The configured donation endpoint has no Zecnero jobs.
+    if (m_client->pool().algorithm().isZecnero()) { return; }
+
     m_client->tick(now);
 
     m_ticks++;

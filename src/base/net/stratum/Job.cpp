@@ -46,7 +46,8 @@ xmrig::Job::Job(bool nicehash, const Algorithm &algorithm, const String &clientI
 
 bool xmrig::Job::isEqual(const Job &other) const
 {
-    return m_id == other.m_id && m_clientId == other.m_clientId && isEqualBlob(other) && m_target == other.m_target;
+    return m_id == other.m_id && m_clientId == other.m_clientId && isEqualBlob(other) && m_target == other.m_target
+        && m_algorithm == other.m_algorithm && m_seed == other.m_seed && m_fullTarget == other.m_fullTarget;
 }
 
 
@@ -70,7 +71,7 @@ bool xmrig::Job::setBlob(const char *blob)
     size /= 2;
 
     const size_t minSize = nonceOffset() + nonceSize();
-    if (size < minSize || size >= sizeof(m_blob)) {
+    if (size < minSize || size >= sizeof(m_blob) || (algorithm().isZecnero() && size != 140)) {
         return false;
     }
 
@@ -78,7 +79,7 @@ bool xmrig::Job::setBlob(const char *blob)
         return false;
     }
 
-    if (readUnaligned(nonce()) != 0 && !m_nicehash) {
+    if (!algorithm().isZecnero() && readUnaligned(nonce()) != 0 && !m_nicehash) {
         m_nicehash = true;
     }
 
@@ -110,6 +111,7 @@ bool xmrig::Job::setSeedHash(const char *hash)
 
 bool xmrig::Job::setTarget(const char *target)
 {
+    m_fullTarget.clear();
     static auto parse = [](const char *target, size_t size, const Algorithm &algorithm) -> uint64_t {
         if (algorithm == Algorithm::RX_YADA) {
             return strtoull(target, nullptr, 16);
@@ -152,6 +154,43 @@ bool xmrig::Job::setTarget(const char *target)
 }
 
 
+bool xmrig::Job::setFullTarget(const char *target)
+{
+    if (!target || strlen(target) != 64) {
+        return false;
+    }
+    auto bytes = Cvt::fromHex(target, 64);
+    if (bytes.size() != 32) {
+        return false;
+    }
+    bool nonzero = false;
+    for (const auto b : bytes) { nonzero |= b != 0; }
+    if (!nonzero) { return false; }
+    m_fullTarget.assign(bytes.rbegin(), bytes.rend());
+    m_target = 0;
+    for (size_t i = 0; i < 8; ++i) { m_target = (m_target << 8) | bytes[i]; }
+    // Difficulty is only a display/statistics estimate; comparison uses all 256 bits.
+    m_diff = m_target ? toDiff(m_target) : UINT64_MAX;
+    // Stratum carries the conservative high 64 bits; RPC submissions use all 256.
+    Cvt::toHex(m_rawTarget, sizeof(m_rawTarget), reinterpret_cast<const uint8_t *>(&m_target), sizeof(m_target));
+    return true;
+}
+
+
+bool xmrig::Job::meetsTarget(const uint8_t *hash) const
+{
+    if (m_fullTarget.size() == 32) {
+        for (int i = 31; i >= 0; --i) {
+            if (hash[i] != m_fullTarget[i]) { return hash[i] < m_fullTarget[i]; }
+        }
+        return true;
+    }
+    uint64_t high;
+    memcpy(&high, hash + 24, sizeof(high));
+    return high < m_target;
+}
+
+
 size_t xmrig::Job::nonceOffset() const
 {
     switch (algorithm().family()) {
@@ -169,12 +208,17 @@ size_t xmrig::Job::nonceOffset() const
         return 147;
     }
 
+    if (algorithm().isZecnero()) {
+        return 108;
+    }
+
     return 39;
 }
 
 
 void xmrig::Job::setDiff(uint64_t diff)
 {
+    m_fullTarget.clear();
     m_diff   = diff;
     m_target = toDiff(diff);
 
@@ -239,6 +283,7 @@ void xmrig::Job::copy(const Job &other)
     m_diff       = other.m_diff;
     m_height     = other.m_height;
     m_target     = other.m_target;
+    m_fullTarget = other.m_fullTarget;
     m_index      = other.m_index;
     m_seed       = other.m_seed;
     m_extraNonce = other.m_extraNonce;
@@ -290,6 +335,7 @@ void xmrig::Job::move(Job &&other)
     m_diff       = other.m_diff;
     m_height     = other.m_height;
     m_target     = other.m_target;
+    m_fullTarget = other.m_fullTarget;
     m_index      = other.m_index;
     m_seed       = std::move(other.m_seed);
     m_extraNonce = std::move(other.m_extraNonce);

@@ -11,6 +11,10 @@ Extremely high performance Monero (XMR) Stratum protocol proxy, can easily handl
 
 **This proxy is compatible with XMRigCC**
 
+Zecnero pool, bridge, and direct RPC mining (`rx/zecnero` and `rx/zecnero2`)
+is described in [doc/ZECNERO.md](doc/ZECNERO.md), with an
+[example configuration](config-zecnero.example.json).
+
 ## Compatibility
 
 :warning: :warning: :warning: **This proxy is compatible with all algos supported by the latest version of XMRigCC** :warning: :warning: :warning:

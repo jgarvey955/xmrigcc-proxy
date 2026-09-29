@@ -24,6 +24,7 @@
 
 
 #include "proxy/Error.h"
+#include "base/kernel/interfaces/IClient.h"
 
 
 namespace xmrig {
@@ -77,9 +78,23 @@ const char *xmrig::Error::toString(int code)
     case RouteNotFound:
         return kRouteNotFound;
 
+    case SubmissionPending:
+        return "Block submission already pending";
+
     default:
         break;
     }
 
     return kUnknownError;
+}
+
+
+xmrig::Error::Code xmrig::Error::fromSubmitResult(int64_t result)
+{
+    switch (result) {
+    case IClient::SubmitPending:       return SubmissionPending;
+    case IClient::SubmitStale:         return InvalidJobId;
+    case IClient::SubmitLowDifficulty: return LowDifficulty;
+    default:                          return BadGateway;
+    }
 }

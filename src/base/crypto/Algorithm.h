@@ -82,6 +82,8 @@ public:
         RX_TUSKE        = 0x72151274,   // "rx/tuske"         RandomTuske (TUSKE).
         RX_XEQ          = 0x72121078,   // "rx/xeq"           RandomXEQ (Equilibria).
         RX_YADA         = 0x72151279,   // "rx/yada"          RandomYada (YadaCoin).
+        RX_ZECNERO2     = 0x7215127b,   // "rx/zecnero2"      Zecnero RandomX v2.
+        RX_ZECNERO      = 0x7215127a,   // "rx/zecnero"       Zecnero RandomX v1 (domain-separated salt).
         RX_VRL          = 0x72141176,   // "rx/vrl"           RandomVRL (Virel).
         AR2_CHUKWA      = 0x61130000,   // "argon2/chukwa"    Argon2id (Chukwa).
         AR2_CHUKWA_V2   = 0x61140000,   // "argon2/chukwav2"  Argon2id (Chukwa v2).
@@ -156,6 +158,8 @@ public:
     static const char *kRX_TUSKE;
     static const char *kRX_XEQ;
     static const char *kRX_YADA;
+    static const char *kRX_ZECNERO;
+    static const char *kRX_ZECNERO2;
     static const char *kRX_VRL;
 #   endif
 
@@ -190,6 +194,7 @@ public:
 
     inline bool isCN() const                                { return isCN(m_id); }
     inline bool isEqual(const Algorithm &other) const       { return m_id == other.m_id; }
+    inline bool isZecnero() const { return m_id == RX_ZECNERO || m_id == RX_ZECNERO2; }
     inline bool isValid() const                             { return m_id != INVALID && family() > UNKNOWN; }
     inline Id base() const                                  { return base(m_id); }
     inline Id id() const                                    { return m_id; }

@@ -126,12 +126,14 @@ void xmrig::SimpleMapper::submit(SubmitEvent *event)
     }
 
     JobResult req = event->request;
+    req.algorithm = m_job.algorithm();
     req.diff = m_job.diff();
 
     IStrategy *strategy = m_donate && m_donate->isActive() ? m_donate : m_strategy;
 
     if (strategy) {
-        strategy->submit(req);
+        const int64_t seq = strategy->submit(req);
+        if (seq < 0) { event->setError(Error::fromSubmitResult(seq)); }
     }
 }
 

@@ -65,6 +65,9 @@ static inline const std::string &usage()
     u += "      --daemon-zmq-port         daemon's zmq-pub port number (only use it if daemon has it enabled)\n";
     u += "      --daemon-poll-interval=N  daemon poll interval in milliseconds (default: 1000)\n";
     u += "      --daemon-job-timeout=N    daemon job timeout in milliseconds (default: 15000)\n";
+    u += "      --daemon-cookie-file=PATH Zecnero local RPC cookie (reread for each request)\n";
+    u += "      --daemon-rpc-user=USER    Zecnero RPC login with --pass; --user is the payout address\n";
+    u += "                               use --algo=rx/zecnero; templates select v1 or v2\n";
     u += "      --self-select=URL         self-select block templates from URL\n";
     u += "      --submit-to-origin        also submit solution back to self-select URL\n";
 #   endif
@@ -76,7 +79,7 @@ static inline const std::string &usage()
 
     u += "\nOptions:\n";
     u += "  -b, --bind=ADDR               bind to specified address, example \"0.0.0.0:3333\"\n";
-    u += "  -m, --mode=MODE               proxy mode, nicehash (default) or simple\n";
+    u += "  -m, --mode=MODE               proxy mode: nicehash (default), simple, extra_nonce (daemon)\n";
     u += "      --custom-diff=N           override pool diff\n";
     u += "      --custom-diff-stats       calculate stats using custom diff shares instead of pool shares\n";
     u += "      --reuse-timeout=N         timeout in seconds for reuse pool connections in simple mode\n";

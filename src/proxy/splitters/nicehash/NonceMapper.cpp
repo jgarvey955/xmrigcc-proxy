@@ -141,11 +141,14 @@ void xmrig::NonceMapper::submit(SubmitEvent *event)
     }
 
     JobResult req = event->request;
+    req.algorithm = m_storage->job().algorithm();
     req.diff = m_storage->job().diff();
 
     IStrategy *strategy = m_donate && m_donate->isActive() ? m_donate : m_strategy;
 
-    m_results[strategy->submit(req)] = SubmitCtx(req.id, event->miner()->id());
+    const int64_t seq = strategy->submit(req);
+    if (seq < 0) { return event->setError(Error::fromSubmitResult(seq)); }
+    m_results[seq] = SubmitCtx(req.id, event->miner()->id());
 }
 
 

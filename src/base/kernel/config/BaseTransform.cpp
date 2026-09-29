@@ -186,6 +186,12 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
     case IConfig::FingerprintKey: /* --tls-fingerprint */
         return add(doc, Pools::kPools, Pool::kFingerprint, arg);
 
+    case IConfig::DaemonCookieFileKey: /* --daemon-cookie-file */
+        return add(doc, Pools::kPools, Pool::kDaemonCookieFile, arg);
+
+    case IConfig::DaemonRpcUserKey: /* --daemon-rpc-user */
+        return add(doc, Pools::kPools, Pool::kDaemonRpcUser, arg);
+
     case IConfig::SelfSelectKey: /* --self-select */
         return add(doc, Pools::kPools, Pool::kSelfSelect, arg);
 

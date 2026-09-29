@@ -33,7 +33,7 @@ bool xmrig::ExtraNonceStorage::add(Miner *miner)
     m_miners[miner->id()] = miner;
 
     if (isActive()) {
-        miner->setJob(m_job, m_extraNonce);
+        miner->setJob(m_job, m_job.algorithm().isZecnero() ? miner->id() : m_extraNonce);
         ++m_extraNonce;
     }
 
@@ -95,7 +95,8 @@ void xmrig::ExtraNonceStorage::setJob(const Job &job)
     m_extraNonce = 0;
 
     for (const auto& m : m_miners) {
-        m.second->setJob(m_job, m_extraNonce);
+        // A stable worker value also reconstructs shares for the previous job.
+        m.second->setJob(m_job, m_job.algorithm().isZecnero() ? m.second->id() : m_extraNonce);
         ++m_extraNonce;
     }
 }
