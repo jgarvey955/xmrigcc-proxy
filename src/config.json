@@ -61,6 +61,7 @@
             "sni": false,
             "tls-fingerprint": null,
             "daemon": false,
+            "rpc-login": null,
             "socks5": null,
             "self-select": null,
             "submit-to-origin": false

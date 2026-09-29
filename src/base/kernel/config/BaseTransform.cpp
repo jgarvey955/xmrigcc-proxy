@@ -177,6 +177,9 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
     case IConfig::PasswordKey: /* --pass */
         return add(doc, Pools::kPools, Pool::kPass, arg);
 
+    case IConfig::RpcLoginKey: /* --rpc-login */
+        return add(doc, Pools::kPools, Pool::kRpcLogin, arg);
+
     case IConfig::SpendSecretKey: /* --spend-secret-key */
         return add(doc, Pools::kPools, Pool::kSpendSecretKey, arg);
 

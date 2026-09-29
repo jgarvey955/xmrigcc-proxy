@@ -198,6 +198,7 @@ if (WITH_HTTP)
         src/base/net/http/HttpClient.h
         src/base/net/http/HttpContext.h
         src/base/net/http/HttpData.h
+        src/base/net/http/HttpDigestAuth.h
         src/base/net/http/HttpResponse.h
         src/base/net/stratum/DaemonClient.h
         src/base/net/stratum/ZecneroClient.h
@@ -219,6 +220,7 @@ if (WITH_HTTP)
         src/base/net/http/HttpClient.cpp
         src/base/net/http/HttpContext.cpp
         src/base/net/http/HttpData.cpp
+        src/base/net/http/HttpDigestAuth.cpp
         src/base/net/http/HttpListener.cpp
         src/base/net/http/HttpResponse.cpp
         src/base/net/stratum/DaemonClient.cpp

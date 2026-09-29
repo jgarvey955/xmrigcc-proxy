@@ -53,6 +53,7 @@ public:
 protected:
     void onResolved(const DnsRecords &records, int status, const char *error) override;
     void onTimer(const Timer *timer) override;
+    void onMessageComplete() override;
 
     virtual void handshake();
     virtual void read(const char *data, size_t size);
@@ -61,10 +62,12 @@ protected:
     inline const FetchRequest &req() const  { return m_req; }
 
 private:
+    void sendRequest(const std::string &authorization = {});
     static void onConnect(uv_connect_t *req, int status);
 
     const char *m_tag;
     FetchRequest m_req;
+    unsigned m_authRetries = 0;
     std::shared_ptr<DnsRequest> m_dns;
     std::shared_ptr<Timer> m_timer;
 };

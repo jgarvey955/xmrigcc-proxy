@@ -53,6 +53,7 @@ static struct option const options[] = {
     { "daemon-cookie-file", 1, nullptr, IConfig::DaemonCookieFileKey },
     { "daemon-rpc-user",    1, nullptr, IConfig::DaemonRpcUserKey    },
     { "daemon",            0, nullptr, IConfig::DaemonKey         },
+    { "rpc-login",         1, nullptr, IConfig::RpcLoginKey       },
     { "daemon-poll-interval", 1, nullptr, IConfig::DaemonPollKey  },
     { "daemon-job-timeout", 1, nullptr, IConfig::DaemonJobTimeoutKey },
     { "self-select",       1, nullptr, IConfig::SelfSelectKey     },

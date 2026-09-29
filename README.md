@@ -15,6 +15,13 @@ Zecnero pool, bridge, and direct RPC mining (`rx/zecnero` and `rx/zecnero2`)
 is described in [doc/ZECNERO.md](doc/ZECNERO.md), with an
 [example configuration](config-zecnero.example.json).
 
+For a Salvium daemon configured with `rpc-login`, set `"rpc-login": "username:password"`
+in its `pools` entry alongside `"daemon": true`. Keep `user` set to the payout wallet
+address. The proxy uses HTTP Digest authentication for templates, height polling,
+and block submissions, over HTTP or HTTPS. This requires a build with `WITH_TLS=ON`.
+The CLI equivalent is `--rpc-login=USER:PASS`, placed after the daemon's `--url`.
+Zecnero RPC continues to use `daemon-cookie-file` or `daemon-rpc-user` with `pass`.
+
 ## Compatibility
 
 :warning: :warning: :warning: **This proxy is compatible with all algos supported by the latest version of XMRigCC** :warning: :warning: :warning:
