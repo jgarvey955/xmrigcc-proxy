@@ -226,6 +226,8 @@ def rpc_tests(binary, root, mode):
             old = dict(a.job)
             assert not a.submit(algo=False).get('error'), 'Valid candidate rejected'
             wait_for(lambda: any('Height: 1\n' in message for message in state['notifications']))
+            notification = next(message for message in state['notifications'] if 'Height: 1\n' in message)
+            assert '\nCoin: Zecnero\nAlgorithm: rx/zecnero\n' in notification, notification
             a.next_job(old['job_id'])
             assert a.submit(job=old).get('error'), 'Stale candidate accepted'
             assert state['auth'][-1] == 'Basic ' + base64.b64encode(b'test:rotated').decode()
@@ -238,6 +240,8 @@ def rpc_tests(binary, root, mode):
             assert a.job['algo'] == 'rx/zecnero2'
             assert not a.submit().get('error')
             wait_for(lambda: any('Height: 2\n' in message for message in state['notifications']))
+            notification = next(message for message in state['notifications'] if 'Height: 2\n' in message)
+            assert '\nCoin: Zecnero\nAlgorithm: rx/zecnero2\n' in notification, notification
             a.next_job(a.job['job_id'])
 
             state['sync'] = True

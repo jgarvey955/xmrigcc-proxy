@@ -77,6 +77,21 @@ static void appendLine(std::string &out, const char *key, const char *value)
 }
 
 
+static void appendMiningDetails(std::string &out, const SubmitResult &result, bool last = false)
+{
+    std::string coin = "Unknown (set pool coin)";
+    if (result.coin.isValid()) {
+        coin = std::string(result.coin.name()) + " (" + result.coin.code() + ")";
+    }
+    else if (result.algorithm.isZecnero()) {
+        coin = "Zecnero";
+    }
+
+    appendLine(out, last ? "Last coin" : "Coin", coin.c_str());
+    appendLine(out, last ? "Last algorithm" : "Algorithm", result.algorithm.isValid() ? result.algorithm.name() : "Unknown");
+}
+
+
 } // namespace xmrig
 
 
@@ -264,6 +279,8 @@ std::string xmrig::DiscordNotifier::acceptedMessage(const AcceptEvent *event) co
         out = std::string(config.mention.data()) + " " + out;
     }
 
+    appendMiningDetails(out, event->result);
+
     if (event->result.height > 0) {
         snprintf(line, sizeof(line) - 1, "\nHeight: %" PRIu64, event->result.height);
         out += line;
@@ -297,6 +314,8 @@ std::string xmrig::DiscordNotifier::rejectedMessage(const AcceptEvent *event) co
              event->result.diff, event->result.elapsed, event->error() ? event->error() : "unknown");
 
     std::string out = line;
+    appendMiningDetails(out, event->result);
+
     if (m_controller->config()->discord().includeWorker) {
         appendLine(out, "Worker", workerName(event->miner()));
     }
@@ -315,6 +334,10 @@ std::string xmrig::DiscordNotifier::summaryMessage(const AcceptEvent *event, uin
     std::string out = line;
     if (!config.mention.isEmpty()) {
         out = std::string(config.mention.data()) + " " + out;
+    }
+
+    if (event) {
+        appendMiningDetails(out, event->result, true);
     }
 
     if (config.includeWorker && event) {

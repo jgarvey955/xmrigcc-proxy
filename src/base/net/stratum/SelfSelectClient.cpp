@@ -283,7 +283,7 @@ void xmrig::SelfSelectClient::submitOriginDaemon(const JobResult& result)
     params.PushBack(m_blocktemplate.toJSON(), doc.GetAllocator());
 
     JsonRequest::create(doc, m_sequence, "submitblock", params);
-    m_results[m_sequence] = SubmitResult(m_sequence, result.diff, result.actualDiff(), 0, result.backend, result.height);
+    m_results[m_sequence] = SubmitResult(m_sequence, result.diff, result.actualDiff(), 0, result.backend, result.height, result.algorithm, pool().coin());
 
     FetchRequest req(HTTP_POST, pool().daemon().host(), pool().daemon().port(), "/json_rpc", doc, pool().daemon().isTLS(), isQuiet());
     fetch(tag(), std::move(req), m_httpListener);

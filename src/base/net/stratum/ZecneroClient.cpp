@@ -192,7 +192,7 @@ int64_t xmrig::ZecneroClient::submit(const JobResult &result)
     rapidjson::Document doc(rapidjson::kObjectType);
     rapidjson::Value params(rapidjson::kArrayType);
     params.PushBack(Cvt::toHex(block.block(nonce)).toJSON(doc), doc.GetAllocator());
-    m_results.emplace(id, SubmitResult(id, result.diff, result.actualDiff(), result.id, result.backend, work->job.height()));
+    m_results.emplace(id, SubmitResult(id, result.diff, result.actualDiff(), result.id, result.backend, work->job.height(), work->job.algorithm(), m_pool.coin()));
     // A poll in flight never blocks a discovered block from being submitted.
     return sendRpc(id, "submitblock", params, doc) ? id : -1;
 }
