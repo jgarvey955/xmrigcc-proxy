@@ -45,7 +45,7 @@ rm -rf "openssl-${OPENSSL_VERSION}"
 tar -xzf "openssl-${OPENSSL_VERSION}.tar.gz"
 
 cd "openssl-${OPENSSL_VERSION}"
-set -- no-shared no-asm no-zlib no-comp no-dgram no-filenames no-cms no-tests
+set -- no-shared no-zlib no-comp no-dgram no-filenames no-cms no-tests
 if [ "${OPENSSL_VERSION%%.*}" -ge 4 ]; then
     set -- "$@" no-jitter no-fips-jitter
 fi

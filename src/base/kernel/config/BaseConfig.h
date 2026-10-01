@@ -76,6 +76,7 @@ public:
     inline uint32_t printTime() const                       { return m_printTime; }
 
 #   ifdef XMRIG_FEATURE_TLS
+    inline bool tlsAllowUntrusted() const { return m_tlsAllowUntrusted; }
     inline const TlsConfig &tls() const                     { return m_tls; }
 #   endif
 
@@ -107,6 +108,7 @@ protected:
 
 #   ifdef XMRIG_FEATURE_TLS
     TlsConfig m_tls;
+    bool m_tlsAllowUntrusted = true;
 #   endif
 
 private:

@@ -280,3 +280,13 @@ Python with TLS 1.3 support and the `openssl` command.
 * [telegram](https://telegram.me/bendr0id)
 * [discord](https://discord.gg/r3rCKTB)
 * [reddit](https://www.reddit.com/user/BenDr0id/)
+
+
+The root configuration setting `"tls-allow-untrusted": true` preserves connections
+to private/self-signed TLS services. Set it to `false` to require a trusted
+certificate chain and matching hostname for outgoing TLS connections. This
+setting defaults to `true` for compatibility and is saved with miner/proxy
+configuration; the server accepts the same setting for outgoing notifications.
+Explicit `tls-fingerprint` pins are always enforced in either mode. Strict mode
+uses the system CA bundle or the `SSL_CERT_FILE` / `SSL_CERT_DIR` environment
+settings for a private CA.

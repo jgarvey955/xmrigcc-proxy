@@ -227,6 +227,7 @@ bool xmrig::Miner::parseRequest(int64_t id, const char *method, const rapidjson:
                     algorithms.reserve(value.Size());
 
                     for (const auto &i : value.GetArray()) {
+                        if (!i.IsString()) { return false; }
                         Algorithm algo(i.GetString());
                         if (!algo.isValid()) {
                             continue;
@@ -359,7 +360,8 @@ void xmrig::Miner::parse(char *line, size_t len)
         return shutdown(true);
     }
 
-    if (!doc.IsObject()) {
+    if (!doc.IsObject() || !doc.HasMember("id") || !doc.HasMember("method") ||
+        !doc["method"].IsString() || !doc.HasMember("params") || !doc["params"].IsObject()) {
         return shutdown(true);
     }
 

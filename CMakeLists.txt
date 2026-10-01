@@ -213,6 +213,14 @@ if (WITH_ZECNERO_TESTS)
     add_test(NAME zecnero-proxy COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/zecnero-proxy.py --proxy $<TARGET_FILE:${PROJECT_NAME}>)
     set_tests_properties(zecnero-proxy PROPERTIES TIMEOUT 120)
+    add_test(NAME proxy-security COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/security-regressions.py --binary $<TARGET_FILE:${PROJECT_NAME}> --kind proxy)
+    set_tests_properties(proxy-security PROPERTIES TIMEOUT 90)
+    if (WITH_TLS)
+        add_test(NAME proxy-tls-verification COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/tests/tls-verification.py --binary $<TARGET_FILE:${PROJECT_NAME}> --proxy)
+        set_tests_properties(proxy-tls-verification PROPERTIES TIMEOUT 120)
+    endif()
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES Clang AND CMAKE_BUILD_TYPE STREQUAL Release AND NOT CMAKE_GENERATOR STREQUAL Xcode)
