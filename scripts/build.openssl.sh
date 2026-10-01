@@ -23,7 +23,11 @@ download() {
 }
 
 jobs() {
-    nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || printf '1\n'
+    if [ -n "${JOBS:-}" ]; then
+        printf '%s\n' "$JOBS"
+    else
+        nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || printf '1\n'
+    fi
 }
 
 OPENSSL_TAG="${OPENSSL_VERSION:-4.0.3}"

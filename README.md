@@ -71,6 +71,24 @@ make -j$(nproc)
 
 ## Build on Linux
 
+For a fully static binary, run the root-level helper on the target machine:
+
+```sh
+./build-static.sh
+```
+
+It uses all available CPU cores, rebuilds the bundled dependencies, enables
+OpenSSL/TLS, and writes
+`build-static/xmrigcc-proxy`. It verifies that the executable has no dynamic
+interpreter or shared-library dependencies. `BUILD_DIR` overrides the output
+directory; relative paths are resolved from the repository root. The script
+works from any working directory and uses the host compiler for its architecture.
+It requires the usual C/C++ build tools, CMake, Perl, curl or wget, and binutils
+(`readelf`). glibc's static-link warnings remain visible; runtime-loaded modules
+can still depend on matching system libraries.
+
+For dynamic system-library linking, use the commands below.
+
 Linux builds libuv 1.53.0, hwloc 2.15.0, and OpenSSL 4.0.3 from source into
 `scripts/deps`. These are the latest stable upstream releases verified on
 September 30, 2026; the defaults are pinned for reproducible builds:

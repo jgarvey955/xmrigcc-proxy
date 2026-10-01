@@ -1,5 +1,6 @@
 # Build outputs
 /build/
+/build-static/
 build/
 /cmake-build-*/
 /scripts/build/
