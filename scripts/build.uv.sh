@@ -22,19 +22,11 @@ download() {
     fi
 }
 
-latest_release_tag() {
-    repo="$1"
-
-    release_json=".libuv-release.json"
-    download "https://api.github.com/repos/${repo}/releases/latest" "$release_json" >/dev/null
-    sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' "$release_json" | head -n 1
-}
-
 jobs() {
     nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || printf '1\n'
 }
 
-UV_VERSION="${UV_VERSION:-$(latest_release_tag libuv/libuv)}"
+UV_VERSION="${UV_VERSION:-1.53.0}"
 UV_VERSION="${UV_VERSION#v}"
 
 if [ -z "$UV_VERSION" ]; then

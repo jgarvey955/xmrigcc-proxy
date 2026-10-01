@@ -22,22 +22,13 @@ download() {
     fi
 }
 
-latest_release_field() {
-    repo="$1"
-    pattern="$2"
-
-    release_json=".openssl-release.json"
-    download "https://api.github.com/repos/${repo}/releases/latest" "$release_json" >/dev/null
-    sed -n "$pattern" "$release_json" | head -n 1
-}
-
 jobs() {
     nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || printf '1\n'
 }
 
-OPENSSL_TAG="${OPENSSL_VERSION:-$(latest_release_field openssl/openssl 's/.*"tag_name": *"\([^"]*\)".*/\1/p')}"
+OPENSSL_TAG="${OPENSSL_VERSION:-4.0.3}"
 OPENSSL_VERSION="${OPENSSL_TAG#openssl-}"
-OPENSSL_URL="$(latest_release_field openssl/openssl 's/.*"browser_download_url": *"\([^"]*openssl-[0-9][^"]*\.tar\.gz\)".*/\1/p')"
+OPENSSL_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
 
 if [ -z "$OPENSSL_VERSION" ] || [ -z "$OPENSSL_URL" ]; then
     printf '%s\n' "Unable to determine latest OpenSSL release." >&2
@@ -50,8 +41,12 @@ rm -rf "openssl-${OPENSSL_VERSION}"
 tar -xzf "openssl-${OPENSSL_VERSION}.tar.gz"
 
 cd "openssl-${OPENSSL_VERSION}"
-./config -no-shared -no-asm -no-zlib -no-comp -no-dgram -no-filenames -no-cms
-make -j"$(jobs)"
+set -- no-shared no-asm no-zlib no-comp no-dgram no-filenames no-cms no-tests
+if [ "${OPENSSL_VERSION%%.*}" -ge 4 ]; then
+    set -- "$@" no-jitter no-fips-jitter
+fi
+./config "$@"
+make -j"$(jobs)" build_libs
 cp -fr include ../../deps
 cp libcrypto.a ../../deps/lib
 cp libssl.a ../../deps/lib

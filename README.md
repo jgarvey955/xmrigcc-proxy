@@ -71,8 +71,9 @@ make -j$(nproc)
 
 ## Static build on Linux
 
-Linux builds the latest upstream releases of libuv, hwloc, and OpenSSL from
-source into `scripts/deps`:
+Linux builds libuv 1.53.0, hwloc 2.15.0, and OpenSSL 4.0.3 from source into
+`scripts/deps`. These are the latest stable upstream releases verified on
+September 30, 2026; the defaults are pinned for reproducible builds:
 
 ```
 scripts/build_deps.sh
@@ -82,9 +83,8 @@ cmake .. -DXMRIG_DEPS=../scripts/deps -DBUILD_STATIC=ON
 make -j$(nproc)
 ```
 
-The helper scripts also accept explicit version overrides when you need a
-reproducible rebuild, for example `UV_VERSION=1.52.1` or
-`HWLOC_VERSION=2.13.0` or `OPENSSL_VERSION=4.0.0`.
+The helper scripts also accept explicit version overrides, for example
+`UV_VERSION=1.53.0 HWLOC_VERSION=2.15.0 OPENSSL_VERSION=4.0.3 scripts/build_deps.sh`.
   
 ## Usage
 :boom: If you are using Linux and need to manage over **1000 connections**, you must [increase the limits on open files](https://github.com/xmrig/xmrig-proxy/wiki/Ubuntu-setup).

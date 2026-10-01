@@ -22,22 +22,14 @@ download() {
     fi
 }
 
-latest_release_field() {
-    repo="$1"
-    pattern="$2"
-
-    release_json=".hwloc-release.json"
-    download "https://api.github.com/repos/${repo}/releases/latest" "$release_json" >/dev/null
-    sed -n "$pattern" "$release_json" | head -n 1
-}
-
 jobs() {
     nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || printf '1\n'
 }
 
-HWLOC_TAG="${HWLOC_VERSION:-$(latest_release_field open-mpi/hwloc 's/.*"tag_name": *"\([^"]*\)".*/\1/p')}"
+HWLOC_TAG="${HWLOC_VERSION:-2.15.0}"
 HWLOC_VERSION="${HWLOC_TAG#hwloc-}"
-HWLOC_URL="$(latest_release_field open-mpi/hwloc 's/.*"browser_download_url": *"\([^"]*hwloc-[0-9][^"]*\.tar\.gz\)".*/\1/p')"
+HWLOC_SERIES="${HWLOC_VERSION%.*}"
+HWLOC_URL="https://download.open-mpi.org/release/hwloc/v${HWLOC_SERIES}/hwloc-${HWLOC_VERSION}.tar.gz"
 
 if [ -z "$HWLOC_VERSION" ] || [ -z "$HWLOC_URL" ]; then
     printf '%s\n' "Unable to determine latest hwloc release." >&2
