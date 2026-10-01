@@ -83,11 +83,11 @@ available CPU cores. This removes glibc's static-link dependency warnings while
 keeping OpenSSL/TLS enabled. The builder caches its dependencies separately from
 the host's `scripts/deps` directory.
 
-The output is `build-static/xmrigcc-proxy`, which runs directly on Linux without
+The output is `build/xmrigcc-proxy`, which runs directly on Linux without
 a container. It is checked for dynamic interpreters and linked shared libraries.
 Build on the target architecture (for example, ARM64 on a 64-bit Raspberry Pi).
 `BUILD_DIR` overrides the output directory; relative paths are resolved from the
-repository root. Intermediate musl build files live in `build-static/musl/`,
+repository root. Intermediate musl build files live in `build/musl/`,
 separate from previous glibc build caches.
 
 OpenSSL's linked-in providers support TLS. Fully static musl executables cannot

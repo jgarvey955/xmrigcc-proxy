@@ -48,3 +48,4 @@ cmake -S "libuv-v${UV_VERSION}" -B "libuv-v${UV_VERSION}/cmake-build" \
 cmake --build "libuv-v${UV_VERSION}/cmake-build" --parallel "$(jobs)"
 cp -R "libuv-v${UV_VERSION}/include/." ../deps/include/
 cp "libuv-v${UV_VERSION}/cmake-build/libuv.a" ../deps/lib/
+printf '[libuv 100%%] Build complete\n'

@@ -3,6 +3,8 @@
 set -eu
 
 JOBS=$(nproc)
+# Count completed build tasks, including linking, rather than tasks started.
+export NINJA_STATUS='[compile %p | %f/%t completed] '
 cmake -S /source -B /output/musl -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/output \
@@ -10,7 +12,9 @@ cmake -S /source -B /output/musl -G Ninja \
     -DBUILD_STATIC=ON \
     -DWITH_TLS=ON
 cmake --build /output/musl --parallel "$JOBS"
+printf '[compile 100%%] Build complete\n'
 
+printf '\nStage 3/3: Verifying static binaries\n'
 for name in xmrigcc-proxy; do
     binary="/output/$name"
     program_headers=$(readelf -lW "$binary")
