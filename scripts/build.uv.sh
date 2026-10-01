@@ -39,9 +39,8 @@ download "https://dist.libuv.org/dist/v${UV_VERSION}/libuv-v${UV_VERSION}.tar.gz
 rm -rf "libuv-v${UV_VERSION}"
 tar -xzf "libuv-v${UV_VERSION}.tar.gz"
 
-cd "libuv-v${UV_VERSION}"
-sh autogen.sh
-./configure --disable-shared
-make -j"$(jobs)"
-cp -fr include ../../deps
-cp .libs/libuv.a ../../deps/lib
+cmake -S "libuv-v${UV_VERSION}" -B "libuv-v${UV_VERSION}/cmake-build" \
+    -DCMAKE_BUILD_TYPE=Release -DLIBUV_BUILD_SHARED=OFF -DBUILD_TESTING=OFF
+cmake --build "libuv-v${UV_VERSION}/cmake-build" --parallel "$(jobs)"
+cp -R "libuv-v${UV_VERSION}/include/." ../deps/include/
+cp "libuv-v${UV_VERSION}/cmake-build/libuv.a" ../deps/lib/

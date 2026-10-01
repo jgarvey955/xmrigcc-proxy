@@ -69,23 +69,28 @@ cmake .. -DXMRIG_DEPS=../scripts/deps -DBUILD_STATIC=ON
 make -j$(nproc)
 ```
 
-## Static build on Linux
+## Build on Linux
 
 Linux builds libuv 1.53.0, hwloc 2.15.0, and OpenSSL 4.0.3 from source into
 `scripts/deps`. These are the latest stable upstream releases verified on
 September 30, 2026; the defaults are pinned for reproducible builds:
 
-```
+```sh
 scripts/build_deps.sh
 mkdir -p build
 cd build
-cmake .. -DXMRIG_DEPS=../scripts/deps -DBUILD_STATIC=ON
+cmake .. -DXMRIG_DEPS=../scripts/deps -DBUILD_STATIC=OFF
 make -j$(nproc)
 ```
 
+This links the bundled dependencies statically and system libraries dynamically,
+preserving DNS resolution and module loading without glibc static-link warnings.
+OpenSSL and TLS support remain enabled. Fully static system linking is still
+available with `BUILD_STATIC=ON`, with glibc's associated runtime limitations.
+
 The helper scripts also accept explicit version overrides, for example
 `UV_VERSION=1.53.0 HWLOC_VERSION=2.15.0 OPENSSL_VERSION=4.0.3 scripts/build_deps.sh`.
-  
+
 ## Usage
 :boom: If you are using Linux and need to manage over **1000 connections**, you must [increase the limits on open files](https://github.com/xmrig/xmrig-proxy/wiki/Ubuntu-setup).
 

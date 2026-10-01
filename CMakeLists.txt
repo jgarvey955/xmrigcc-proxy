@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(xmrigcc-proxy)
 
 
@@ -208,9 +208,9 @@ if (WITH_ZECNERO_TESTS)
     if (NOT WITH_HTTP)
         message(FATAL_ERROR "Zecnero RPC tests require WITH_HTTP=ON")
     endif()
-    find_package(PythonInterp 3 REQUIRED)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
     enable_testing()
-    add_test(NAME zecnero-proxy COMMAND ${PYTHON_EXECUTABLE}
+    add_test(NAME zecnero-proxy COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/zecnero-proxy.py --proxy $<TARGET_FILE:${PROJECT_NAME}>)
     set_tests_properties(zecnero-proxy PROPERTIES TIMEOUT 120)
 endif()
