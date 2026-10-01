@@ -77,15 +77,21 @@ For a fully static binary, run the root-level helper on the target machine:
 ./build-static.sh
 ```
 
-It uses all available CPU cores, rebuilds the bundled dependencies, enables
-OpenSSL/TLS, and writes
-`build-static/xmrigcc-proxy`. It verifies that the executable has no dynamic
-interpreter or shared-library dependencies. `BUILD_DIR` overrides the output
-directory; relative paths are resolved from the repository root. The script
-works from any working directory and uses the host compiler for its architecture.
-It requires the usual C/C++ build tools, CMake, Perl, curl or wget, and binutils
-(`readelf`). glibc's static-link warnings remain visible; runtime-loaded modules
-can still depend on matching system libraries.
+Install Docker or Podman and ensure your user can run it. The script builds the
+bundled dependencies and proxy with musl in an Alpine 3.24.2 container, using all
+available CPU cores. This removes glibc's static-link dependency warnings while
+keeping OpenSSL/TLS enabled. The builder caches its dependencies separately from
+the host's `scripts/deps` directory.
+
+The output is `build-static/xmrigcc-proxy`, which runs directly on Linux without
+a container. It is checked for dynamic interpreters and linked shared libraries.
+Build on the target architecture (for example, ARM64 on a 64-bit Raspberry Pi).
+`BUILD_DIR` overrides the output directory; relative paths are resolved from the
+repository root. Intermediate musl build files live in `build-static/musl/`,
+separate from previous glibc build caches.
+
+OpenSSL's linked-in providers support TLS. Fully static musl executables cannot
+load external shared-library plugins or OpenSSL provider modules.
 
 For dynamic system-library linking, use the commands below.
 

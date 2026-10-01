@@ -7,10 +7,10 @@ usage() {
     printf '%s\n' \
         'Usage: ./build-static.sh' \
         '' \
-        'Build the bundled dependencies and a fully static Linux proxy with TLS.' \
-        'Uses all available CPU cores for dependency and application builds.' \
+        'Build static Linux proxy binaries with OpenSSL/TLS using musl.' \
+        'Requires Docker or Podman; uses all available CPU cores.' \
         'BUILD_DIR selects the output directory (default: build-static).' \
-        'UV_VERSION, HWLOC_VERSION, and OPENSSL_VERSION override dependency versions.'
+        'The resulting binaries run directly on Linux without a container.'
 }
 
 if [ "$#" -gt 0 ]; then
@@ -21,45 +21,45 @@ if [ "$#" -gt 0 ]; then
 fi
 
 if [ "$(uname -s)" != Linux ]; then
-    printf '%s\n' 'This script builds native Linux binaries. Run it on the target Linux machine.' >&2
+    printf '%s\n' 'Run this script on the target Linux architecture.' >&2
     exit 1
 fi
 
-# Always use all available CPU cores for dependencies and applications.
-JOBS=$(nproc 2>/dev/null || getconf _NPROCESSORS_ONLN)
-export JOBS
+if command -v docker >/dev/null 2>&1; then
+    engine=docker
+elif command -v podman >/dev/null 2>&1; then
+    engine=podman
+else
+    printf '%s\n' 'Install Docker or Podman to build static binaries with musl.' >&2
+    exit 1
+fi
+
+if ! "$engine" info >/dev/null 2>&1; then
+    printf 'Cannot access %s. Start it and ensure your user has permission to run it.\n' "$engine" >&2
+    exit 1
+fi
 
 BUILD_DIR="${BUILD_DIR:-$SCRIPT_DIR/build-static}"
 case "$BUILD_DIR" in
     /*) ;;
     *) BUILD_DIR="$SCRIPT_DIR/$BUILD_DIR" ;;
 esac
+mkdir -p "$BUILD_DIR"
+BUILD_DIR=$(CDPATH= cd -- "$BUILD_DIR" && pwd)
 
-for command in cmake make perl readelf; do
-    if ! command -v "$command" >/dev/null 2>&1; then
-        printf 'Required build tool not found: %s\n' "$command" >&2
-        exit 1
-    fi
-done
+builder_image=xmrigcc-proxy-static-builder:alpine-3.24.2
+"$engine" build --file "$SCRIPT_DIR/scripts/Dockerfile.static" \
+    --tag "$builder_image" "$SCRIPT_DIR/scripts"
 
-"$SCRIPT_DIR/scripts/build_deps.sh"
+# A separate CMake directory prevents reuse of any earlier glibc build cache.
+set --
+if [ "$engine" = podman ]; then
+    set -- --userns=keep-id
+fi
+"$engine" run --rm "$@" --user "$(id -u):$(id -g)" \
+    --mount "type=bind,source=$SCRIPT_DIR,target=/source,readonly" \
+    --mount "type=bind,source=$BUILD_DIR,target=/output" \
+    --workdir /output "$builder_image" \
+    /bin/sh /source/scripts/build-static-container.sh
 
-cmake -S "$SCRIPT_DIR" -B "$BUILD_DIR" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DXMRIG_DEPS:PATH="$SCRIPT_DIR/scripts/deps" \
-    -DBUILD_STATIC=ON \
-    -DWITH_TLS=ON
-cmake --build "$BUILD_DIR" --parallel "$JOBS"
-
-binary="$BUILD_DIR/xmrigcc-proxy"
-program_headers=$(readelf -lW "$binary")
-dynamic_section=$(readelf -dW "$binary")
-case "$program_headers" in
-    *INTERP*) printf '%s\n' 'Static verification failed: binary has a dynamic interpreter.' >&2; exit 1 ;;
-esac
-case "$dynamic_section" in
-    *'(NEEDED)'*) printf '%s\n' 'Static verification failed: binary requires shared libraries.' >&2; exit 1 ;;
-esac
-
-"$binary" --version
-printf '\nVerified static binary: %s\n' "$binary"
+printf '\nStatic binaries are in %s\n' "$BUILD_DIR"
