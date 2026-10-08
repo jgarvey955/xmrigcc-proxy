@@ -1,3 +1,10 @@
+# 3.5.0
+* Synced with XMRigCC 3.5.0 and xmrig-proxy 6.26.0.
+* Added RandomX v2 commitment forwarding and FCMP++ solo-mining support.
+* Fixed miner timeout and keepalive timing with monotonic clocks.
+* Added current OpenBSD and LibreSSL compatibility fixes.
+* Retained existing Zecnero proxy modes, TLS hardening, and RPC support.
+
 # 3.4.8
 * Synched changes to XMRigCC 3.4.8
   * Added Virel(VRL) RandomX variant (rx/vrl)

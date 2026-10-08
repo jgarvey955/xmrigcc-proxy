@@ -303,15 +303,22 @@ def pool_tests(binary, root, algo):
             stop(proc)
 
 
-def regtest(binary, node_binary, miner_binary, root, mode):
+def regtest(binary, node_binary, miner_binary, root, mode, nu1_height=None):
     root.mkdir()
     rpc_port, listen = port(), port()
     cookie = root / 'rpc/.cookie'
+    activation_heights = ''
+    if nu1_height is not None:
+        activation_heights = f'''[network.testnet_parameters.activation_heights]
+NU6 = 1
+"NU6.2" = {nu1_height}
+'''
     (root / 'node.toml').write_text(f'''[network]
 network = "Regtest"
 listen_addr = "127.0.0.1:{port()}"
 [network.testnet_parameters]
 experimental_randomx_v2 = true
+{activation_heights}
 [state]
 ephemeral = true
 [rpc]
@@ -360,10 +367,12 @@ use_color = false
                   'pools': [{'algo': 'rx/zecnero', 'url': f'127.0.0.1:{listen}', 'user': 'worker', 'pass': 'x'}]}
         miner = launch(miner_binary, root, 'miner', config, ['--daemonized'])
 
+        target_blocks = max(3, (nu1_height or 0) + 3)
+
         def mined():
             assert proxy.poll() is None and miner.poll() is None, 'Proxy/miner exited early'
             info = rpc('getblockchaininfo', [])
-            return info if info['blocks'] >= 3 else None
+            return info if info['blocks'] >= target_blocks else None
         info = wait_for(mined, 180)
         stop(miner)
         block = bytes.fromhex(rpc('getblock', ['1', 0]))
@@ -380,7 +389,8 @@ use_color = false
         proxy_log = (root / 'proxy-events.log').read_text()
         assert proxy_log.count('Zecnero block accepted by node') >= 3
         assert 'rejected (' not in proxy_log, 'Daemon rejected a submitted block'
-        print(f"PASS real regtest {mode}: {info['blocks']} PoW-validated blocks, v1/v2 activation, intact coinbase, no daemon rejections; {len(rejected)} pending/stale candidates declined locally")
+        boundary = f', NU1 activation at {nu1_height}' if nu1_height is not None else ''
+        print(f"PASS real regtest {mode}: {info['blocks']} PoW-validated blocks, v1/v2 activation{boundary}, intact coinbase, no daemon rejections; {len(rejected)} pending/stale candidates declined locally")
     finally:
         stop(miner)
         stop(proxy)
@@ -392,9 +402,13 @@ def main():
     parser.add_argument('--proxy', required=True, type=pathlib.Path)
     parser.add_argument('--node', type=pathlib.Path)
     parser.add_argument('--miner', type=pathlib.Path)
+    parser.add_argument('--nu1-height', type=int,
+                        help='configure Regtest NU1 at this height and mine three blocks past it')
     args = parser.parse_args()
     if bool(args.node) != bool(args.miner):
         parser.error('--node and --miner must be supplied together')
+    if args.nu1_height is not None and args.nu1_height < 2:
+        parser.error('--nu1-height must be at least 2')
     root = pathlib.Path(tempfile.mkdtemp(prefix='zecnero-proxy-test-'))
     print(f'Test artifacts: {root}', flush=True)
     binary = args.proxy.resolve()
@@ -404,7 +418,8 @@ def main():
         pool_tests(binary, root, algo)
     if args.node:
         for mode in ['nicehash', 'simple', 'extra_nonce']:
-            regtest(binary, args.node.resolve(), args.miner.resolve(), root / ('regtest-' + mode), mode)
+            regtest(binary, args.node.resolve(), args.miner.resolve(), root / ('regtest-' + mode),
+                    mode, args.nu1_height)
 
 
 if __name__ == '__main__':
