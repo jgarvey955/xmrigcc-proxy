@@ -1,0 +1,230 @@
+name: Build and publish release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to create
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    name: Linux ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake binutils build-essential cmake libtool patch perl python3 wget
+
+      - name: Build static CPU binary
+        env:
+          BUILD_DIR: ${{ github.workspace }}/build-release
+        run: ./build-static.sh
+
+      - name: Package
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: |
+          package="xmrigcc-proxy-${RELEASE_TAG}-linux-static-${TARGET_ARCH}"
+          mkdir -p "staging/${package}" dist
+          cp build-release/xmrigcc-proxy "staging/${package}/"
+          cp README.md LICENSE src/config.json config-zecnero.example.json "staging/${package}/"
+          {
+            printf 'Project: xmrigcc-proxy\n'
+            printf 'Tag: %s\n' "$RELEASE_TAG"
+            printf 'Commit: %s\n' "$GITHUB_SHA"
+            printf 'Platform: Linux static %s\n' "$TARGET_ARCH"
+            printf 'TLS: enabled\n'
+          } > "staging/${package}/BUILDINFO.txt"
+          tar -C staging -czf "dist/${package}.tar.gz" "$package"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  macos:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            arch: x64
+          - runner: macos-15
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: brew install automake libtool wget
+
+      - name: Build static dependencies
+        run: |
+          export JOBS="$(sysctl -n hw.logicalcpu)"
+          scripts/build_deps.sh
+
+      - name: Build CPU binary
+        run: |
+          cmake -S . -B build-release \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DXMRIG_DEPS="$PWD/scripts/deps" \
+            -DBUILD_STATIC=OFF \
+            -DWITH_TLS=ON
+          cmake --build build-release --parallel "$(sysctl -n hw.logicalcpu)"
+          build-release/xmrigcc-proxy --version
+
+      - name: Package
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          TARGET_ARCH: ${{ matrix.arch }}
+        run: |
+          package="xmrigcc-proxy-${RELEASE_TAG}-macos-${TARGET_ARCH}"
+          mkdir -p "staging/${package}" dist
+          cp build-release/xmrigcc-proxy "staging/${package}/"
+          cp README.md LICENSE src/config.json config-zecnero.example.json "staging/${package}/"
+          {
+            printf 'Project: xmrigcc-proxy\n'
+            printf 'Tag: %s\n' "$RELEASE_TAG"
+            printf 'Commit: %s\n' "$GITHUB_SHA"
+            printf 'Platform: macOS %s\n' "$TARGET_ARCH"
+            printf 'TLS: enabled\nCode signing: unsigned\n'
+          } > "staging/${package}/BUILDINFO.txt"
+          tar -C staging -czf "dist/${package}.tar.gz" "$package"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.arch }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  windows:
+    name: Windows x64
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download static dependencies
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $headers = @{
+            Authorization = "Bearer $env:GH_TOKEN"
+            Accept = "application/vnd.github+json"
+            "X-GitHub-Api-Version" = "2022-11-28"
+          }
+          $release = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/xmrig/xmrig-deps/releases/latest"
+          $archive = Join-Path $env:RUNNER_TEMP "xmrig-deps.tar.gz"
+          Invoke-WebRequest -Uri "https://github.com/xmrig/xmrig-deps/archive/refs/tags/$($release.tag_name).tar.gz" -OutFile $archive
+          $extract = Join-Path $env:RUNNER_TEMP "xmrig-deps-source"
+          New-Item -ItemType Directory -Force $extract | Out-Null
+          tar.exe -xzf $archive -C $extract
+          $root = Get-ChildItem $extract -Directory | Select-Object -First 1
+          $deps = Join-Path $root.FullName "msvc2022\x64"
+          if (-not (Test-Path (Join-Path $deps "lib\libuv.lib"))) {
+            throw "xmrig-deps msvc2022/x64 profile was not found."
+          }
+          "DEPS_DIR=$deps" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Build static CPU binary
+        shell: pwsh
+        run: |
+          cmake.exe `
+            -S . `
+            -B build-release `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DBUILD_STATIC=ON `
+            -DWITH_TLS=ON `
+            "-DUV_INCLUDE_DIR=$env:DEPS_DIR\include" `
+            "-DUV_LIBRARY=$env:DEPS_DIR\lib\libuv.lib" `
+            "-DOPENSSL_ROOT_DIR=$env:DEPS_DIR" `
+            "-DOPENSSL_INCLUDE_DIR=$env:DEPS_DIR\include" `
+            "-DOPENSSL_SSL_LIBRARY=$env:DEPS_DIR\lib\libssl.lib" `
+            "-DOPENSSL_CRYPTO_LIBRARY=$env:DEPS_DIR\lib\libcrypto.lib"
+          cmake.exe --build build-release --config Release --parallel
+          & .\build-release\Release\xmrigcc-proxy.exe --version
+
+      - name: Package
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          $package = "xmrigcc-proxy-$env:RELEASE_TAG-windows-x64"
+          $packageDir = Join-Path "staging" $package
+          New-Item -ItemType Directory -Force $packageDir, "dist" | Out-Null
+          Copy-Item "build-release\Release\xmrigcc-proxy.exe" $packageDir
+          Copy-Item "README.md", "LICENSE", "src\config.json", "config-zecnero.example.json" $packageDir
+          @(
+            "Project: xmrigcc-proxy"
+            "Tag: $env:RELEASE_TAG"
+            "Commit: $env:GITHUB_SHA"
+            "Platform: Windows x64"
+            "TLS: enabled"
+            "Code signing: unsigned"
+          ) | Set-Content -Encoding ASCII (Join-Path $packageDir "BUILDINFO.txt")
+          Compress-Archive -Path $packageDir -DestinationPath "dist\$package.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64
+          path: dist/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release
+    needs: [linux, macos, windows]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create checksums and release notes
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          cd dist
+          sha256sum *.tar.gz *.zip > SHA256SUMS.txt
+          cd ..
+          {
+            printf 'CPU-only release built from commit `%s`.\n\n' "$GITHUB_SHA"
+            printf -- '- Linux x64 and ARM64 are fully static and suitable for Ubuntu and other common Linux distributions.\n'
+            printf -- '- Windows x64 is statically linked and unsigned.\n'
+            printf -- '- macOS Intel and Apple Silicon builds are unsigned.\n'
+            printf -- '- TLS is enabled in every build.\n'
+            printf -- '- Proxy donation defaults to 5%%; an explicit `donate-level: 0` disables it, and nonzero values below 5%% clamp to 5%%.\n'
+            printf -- '- Donation mining uses the configured Monero HeroMiners TLS endpoint.\n\n'
+            printf 'Verify downloads with `SHA256SUMS.txt`.\n'
+          } > release-notes.md
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/* \
+            --target "$GITHUB_SHA" \
+            --title "xmrigcc-proxy ${RELEASE_TAG}" \
+            --notes-file release-notes.md
