@@ -1,5 +1,5 @@
 # XMRig Proxy - Updated to work with SALVIUM
-to Donate SAL1 -> SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
+Donation XMR -> 45ny5y3EYkhF7KzTYbVnC3Zt6MmvszsSxPhdY1kg35GzNFX3BDPqK4gLzxJHqJXwSfC4GSB3cAUVfBj3mACNGZS42QsUQ6F
 
 [![Github All Releases](https://img.shields.io/github/downloads/bendr0id/xmrigcc-proxy/total.svg)](https://github.com/bendr0id/xmrigcc-proxy/releases)
 [![Github Latest](https://img.shields.io/github/downloads/bendr0id/xmrigCC-proxy/latest/total.svg)](https://github.com/bendr0id/xmrigcc-proxy/releases)
@@ -250,7 +250,7 @@ Python with TLS 1.3 support and the `openssl` command.
       --no-color           disable colored output
       --no-workers         disable per worker statistics
       --variant            algorithm PoW variant
-      --donate-level=N     donate level, default 2%
+      --donate-level=N     donation default 5%; 0 disables; nonzero minimum 5%
   -B, --background         run the miner in the background
   -c, --config=FILE        load a JSON-format configuration file
       --no-watch           disable configuration file watching

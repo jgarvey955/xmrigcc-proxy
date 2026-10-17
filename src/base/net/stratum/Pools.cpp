@@ -72,11 +72,7 @@ bool xmrig::Pools::isEqual(const Pools &other) const
 
 int xmrig::Pools::donateLevel() const
 {
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    return benchSize() || (m_benchmark && !m_benchmark->id().isEmpty()) ? 0 : m_donateLevel;
-#   else
     return m_donateLevel;
-#   endif
 }
 
 
@@ -217,8 +213,10 @@ void xmrig::Pools::toJSON(rapidjson::Value &out, rapidjson::Document &doc) const
 
 void xmrig::Pools::setDonateLevel(int level)
 {
-    if (level >= kMinimumDonateLevel && level <= 99) {
-        m_donateLevel = level > 2 ? level : 2;
+    if (level == 0) {
+        m_donateLevel = 0;
+    } else if (level > 0 && level <= 99) {
+        m_donateLevel = std::max(kMinimumDonateLevel, level);
     }
 }
 

@@ -35,9 +35,9 @@ namespace xmrig {
 
 
 static inline double randomf(double min, double max)    { return (max - min) * (((static_cast<double>(rand())) / static_cast<double>(RAND_MAX))) + min; }
-static constexpr const char *kDonateHost               = "us2.salvium.herominers.com";
-static constexpr uint16_t kDonatePort                  = 1230;
-static constexpr const char *kDonateUser               = "SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp";
+static constexpr const char *kDonateHost               = "monero.herominers.com";
+static constexpr uint16_t kDonatePort                  = 1118;
+static constexpr const char *kDonateUser               = "45ny5y3EYkhF7KzTYbVnC3Zt6MmvszsSxPhdY1kg35GzNFX3BDPqK4gLzxJHqJXwSfC4GSB3cAUVfBj3mACNGZS42QsUQ6F";
 
 
 } // namespace xmrig
@@ -49,15 +49,9 @@ xmrig::DonateStrategy::DonateStrategy(Controller *controller, IStrategyListener 
 {
     m_client = new Client(-1, Platform::userAgent(), this);
 
-    Pool pool(
-#   ifdef XMRIG_FEATURE_TLS
-        kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, true, Pool::MODE_POOL
-#   else
-        kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, false, Pool::MODE_POOL
-#   endif
-    );
-    pool.setCoin(Coin::SALVIUM);
-    pool.setAlgo(Coin(Coin::SALVIUM).algorithm());
+    Pool pool(kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, true, Pool::MODE_POOL);
+    pool.setCoin(Coin::MONERO);
+    pool.setAlgo(Coin(Coin::MONERO).algorithm());
     m_client->setPool(pool);
 
     m_client->setRetryPause(5000);
@@ -96,9 +90,9 @@ void xmrig::DonateStrategy::save(const IClient *client, const Job &job)
 }
 
 
-void xmrig::DonateStrategy::setAlgo(const xmrig::Algorithm &algorithm)
+void xmrig::DonateStrategy::setAlgo(const xmrig::Algorithm &)
 {
-    m_client->setAlgo(algorithm);
+    m_client->setAlgo(Coin(Coin::MONERO).algorithm());
 }
 
 
@@ -122,9 +116,6 @@ void xmrig::DonateStrategy::stop()
 
 void xmrig::DonateStrategy::tick(uint64_t now)
 {
-    // The configured donation endpoint has no Zecnero jobs.
-    if (m_client->pool().algorithm().isZecnero()) { return; }
-
     m_client->tick(now);
 
     m_ticks++;

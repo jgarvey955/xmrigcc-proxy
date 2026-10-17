@@ -32,10 +32,10 @@
 /*
  * Dev donation.
  *
- * Percentage of your hashing power that you want to donate to the developer, can be 0 if you don't want to do that.
+ * Donation defaults to 5%. An explicit donate level of 0 disables it; nonzero values below 5% are clamped to 5%.
  *
  * If you plan on changing this setting to 0 please consider making a one off donation to my wallet:
- * SAL1: SC11UA22DFrAQerDwJwcf8Yh2ySTb7ipaFL8qSEX26tqUDdPf1RQBmmRuZG4SnRd8DNpp5vE1zDHnKNStiFDQsce49Q7fyp8Yp
+ * XMR: 45ny5y3EYkhF7KzTYbVnC3Zt6MmvszsSxPhdY1kg35GzNFX3BDPqK4gLzxJHqJXwSfC4GSB3cAUVfBj3mACNGZS42QsUQ6F
  *
  * How it works:
  * Upstreams randomly switch to dev pool in range from 50 to 150 minutes, to reduce dev pool peak load.
@@ -46,8 +46,8 @@
  * Since 2.15.0
  * If you set level to 0 it will enable donate over proxy feature.
  */
-constexpr const int kDefaultDonateLevel = 3;
-constexpr const int kMinimumDonateLevel = 3;
+constexpr const int kDefaultDonateLevel = 5;
+constexpr const int kMinimumDonateLevel = 5;
 
 
 #endif /* XMRIG_DONATE_H */
