@@ -308,7 +308,9 @@ void xmrig::Workers::accept(const AcceptEvent *event)
         worker.add(m_controller->config()->isCustomDiffStats() ? event->statsDiff() : event->result.diff);
     }
     else {
-        worker.reject(false);
+        if (!event->result.isOutcomeUnknown()) {
+            worker.reject(false);
+        }
     }
 }
 

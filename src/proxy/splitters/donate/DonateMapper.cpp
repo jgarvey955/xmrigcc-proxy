@@ -75,7 +75,10 @@ void xmrig::DonateMapper::submit(SubmitEvent *event)
     JobResult req = event->request;
     req.diff = m_diff;
 
-    m_client->submit(req);
+    const int64_t seq = m_client->submit(req);
+    if (seq < 0) {
+        event->setError(Error::fromSubmitResult(seq));
+    }
 }
 
 

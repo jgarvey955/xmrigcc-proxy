@@ -135,6 +135,9 @@ void xmrig::SimpleMapper::submit(SubmitEvent *event)
         const int64_t seq = strategy->submit(req);
         if (seq < 0) { event->setError(Error::fromSubmitResult(seq)); }
     }
+    else {
+        event->setError(Error::BadGateway);
+    }
 }
 
 

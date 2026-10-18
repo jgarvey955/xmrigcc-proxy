@@ -145,5 +145,10 @@ void xmrig::Stats::reject(const AcceptEvent *event)
         return;
     }
 
-    m_data.rejected++;
+    if (event->result.isOutcomeUnknown()) {
+        m_data.unknown++;
+    }
+    else {
+        m_data.rejected++;
+    }
 }

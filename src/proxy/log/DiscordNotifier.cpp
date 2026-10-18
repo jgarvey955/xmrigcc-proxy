@@ -298,8 +298,8 @@ std::string xmrig::DiscordNotifier::acceptedMessage(const AcceptEvent *event) co
     }
 
     if (config.includeTotals) {
-        snprintf(line, sizeof(line) - 1, "\nProxy totals: accepted %" PRIu64 ", upstream rejected %" PRIu64 ", locally rejected %" PRIu64,
-                 m_stats->data().accepted, m_stats->data().rejected, m_stats->data().invalid);
+        snprintf(line, sizeof(line) - 1, "\nProxy totals: accepted %" PRIu64 ", upstream rejected %" PRIu64 ", outcome unknown %" PRIu64 ", locally rejected %" PRIu64,
+                 m_stats->data().accepted, m_stats->data().rejected, m_stats->data().unknown, m_stats->data().invalid);
         out += line;
     }
 
@@ -310,7 +310,8 @@ std::string xmrig::DiscordNotifier::acceptedMessage(const AcceptEvent *event) co
 std::string xmrig::DiscordNotifier::rejectedMessage(const AcceptEvent *event) const
 {
     char line[512] = { 0 };
-    snprintf(line, sizeof(line) - 1, "Rejected block/share: diff %" PRIu64 ", elapsed %" PRIu64 " ms, error: %s",
+    snprintf(line, sizeof(line) - 1, "%s block/share: diff %" PRIu64 ", elapsed %" PRIu64 " ms, error: %s",
+             event->result.isOutcomeUnknown() ? "Submission outcome unknown for" : "Rejected",
              event->result.diff, event->result.elapsed, event->error() ? event->error() : "unknown");
 
     std::string out = line;
@@ -350,8 +351,8 @@ std::string xmrig::DiscordNotifier::summaryMessage(const AcceptEvent *event, uin
     }
 
     if (config.includeTotals) {
-        snprintf(line, sizeof(line) - 1, "\nProxy totals: accepted %" PRIu64 ", upstream rejected %" PRIu64 ", locally rejected %" PRIu64,
-                 m_stats->data().accepted, m_stats->data().rejected, m_stats->data().invalid);
+        snprintf(line, sizeof(line) - 1, "\nProxy totals: accepted %" PRIu64 ", upstream rejected %" PRIu64 ", outcome unknown %" PRIu64 ", locally rejected %" PRIu64,
+                 m_stats->data().accepted, m_stats->data().rejected, m_stats->data().unknown, m_stats->data().invalid);
         out += line;
     }
 

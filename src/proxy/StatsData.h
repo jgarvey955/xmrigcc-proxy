@@ -82,6 +82,7 @@ public:
         hashes       += other.hashes;
         invalid      += other.invalid;
         rejected     += other.rejected;
+        unknown      += other.unknown;
 
         for (size_t i = 0; i < 6; ++i) {
             hashrate[i] += other.hashrate[i];
@@ -103,6 +104,7 @@ public:
     uint64_t maxMiners      = 0;
     uint64_t miners         = 0;
     uint64_t rejected       = 0;
+    uint64_t unknown        = 0;
     uint64_t startTime      = 0;
     Upstreams upstreams;
 };

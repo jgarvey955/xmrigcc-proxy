@@ -170,5 +170,9 @@ void xmrig::ExtraNonceSplitter::submit(SubmitEvent *event)
         return;
     }
 
+    if (!m_upstream) {
+        return event->setError(Error::BadGateway);
+    }
+
     m_upstream->submit(event);
 }

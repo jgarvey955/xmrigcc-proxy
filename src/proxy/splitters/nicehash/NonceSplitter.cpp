@@ -206,5 +206,10 @@ void xmrig::NonceSplitter::submit(SubmitEvent *event)
         return;
     }
 
-    m_upstreams[event->miner()->mapperId()]->submit(event);
+    const size_t index = static_cast<size_t>(event->miner()->mapperId());
+    if (index >= m_upstreams.size() || !m_upstreams[index]) {
+        return event->setError(Error::BadGateway);
+    }
+
+    m_upstreams[index]->submit(event);
 }

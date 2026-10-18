@@ -244,8 +244,10 @@ void xmrig::SimpleSplitter::submit(SubmitEvent *event)
         return;
     }
 
-    SimpleMapper *mapper = m_upstreams[event->miner()->mapperId()];
-    if (mapper) {
-        mapper->submit(event);
+    const auto it = m_upstreams.find(static_cast<uint64_t>(event->miner()->mapperId()));
+    if (it == m_upstreams.end() || !it->second) {
+        return event->setError(Error::BadGateway);
     }
+
+    it->second->submit(event);
 }

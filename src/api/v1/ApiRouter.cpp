@@ -256,6 +256,7 @@ void xmrig::ApiRouter::getResults(rapidjson::Value &reply, rapidjson::Document &
 
     results.AddMember("accepted",      stats.accepted, allocator);
     results.AddMember("rejected",      stats.rejected, allocator);
+    results.AddMember("unknown",       stats.unknown, allocator);
     results.AddMember("invalid",       stats.invalid, allocator);
     results.AddMember("expired",       stats.expired, allocator);
     results.AddMember("avg_time",      stats.avgTime(), allocator);

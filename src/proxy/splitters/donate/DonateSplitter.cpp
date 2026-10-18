@@ -139,8 +139,10 @@ void xmrig::DonateSplitter::submit(SubmitEvent *event)
         return;
     }
 
-    DonateMapper *mapper = m_mappers[static_cast<size_t>(event->miner()->mapperId())];
-    if (mapper) {
-        mapper->submit(event);
+    const size_t index = static_cast<size_t>(event->miner()->mapperId());
+    if (index >= m_mappers.size() || !m_mappers[index]) {
+        return event->setError(Error::BadGateway);
     }
+
+    m_mappers[index]->submit(event);
 }

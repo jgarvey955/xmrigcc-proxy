@@ -142,9 +142,15 @@ int64_t xmrig::Client::send(const rapidjson::Value &obj, Callback callback)
 {
     assert(obj["id"] == sequence());
 
-    m_callbacks.insert({ sequence(), std::move(callback) });
+    const int64_t id = sequence();
+    m_callbacks.insert({ id, std::move(callback) });
 
-    return send(obj);
+    const int64_t result = send(obj);
+    if (result < 0) {
+        m_callbacks.erase(id);
+    }
+
+    return result;
 }
 
 
@@ -254,7 +260,13 @@ int64_t xmrig::Client::submit(const JobResult &result)
     m_results[m_sequence] = SubmitResult(m_sequence, result.diff, result.actualDiff(), 0, result.backend, result.height, result.algorithm, m_pool.coin());
 #   endif
 
-    return send(doc);
+    const int64_t id = m_sequence;
+    const int64_t rc = send(doc);
+    if (rc < 0) {
+        m_results.erase(id);
+    }
+
+    return rc;
 }
 
 
@@ -569,7 +581,6 @@ int64_t xmrig::Client::send(size_t size)
     }
 
     m_expire = Chrono::steadyMSecs() + kResponseTimeout;
-    startTimeout();
     return m_sequence++;
 }
 
@@ -635,7 +646,8 @@ bool xmrig::Client::parseLogin(const rapidjson::Value &result, int *code)
 void xmrig::Client::login()
 {
     using namespace rapidjson;
-    m_results.clear();
+    failPendingSubmissions("upstream reconnected; share acceptance unknown");
+    m_callbacks.clear();
 
     Document doc(kObjectType);
     auto &allocator = doc.GetAllocator();
@@ -677,6 +689,8 @@ void xmrig::Client::onClose()
 
 void xmrig::Client::parse(char *line, size_t len)
 {
+    startTimeout();
+
     LOG_DEBUG("[%s] received (%d bytes): \"%.*s\"", url(), len, static_cast<int>(len), line);
 
     if (len < 22 || line[0] != '{') {
@@ -826,7 +840,7 @@ void xmrig::Client::parseResponse(int64_t id, const rapidjson::Value &result, co
     }
 
     if (error.IsObject()) {
-        const char *message = error["message"].GetString();
+        const char *message = Json::getString(error, "message", "upstream returned a malformed error");
 
         if (!handleSubmitResponse(id, message) && !isQuiet()) {
             LOG_ERR("%s " RED("error: ") RED_BOLD("\"%s\"") RED(", code: ") RED_BOLD("%d"), tag(), message, Json::getInt(error, "code"));
@@ -871,6 +885,8 @@ void xmrig::Client::parseResponse(int64_t id, const rapidjson::Value &result, co
 void xmrig::Client::ping()
 {
     send(snprintf(m_sendBuf.data(), m_sendBuf.size(), "{\"id\":%" PRId64 ",\"jsonrpc\":\"2.0\",\"method\":\"keepalived\",\"params\":{\"id\":\"%s\"}}\n", m_sequence, m_rpcId.data()));
+
+    m_keepAlive = 0;
 }
 
 
@@ -933,6 +949,7 @@ void xmrig::Client::reconnect()
     }
 
     m_keepAlive = 0;
+    failPendingSubmissions("upstream connection lost; share acceptance unknown");
 
     if (m_failures == -1) {
         return m_listener->onClose(this, -1);

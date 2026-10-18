@@ -277,9 +277,9 @@ void xmrig::Proxy::gc()
 
 void xmrig::Proxy::print()
 {
-    LOG_INFO("%s \x1B[01;36m%03.2f kH/s\x1B[0m, shares: \x1B[01;37m%" PRIu64 "\x1B[0m/%s%" PRIu64 "\x1B[0m +%" PRIu64 ", upstreams: \x1B[01;37m%" PRIu64 "\x1B[0m, miners: \x1B[01;37m%" PRIu64 "\x1B[0m (max \x1B[01;37m%" PRIu64 "\x1B[0m) +%u/-%u",
+    LOG_INFO("%s \x1B[01;36m%03.2f kH/s\x1B[0m, shares: \x1B[01;37m%" PRIu64 "\x1B[0m/%s%" PRIu64 "\x1B[0m ?%" PRIu64 " +%" PRIu64 ", upstreams: \x1B[01;37m%" PRIu64 "\x1B[0m, miners: \x1B[01;37m%" PRIu64 "\x1B[0m (max \x1B[01;37m%" PRIu64 "\x1B[0m) +%u/-%u",
              Tags::proxy(), m_stats->hashrate(m_controller->config()->printTime()), m_stats->data().accepted, (m_stats->data().rejected ? "\x1B[0;31m" : "\x1B[1;37m"), m_stats->data().rejected,
-             Counters::accepted, m_splitter->upstreams().active, Counters::miners(), Counters::maxMiners(), Counters::added(), Counters::removed());
+             m_stats->data().unknown, Counters::accepted, m_splitter->upstreams().active, Counters::miners(), Counters::maxMiners(), Counters::added(), Counters::removed());
 
     Counters::reset();
 }
