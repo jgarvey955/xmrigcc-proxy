@@ -100,7 +100,7 @@ static inline const std::string &usage()
     u += "      --discord-avatar-url=URL  override Discord webhook avatar URL\n";
     u += "      --discord-mention=TEXT    prefix messages with a mention or text\n";
     u += "      --discord-no-worker       omit worker name from Discord messages\n";
-    u += "      --discord-no-totals       omit accepted/rejected/invalid totals from Discord messages\n";
+    u += "      --discord-no-totals       omit proxy-wide accepted/upstream/local-rejection totals\n";
     u += "      --discord-log-errors      log Discord webhook HTTP errors locally\n";
 
 #   ifdef XMRIG_FEATURE_HTTP

@@ -124,6 +124,11 @@ share, so a subsequent job change cannot change the notification's algorithm.
 Batch summaries show `Last coin` and `Last algorithm` for the last accepted
 share; the totals can span multiple algorithms or coins.
 
+The `Proxy totals` line is cumulative for the whole proxy, not for the worker
+named in that notification. `Upstream rejected` means a submission reached the
+pool or daemon and was rejected there; `locally rejected` means the proxy did
+not forward it (for example, because its job ID was stale).
+
 Set `coin` in each pool entry (for example, `"coin": "SAL"` for Salvium or
 `"coin": "XMR"` for Monero). Daemon mining also uses the coin detected from the
 wallet, and `rx/zecnero` / `rx/zecnero2` identify Zecnero automatically. Other

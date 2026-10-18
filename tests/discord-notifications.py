@@ -80,7 +80,7 @@ def run_case(binary, root, mode, coin, batch=False):
                   'donate-level': 0, 'pools': [upstream], 'http': {'enabled': False},
                   'tls': {'enabled': False}, 'discord': {
                       'enabled': True, 'webhook': f'http://127.0.0.1:{webhook_port}/test',
-                      'notify-rejected': True, 'include-worker': False, 'include-totals': False,
+                      'notify-rejected': True, 'include-worker': False, 'include-totals': batch,
                       'verbose': False, 'accepted-interval': 1 if batch else 0}}
         if mode == 'miner':
             config.update({'dmi': False, 'cc-client': {'enabled': False},
@@ -159,10 +159,13 @@ def run_case(binary, root, mode, coin, batch=False):
             if batch:
                 assert 'accepted block/share events in' in accepted, accepted
                 assert f'\nLast coin: {expected_coin}\nLast algorithm: rx/wow' in accepted, accepted
+                assert '\nProxy totals: accepted ' in accepted, accepted
+                assert ', upstream rejected ' in accepted and ', locally rejected ' in accepted, accepted
             else:
                 assert accepted.startswith('Accepted block/share:'), accepted
                 assert f'\nCoin: {expected_coin}\nAlgorithm: rx/0' in accepted, accepted
-            assert 'Worker:' not in accepted and 'Totals:' not in accepted, accepted
+                assert 'Proxy totals:' not in accepted, accepted
+            assert 'Worker:' not in accepted, accepted
             (root / (label + '-message.txt')).write_text(accepted)
             print(f'PASS {label}: accepted/rejected metadata, job change before reply, verbosity off', flush=True)
         finally:

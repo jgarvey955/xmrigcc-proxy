@@ -134,7 +134,7 @@ bool xmrig::DaemonClient::isTLS() const
 int64_t xmrig::DaemonClient::submit(const JobResult &result)
 {
     if (result.jobId != m_currentJobId) {
-        return -1;
+        return SubmitStale;
     }
 
     char *data = m_blocktemplateStr.data();
@@ -187,7 +187,11 @@ int64_t xmrig::DaemonClient::submit(const JobResult &result)
     std::map<std::string, std::string> headers;
     headers.insert({"X-Hash-Difficulty", std::to_string(result.actualDiff())});
 
-    return rpcSend(doc, headers);
+    // A block candidate must not be dropped just because a periodic daemon
+    // poll is in flight. Fetch requests are independent and responses carry
+    // their request type and RPC id, so submitblock can safely overlap the
+    // serialized control/poll request.
+    return rpcSend(doc, headers, true);
 }
 
 
@@ -257,10 +261,19 @@ void xmrig::DaemonClient::setPool(const Pool &pool)
 
 void xmrig::DaemonClient::onHttpData(const HttpData &data)
 {
-    m_httpActive = false;
-    m_httpStarted = 0;
+    const bool isSubmit = data.userType == SubmitRequest;
+
+    if (!isSubmit) {
+        m_httpActive = false;
+        m_httpStarted = 0;
+    }
 
     if (data.status != 200) {
+        if (isSubmit) {
+            const std::string message = "daemon RPC HTTP " + std::to_string(data.status);
+            handleSubmitResponse(static_cast<int64_t>(data.rpcId), message.c_str());
+        }
+
         if (!isQuiet() && data.status == 401) {
             if (m_pool.rpcLogin().isEmpty()) {
                 LOG_ERR("%s [%s:%d] " RED("daemon RPC authentication required (HTTP 401); set rpc-login in this pool entry."),
@@ -591,9 +604,9 @@ int64_t xmrig::DaemonClient::getBlockTemplate()
 }
 
 
-int64_t xmrig::DaemonClient::rpcSend(const rapidjson::Document &doc, const std::map<std::string, std::string> &headers)
+int64_t xmrig::DaemonClient::rpcSend(const rapidjson::Document &doc, const std::map<std::string, std::string> &headers, bool submit)
 {
-    if (m_httpActive) {
+    if (m_httpActive && !submit) {
         return -1;
     }
 
@@ -605,11 +618,16 @@ int64_t xmrig::DaemonClient::rpcSend(const rapidjson::Document &doc, const std::
         req.headers.insert(header);
     }
 
-    m_httpActive = true;
-    m_httpStarted = Chrono::steadyMSecs();
-    fetch(tag(), std::move(req), m_httpListener);
+    const int64_t id = m_sequence++;
 
-    return m_sequence++;
+    if (!submit) {
+        m_httpActive = true;
+        m_httpStarted = Chrono::steadyMSecs();
+    }
+
+    fetch(tag(), std::move(req), m_httpListener, submit ? SubmitRequest : ControlRequest, static_cast<uint64_t>(id));
+
+    return id;
 }
 
 

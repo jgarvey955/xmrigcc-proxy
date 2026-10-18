@@ -8,6 +8,7 @@ temporary data, and unused loopback ports. Only child processes are stopped.
 import argparse
 import contextlib
 import hashlib
+import http.server
 import json
 import os
 from pathlib import Path
@@ -136,6 +137,82 @@ def daemon_pool(daemon, login=LOGIN):
     if login is not None:
         pool["rpc-login"] = login
     return pool
+
+
+@contextlib.contextmanager
+def delayed_poll_daemon(template):
+    """Serve a valid template while holding one height poll open."""
+    class State:
+        tls = False
+        fingerprint = None
+
+        def __init__(self):
+            self.arm = threading.Event()
+            self.poll_inflight = threading.Event()
+            self.release = threading.Event()
+            self.submit_received = threading.Event()
+            self.delayed = False
+            self.lock = threading.Lock()
+
+    state = State()
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *_):
+            pass
+
+        def reply(self, value):
+            body = json.dumps(value).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Connection", "close")
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            if self.path != "/getheight":
+                self.send_error(404)
+                return
+
+            should_delay = False
+            with state.lock:
+                if state.arm.is_set() and not state.delayed:
+                    state.delayed = True
+                    should_delay = True
+
+            if should_delay:
+                state.poll_inflight.set()
+                state.release.wait(15)
+
+            self.reply({"height": template["height"],
+                        "hash": template.get("prev_hash", "00" * 32)})
+
+        def do_POST(self):
+            request = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+            method = request.get("method")
+            if method == "getblocktemplate":
+                result = template
+            elif method == "submitblock":
+                state.submit_received.set()
+                result = {"status": "OK"}
+            else:
+                self.send_error(404)
+                return
+
+            self.reply({"jsonrpc": "2.0", "id": request["id"], "result": result})
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    server.daemon_threads = True
+    state.port = server.server_address[1]
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield state
+    finally:
+        state.release.set()
+        server.shutdown()
+        server.server_close()
+        thread.join()
 
 
 @contextlib.contextmanager
@@ -278,6 +355,37 @@ def run(args, root):
                     break
             assert LOGIN not in log.read_text()
             print("PASS: authenticated height polling detects an independently generated block", flush=True)
+
+        with delayed_poll_daemon(template) as delayed:
+            with proxy_process(args.proxy, root / "submit-during-poll",
+                               [daemon_pool(delayed, None)]) as (stream, _):
+                login = receive(stream)["result"]
+                job = login["job"]
+                delayed.arm.set()
+                wait_for(delayed.poll_inflight.is_set)
+
+                blob = bytes.fromhex(job["blob"])
+                offset = 0
+                for _ in range(3):
+                    while blob[offset] & 0x80:
+                        offset += 1
+                    offset += 1
+                nonce = blob[offset + 32:offset + 36].hex()
+                stream.write((json.dumps({"id": 2, "method": "submit", "params": {
+                    "id": login["id"], "job_id": job["job_id"], "nonce": nonce,
+                    "result": "00" * 24 + "0100000000000000", "algo": "rx/0"}}) + "\n").encode())
+                stream.flush()
+
+                wait_for(delayed.submit_received.is_set)
+                while True:
+                    reply = receive(stream)
+                    if reply.get("id") == 2:
+                        assert not reply.get("error"), reply
+                        assert reply["result"]["status"] == "OK"
+                        break
+
+                delayed.release.set()
+                print("PASS: submitblock is sent while a daemon height poll is in flight", flush=True)
 
         with proxy_process(args.proxy, root / "cli-login", [daemon_pool(daemon, None)], LOGIN) as (stream, _):
             assert receive(stream)["result"]["job"]["height"] == expected_height

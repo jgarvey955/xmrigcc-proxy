@@ -298,7 +298,7 @@ std::string xmrig::DiscordNotifier::acceptedMessage(const AcceptEvent *event) co
     }
 
     if (config.includeTotals) {
-        snprintf(line, sizeof(line) - 1, "\nTotals: accepted %" PRIu64 ", rejected %" PRIu64 ", invalid %" PRIu64,
+        snprintf(line, sizeof(line) - 1, "\nProxy totals: accepted %" PRIu64 ", upstream rejected %" PRIu64 ", locally rejected %" PRIu64,
                  m_stats->data().accepted, m_stats->data().rejected, m_stats->data().invalid);
         out += line;
     }
@@ -350,7 +350,7 @@ std::string xmrig::DiscordNotifier::summaryMessage(const AcceptEvent *event, uin
     }
 
     if (config.includeTotals) {
-        snprintf(line, sizeof(line) - 1, "\nTotals: accepted %" PRIu64 ", rejected %" PRIu64 ", invalid %" PRIu64,
+        snprintf(line, sizeof(line) - 1, "\nProxy totals: accepted %" PRIu64 ", upstream rejected %" PRIu64 ", locally rejected %" PRIu64,
                  m_stats->data().accepted, m_stats->data().rejected, m_stats->data().invalid);
         out += line;
     }
