@@ -69,7 +69,9 @@ bool xmrig::Server::bind()
 
     uv_tcp_bind(m_server, reinterpret_cast<const sockaddr*>(&m_addr), m_version == 6 ? UV_TCP_IPV6ONLY : 0);
 
-    const int r = uv_listen(reinterpret_cast<uv_stream_t*>(m_server), 511, Server::onConnection);
+    // libuv and the kernel clamp this to their supported maximum. A larger
+    // queue absorbs connection bursts without creating worker threads.
+    const int r = uv_listen(reinterpret_cast<uv_stream_t*>(m_server), 4096, Server::onConnection);
     if (r) {
         LOG_ERR("[%s:%u] listen error: \"%s\"", m_host.data(), m_port, uv_strerror(r));
         return false;

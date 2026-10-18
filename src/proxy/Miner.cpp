@@ -52,6 +52,7 @@
 #include <cinttypes>
 #include <cstdio>
 #include <cstring>
+#include <vector>
 
 
 namespace xmrig {
@@ -59,6 +60,23 @@ namespace xmrig {
     char Miner::m_sendBuf[16384] = { 0 };
     Storage<Miner> Miner::m_storage;
 } // namespace xmrig
+
+
+struct xmrig::Miner::WriteRequest
+{
+    WriteRequest(Miner *owner, const char *data, size_t size) :
+        miner(owner),
+        bytes(data, data + size)
+    {
+        request.data = this;
+        buffer = uv_buf_init(bytes.data(), static_cast<unsigned int>(bytes.size()));
+    }
+
+    uv_write_t request{};
+    uv_buf_t buffer{};
+    Miner *miner;
+    std::vector<char> bytes;
+};
 
 
 xmrig::Miner::Miner(const TlsContext *ctx, uint16_t port, bool strictTls) :
@@ -105,6 +123,9 @@ bool xmrig::Miner::accept(uv_stream_t *server)
         LOG_ERR("[miner] accept error: \"%s\"", uv_strerror(rt));
         return false;
     }
+
+    uv_tcp_nodelay(m_socket, 1);
+    uv_tcp_keepalive(m_socket, 1, 60);
 
     sockaddr_storage addr = {};
     int size = sizeof(addr);
@@ -317,21 +338,40 @@ bool xmrig::Miner::send(BIO *bio)
         return false;
     }
 
-    const int rc = uv_try_write(reinterpret_cast<uv_stream_t*>(m_socket), &buf, 1);
+    const bool written = write(buf.base, buf.len);
     (void) BIO_reset(bio);
 
-    if (rc < 0) {
-        shutdown(true);
-
-        return false;
-    }
-
-    m_tx += buf.len;
-
-    return true;
+    return written;
 #   else
     return false;
 #   endif
+}
+
+
+bool xmrig::Miner::write(const char *data, size_t size)
+{
+    if (!data || size == 0 || !isWritable()) {
+        return false;
+    }
+
+    if (size > kMaxPendingWriteBytes || m_pendingWriteBytes > (kMaxPendingWriteBytes - size)) {
+        LOG_ERR("[%s] closing slow miner: pending output exceeds %zu bytes", m_ip, kMaxPendingWriteBytes);
+        shutdown(true);
+        return false;
+    }
+
+    auto *request = new WriteRequest(this, data, size);
+    const int rc = uv_write(&request->request, reinterpret_cast<uv_stream_t *>(m_socket),
+                            &request->buffer, 1, Miner::onWrite);
+    if (rc < 0) {
+        delete request;
+        shutdown(true);
+        return false;
+    }
+
+    m_pendingWriteBytes += size;
+    m_tx += size;
+    return true;
 }
 
 
@@ -436,23 +476,15 @@ void xmrig::Miner::send(int size)
         return;
     }
 
-    int rc = -1;
 #   ifdef XMRIG_FEATURE_TLS
     if (isTLS()) {
-        rc = m_tls->send(m_sendBuf, size) ? 0 : -1;
+        if (!m_tls->send(m_sendBuf, size)) {
+            shutdown(true);
+        }
+        return;
     }
-    else
 #   endif
-    {
-        uv_buf_t buf = uv_buf_init(m_sendBuf, (unsigned int) size);
-        rc = uv_try_write(reinterpret_cast<uv_stream_t*>(m_socket), &buf, 1);
-    }
-
-    if (rc < 0) {
-        return shutdown(true);
-    }
-
-    m_tx += size;
+    write(m_sendBuf, static_cast<size_t>(size));
 }
 
 
@@ -626,4 +658,25 @@ void xmrig::Miner::onTimeout(uv_timer_t *handle)
     }
 
     miner->shutdown(true);
+}
+
+
+void xmrig::Miner::onWrite(uv_write_t *req, int status)
+{
+    auto *request = static_cast<WriteRequest *>(req->data);
+    Miner *miner = request->miner;
+    const size_t size = request->bytes.size();
+    delete request;
+
+    if (!miner) {
+        return;
+    }
+
+    miner->m_pendingWriteBytes = size > miner->m_pendingWriteBytes
+        ? 0
+        : miner->m_pendingWriteBytes - size;
+
+    if (status < 0 && status != UV_ECANCELED) {
+        miner->shutdown(true);
+    }
 }

@@ -1,3 +1,20 @@
+# 3.6.0
+* Updated llhttp to 9.4.3 and fmt to 12.2.0.
+* Replaced best-effort miner writes with bounded asynchronous writes that
+  preserve partial output under socket backpressure.
+* Enabled TCP keepalive and `TCP_NODELAY` on accepted miner sockets and raised
+  the connection backlog for burst handling.
+* Bounded and batched asynchronous file logging.
+* Pinned source and binary dependency archives with SHA-256 verification.
+
+# 3.5.1
+* Fixed daemon/RPC submission tracking so disconnects and invalid or mismatched
+  responses are counted as outcome unknown instead of rejected.
+* Added outcome-unknown totals to proxy statistics, share logs, the API, and
+  Discord notifications.
+* Hardened Stratum, self-select, Zecnero, and splitter error handling against
+  stale or missing upstream mappings.
+
 # 3.5.0
 * Synced with XMRigCC 3.5.0 and xmrig-proxy 6.26.0.
 * Added RandomX v2 commitment forwarding and FCMP++ solo-mining support.

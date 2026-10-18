@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
-project(xmrigcc-proxy)
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/version.cmake")
+xmrig_read_version(
+    "${CMAKE_CURRENT_LIST_DIR}/src/version.h"
+    "${CMAKE_CURRENT_LIST_DIR}/CHANGELOG.md"
+    XMRIGCC_VERSION)
+project(xmrigcc-proxy VERSION "${XMRIGCC_VERSION}")
 
 
 option(WITH_GOOGLE_BREAKPAD "Use Google Breakpad"     OFF)

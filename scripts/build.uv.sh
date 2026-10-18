@@ -13,9 +13,9 @@ download() {
     out="$2"
 
     if command -v curl >/dev/null 2>&1; then
-        curl -fL "$url" -o "$out"
+        curl -fL --retry 3 "$url" -o "$out"
     elif command -v wget >/dev/null 2>&1; then
-        wget "$url" -O "$out"
+        wget --tries=3 "$url" -O "$out"
     else
         printf '%s\n' "curl or wget is required to download libuv." >&2
         exit 1
@@ -30,8 +30,14 @@ jobs() {
     fi
 }
 
+verify_sha256() {
+    actual=$(sha256sum "$1" | awk '{print $1}')
+    [ "$actual" = "$2" ] || { printf 'SHA-256 mismatch for %s\n' "$1" >&2; exit 1; }
+}
+
 UV_VERSION="${UV_VERSION:-1.53.0}"
 UV_VERSION="${UV_VERSION#v}"
+UV_SHA256="${UV_SHA256:-cb0d6dd2128d5a95bd242c6cc982a24fe608fa93da57b6b4ec763b0018c53e64}"
 
 if [ -z "$UV_VERSION" ]; then
     printf '%s\n' "Unable to determine latest libuv release." >&2
@@ -40,6 +46,7 @@ fi
 
 printf 'Building libuv %s\n' "$UV_VERSION"
 download "https://dist.libuv.org/dist/v${UV_VERSION}/libuv-v${UV_VERSION}.tar.gz" "libuv-v${UV_VERSION}.tar.gz"
+verify_sha256 "libuv-v${UV_VERSION}.tar.gz" "$UV_SHA256"
 rm -rf "libuv-v${UV_VERSION}"
 tar -xzf "libuv-v${UV_VERSION}.tar.gz"
 

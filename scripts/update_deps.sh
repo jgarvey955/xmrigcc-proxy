@@ -1,6 +1,8 @@
 #!/bin/sh -e
 
 REPO="xmrig/xmrig-deps"
+DEPS_TAG="${XMRIG_DEPS_TAG:-v25.06.16}"
+DEPS_SHA256="${XMRIG_DEPS_SHA256:-8a7c06647f3625c1e3c78b70ea9faa70fddcceefbe2523e0a01046780939cd3d}"
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname "$0")" && pwd)"
 DEST_DIR="${DEST_DIR:-${SCRIPT_DIR}/deps}"
 PROFILE="${1:-}"
@@ -40,13 +42,18 @@ download() {
     out="$2"
 
     if command -v curl >/dev/null 2>&1; then
-        curl -fL "$url" -o "$out"
+        curl -fL --retry 3 "$url" -o "$out"
     elif command -v wget >/dev/null 2>&1; then
-        wget "$url" -O "$out"
+        wget --tries=3 "$url" -O "$out"
     else
         printf '%s\n' "curl or wget is required to download ${REPO}." >&2
         exit 1
     fi
+}
+
+verify_sha256() {
+    actual=$(sha256sum "$1" | awk '{print $1}')
+    [ "$actual" = "$2" ] || { printf 'SHA-256 mismatch for %s\n' "$1" >&2; exit 1; }
 }
 
 if [ -z "$PROFILE" ]; then
@@ -59,19 +66,10 @@ mkdir -p "$tmp_dir"
 trap 'rm -rf "$tmp_dir"' EXIT INT TERM
 
 archive="${tmp_dir}/xmrig-deps.tar.gz"
-release_json="${tmp_dir}/release.json"
-
-printf 'Downloading latest %s release...\n' "$REPO"
-download "https://api.github.com/repos/${REPO}/releases/latest" "$release_json"
-tag="$(sed -n 's/.*"tag_name": *"\([^"]*\)".*/\1/p' "$release_json" | head -n 1)"
-
-if [ -z "$tag" ]; then
-    printf 'Unable to determine latest %s release tag.\n' "$REPO" >&2
-    exit 1
-fi
-
-url="https://github.com/${REPO}/archive/refs/tags/${tag}.tar.gz"
+printf 'Downloading pinned %s release %s...\n' "$REPO" "$DEPS_TAG"
+url="https://github.com/${REPO}/archive/refs/tags/${DEPS_TAG}.tar.gz"
 download "$url" "$archive"
+verify_sha256 "$archive" "$DEPS_SHA256"
 
 mkdir -p "${tmp_dir}/src"
 tar -xzf "$archive" -C "${tmp_dir}/src"
@@ -79,7 +77,7 @@ root_dir="$(find "${tmp_dir}/src" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
 profile_dir="${root_dir}/${PROFILE}"
 
 if [ ! -d "$profile_dir" ]; then
-    printf 'Profile "%s" not found in latest %s release.\n' "$PROFILE" "$REPO" >&2
+    printf 'Profile "%s" not found in %s release %s.\n' "$PROFILE" "$REPO" "$DEPS_TAG" >&2
     printf 'Available profiles:\n' >&2
     find "$root_dir" -mindepth 2 -maxdepth 2 -type d | sed "s#${root_dir}/#  #" | sort >&2
     exit 1

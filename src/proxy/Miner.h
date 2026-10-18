@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <bitset>
+#include <cstddef>
 #include <uv.h>
 
 #include "3rdparty/rapidjson/fwd.h"
@@ -105,13 +106,16 @@ protected:
 
 private:
     class Tls;
+    struct WriteRequest;
 
     constexpr static size_t kLoginTimeout  = 10 * 1000;
     constexpr static size_t kSocketTimeout = 60 * 10 * 1000;
+    constexpr static size_t kMaxPendingWriteBytes = 1024 * 1024;
 
     bool isWritable() const;
     bool parseRequest(int64_t id, const char *method, const rapidjson::Value &params);
     bool send(BIO *bio);
+    bool write(const char *data, size_t size);
     void heartbeat();
     void parse(char *line, size_t len);
     void read(ssize_t nread, const uv_buf_t *buf);
@@ -124,6 +128,7 @@ private:
 
     static void onRead(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf);
     static void onTimeout(uv_timer_t *handle);
+    static void onWrite(uv_write_t *req, int status);
 
     inline bool isTLS() const { return m_tls != nullptr; }
 
@@ -155,6 +160,7 @@ private:
     uint64_t m_rx           = 0;
     uint64_t m_timestamp;
     uint64_t m_tx           = 0;
+    size_t m_pendingWriteBytes = 0;
     uint8_t m_fixedByte     = 0;
     int64_t m_extraNonce    = -1;
     uintptr_t m_key;

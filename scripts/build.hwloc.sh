@@ -13,9 +13,9 @@ download() {
     out="$2"
 
     if command -v curl >/dev/null 2>&1; then
-        curl -fL "$url" -o "$out"
+        curl -fL --retry 3 "$url" -o "$out"
     elif command -v wget >/dev/null 2>&1; then
-        wget "$url" -O "$out"
+        wget --tries=3 "$url" -O "$out"
     else
         printf '%s\n' "curl or wget is required to download hwloc." >&2
         exit 1
@@ -30,8 +30,14 @@ jobs() {
     fi
 }
 
+verify_sha256() {
+    actual=$(sha256sum "$1" | awk '{print $1}')
+    [ "$actual" = "$2" ] || { printf 'SHA-256 mismatch for %s\n' "$1" >&2; exit 1; }
+}
+
 HWLOC_TAG="${HWLOC_VERSION:-2.15.0}"
 HWLOC_VERSION="${HWLOC_TAG#hwloc-}"
+HWLOC_SHA256="${HWLOC_SHA256:-f54bbdfc9f8015308c2e7bbab3e7789e47436a4a016689e5749a0c35d6877619}"
 HWLOC_SERIES="${HWLOC_VERSION%.*}"
 HWLOC_URL="https://download.open-mpi.org/release/hwloc/v${HWLOC_SERIES}/hwloc-${HWLOC_VERSION}.tar.gz"
 
@@ -42,6 +48,7 @@ fi
 
 printf 'Building hwloc %s\n' "$HWLOC_VERSION"
 download "$HWLOC_URL" "hwloc-${HWLOC_VERSION}.tar.gz"
+verify_sha256 "hwloc-${HWLOC_VERSION}.tar.gz" "$HWLOC_SHA256"
 rm -rf "hwloc-${HWLOC_VERSION}"
 tar -xzf "hwloc-${HWLOC_VERSION}.tar.gz"
 
