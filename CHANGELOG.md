@@ -1,3 +1,7 @@
+# 3.6.4
+* Synchronized the proxy release version with XMRigCC 3.6.4. The daemon
+  terminal lifecycle fix is client-only and requires no proxy code changes.
+
 # 3.6.0
 * Updated llhttp to 9.4.3 and fmt to 12.2.0.
 * Replaced best-effort miner writes with bounded asynchronous writes that
