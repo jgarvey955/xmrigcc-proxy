@@ -1,3 +1,7 @@
+# 3.6.5
+* Synchronized the proxy release version with XMRigCC 3.6.5. The daemon
+  shutdown fix is client-only and requires no proxy code changes.
+
 # 3.6.4
 * Synchronized the proxy release version with XMRigCC 3.6.4. The daemon
   terminal lifecycle fix is client-only and requires no proxy code changes.
