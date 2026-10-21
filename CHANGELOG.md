@@ -1,3 +1,8 @@
+# 3.6.6
+* Synchronized the proxy release version with XMRigCC 3.6.6. The RandomX
+  hardware-AES dispatch correction is miner-only and requires no proxy code
+  changes.
+
 # 3.6.5
 * Synchronized the proxy release version with XMRigCC 3.6.5. The daemon
   shutdown fix is client-only and requires no proxy code changes.
