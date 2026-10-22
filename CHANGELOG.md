@@ -1,3 +1,11 @@
+# 3.6.7
+* Fixed Zecnero daemon polling treating the rolling block-header timestamp as
+  new work and broadcasting a replacement job to every miner once per second.
+* Restored `daemon-job-timeout` coalescing for timestamp-only template updates
+  while forwarding real parent, root, target, and transaction changes at once.
+* Added an end-to-end regression test with a daemon that advances `curtime` on
+  every poll.
+
 # 3.6.6
 * Synchronized the proxy release version with XMRigCC 3.6.6. The RandomX
   hardware-AES dispatch correction is miner-only and requires no proxy code

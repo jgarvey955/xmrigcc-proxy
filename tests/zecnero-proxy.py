@@ -6,6 +6,7 @@ import copy
 import http.server
 import json
 import pathlib
+import select
 import signal
 import socket
 import socketserver
@@ -164,6 +165,8 @@ def rpc_tests(binary, root, mode):
                 if state['sync']:
                     result['error'] = {'code': -10, 'message': 'node syncing'}
                 else:
+                    if state.get('roll_time'):
+                        state['template']['curtime'] += 1
                     result['result'] = copy.deepcopy(state['template'])
             else:
                 assert data['method'] == 'submitblock'
@@ -196,6 +199,16 @@ def rpc_tests(binary, root, mode):
             assert int.from_bytes(bytes.fromhex(a.job['target']), 'little') == int(template['target'][:16], 16)
             assert a.job['blob'] != b.job['blob'], 'Workers received overlapping work'
             assert ('nicehash' in a.extensions) == (mode == 'nicehash')
+
+            # Real daemons advance curtime on every poll. That alone must not
+            # bypass daemon-job-timeout and broadcast a new job every second.
+            state['roll_time'] = True
+            requests = state['requests']
+            wait_for(lambda: state['requests'] >= requests + 3, 5)
+            readable, _, _ = select.select([a.sock, b.sock], [], [], 0.2)
+            assert not readable, 'Timestamp-only daemon polls were forwarded as new jobs'
+            state['roll_time'] = False
+
             assert a.submit(result='gg' + '00' * 31).get('error'), 'Malformed hash accepted'
             assert a.submit(nonce='zz000000').get('error'), 'Malformed nonce accepted'
             above_target = (int(template['target'], 16) + 1).to_bytes(32, 'little').hex()
