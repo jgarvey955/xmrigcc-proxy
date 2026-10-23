@@ -1,3 +1,8 @@
+# 3.7.1
+* Synchronized the proxy patch version with the miners' direct upstream
+  `v2x/rx-zecnero2` alignment. The proxy does not execute RandomX; its existing
+  v2 commitment validation and forwarding path is unchanged.
+
 # 3.7.0
 * Added `rx/zecnero2` and the official `rx/zmr2` alias for release-compatible
   Zecnero RandomX v2 mining.
