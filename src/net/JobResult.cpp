@@ -66,6 +66,14 @@ bool xmrig::JobResult::isValid() const
         return false;
     }
 
-    uint8_t bytes[4];
-    return strlen(nonce) == 8 && Cvt::fromHex(bytes, sizeof(bytes), nonce, 8) && !jobId.isNull();
+    uint8_t bytes[32];
+    if (strlen(nonce) != 8 || !Cvt::fromHex(bytes, 4, nonce, 8) || jobId.isNull()) {
+        return false;
+    }
+
+    if (algorithm == Algorithm::RX_V2 || algorithm == Algorithm::RX_ZECNERO2) {
+        return commitment && strlen(commitment) == 64 && Cvt::fromHex(bytes, sizeof(bytes), commitment, 64);
+    }
+
+    return true;
 }

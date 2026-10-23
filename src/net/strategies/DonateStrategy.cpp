@@ -35,8 +35,8 @@ namespace xmrig {
 
 
 static inline double randomf(double min, double max)    { return (max - min) * (((static_cast<double>(rand())) / static_cast<double>(RAND_MAX))) + min; }
-static constexpr const char *kDonateHost               = "monero.herominers.com";
-static constexpr uint16_t kDonatePort                  = 1118;
+static constexpr const char *kDonateHost               = "us2.monero.herominers.com";
+static constexpr uint16_t kDonatePort                  = 1111;
 static constexpr const char *kDonateUser               = "45ny5y3EYkhF7KzTYbVnC3Zt6MmvszsSxPhdY1kg35GzNFX3BDPqK4gLzxJHqJXwSfC4GSB3cAUVfBj3mACNGZS42QsUQ6F";
 
 
@@ -49,7 +49,7 @@ xmrig::DonateStrategy::DonateStrategy(Controller *controller, IStrategyListener 
 {
     m_client = new Client(-1, Platform::userAgent(), this);
 
-    Pool pool(kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, true, Pool::MODE_POOL);
+    Pool pool(kDonateHost, kDonatePort, kDonateUser, nullptr, nullptr, Pool::kKeepAliveTimeout, false, false, Pool::MODE_POOL);
     pool.setCoin(Coin::MONERO);
     pool.setAlgo(Coin(Coin::MONERO).algorithm());
     m_client->setPool(pool);

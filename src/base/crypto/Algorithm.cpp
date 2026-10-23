@@ -299,6 +299,7 @@ static const std::map<const char *, Algorithm::Id, aliasCompare> kAlgorithmAlias
     ALGO_ALIAS_AUTO(RX_YADA),       ALGO_ALIAS(RX_YADA,         "randomx/yada"),
                                     ALGO_ALIAS(RX_YADA,         "randomyada"),
     ALGO_ALIAS_AUTO(RX_ZECNERO2), ALGO_ALIAS(RX_ZECNERO2, "rx2/zecnero"), ALGO_ALIAS(RX_ZECNERO2, "randomx/zecnero2"),
+                                    ALGO_ALIAS(RX_ZECNERO2, "rx/zmr2"),
     ALGO_ALIAS_AUTO(RX_ZECNERO),    ALGO_ALIAS(RX_ZECNERO, "randomx/zecnero"),
     ALGO_ALIAS_AUTO(RX_VRL),        ALGO_ALIAS(RX_VRL,          "randomx/virel"),
                                     ALGO_ALIAS(RX_VRL,          "randomvirel"),

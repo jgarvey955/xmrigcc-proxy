@@ -22,15 +22,15 @@
 #define APP_ID        "xmrigcc-proxy"
 #define APP_NAME      "xmrigcc-proxy"
 #define APP_DESC      "XMRigCC Stratum proxy"
-#define APP_VERSION   "3.6.7"
+#define APP_VERSION   "3.7.0"
 #define APP_DOMAIN    ""
 #define APP_SITE      ""
 #define APP_COPYRIGHT ""
 #define APP_KIND      "proxy"
 
 #define APP_VER_MAJOR  3
-#define APP_VER_MINOR  6
-#define APP_VER_PATCH  7
+#define APP_VER_MINOR  7
+#define APP_VER_PATCH  0
 
 #ifdef _MSC_VER
 #   if (_MSC_VER >= 1930)

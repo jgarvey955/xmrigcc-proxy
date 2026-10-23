@@ -37,8 +37,9 @@
 
 namespace {
 
-static constexpr const char *kDonateHost = "monero.herominers.com";
-static constexpr uint16_t kDonatePort    = 1118;
+static constexpr const char *kDonateHost       = "us2.monero.herominers.com";
+static constexpr const char *kDonateBackupHost = "us.monero.herominers.com";
+static constexpr uint16_t kDonatePort          = 1111;
 static constexpr const char *kDonateUser = "45ny5y3EYkhF7KzTYbVnC3Zt6MmvszsSxPhdY1kg35GzNFX3BDPqK4gLzxJHqJXwSfC4GSB3cAUVfBj3mACNGZS42QsUQ6F";
 
 } // namespace
@@ -87,12 +88,13 @@ void xmrig::DonateSplitter::login(LoginEvent *event)
     }
 
 #   ifdef NDEBUG
-    if (!url.contains(kDonateHost)) {
+    if (!url.contains(kDonateHost) && !url.contains(kDonateBackupHost)) {
         return reject(event);
     }
 #   endif
 
-    Pool pool(kDonateHost, kDonatePort, kDonateUser, "proxy", nullptr, Pool::kKeepAliveTimeout, false, true, Pool::MODE_POOL);
+    const char *host = url.contains(kDonateBackupHost) ? kDonateBackupHost : kDonateHost;
+    Pool pool(host, kDonatePort, kDonateUser, "proxy", nullptr, Pool::kKeepAliveTimeout, false, false, Pool::MODE_POOL);
     pool.setCoin(Coin::MONERO);
     pool.setAlgo(Coin(Coin::MONERO).algorithm());
     pool.setRigId(miner->rigId());

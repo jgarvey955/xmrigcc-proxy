@@ -3,6 +3,7 @@
 import argparse
 import base64
 import copy
+import hashlib
 import http.server
 import json
 import pathlib
@@ -115,7 +116,7 @@ class Worker:
             self.receive()
         return self.job
 
-    def submit(self, result='01' + '00' * 31, job=None, nonce=None, algo=True):
+    def submit(self, result='01' + '00' * 31, job=None, nonce=None, algo=True, commitment=None):
         job = job or self.job
         raw = bytes.fromhex(job['blob'])
         nonce = nonce or (b'\x01\x00\x00' + raw[111:112]).hex()
@@ -123,6 +124,8 @@ class Worker:
         params = {'id': self.rpc_id, 'job_id': job['job_id'], 'nonce': nonce, 'result': result}
         if algo:
             params['algo'] = job['algo']
+        if commitment is not None:
+            params['commitment'] = commitment
         self.send({'id': self.sequence, 'method': 'submit', 'params': params})
         return self.response(self.sequence)
 
@@ -251,7 +254,7 @@ def rpc_tests(binary, root, mode):
             state['template']['height'] = 2
             a.next_job(previous)
             assert a.job['algo'] == 'rx/zecnero2'
-            assert not a.submit().get('error')
+            assert not a.submit(commitment='02' * 32).get('error')
             wait_for(lambda: any('Height: 2\n' in message for message in state['notifications']))
             notification = next(message for message in state['notifications'] if 'Height: 2\n' in message)
             assert '\nCoin: Zecnero\nAlgorithm: rx/zecnero2\n' in notification, notification
@@ -260,10 +263,10 @@ def rpc_tests(binary, root, mode):
             state['sync'] = True
             log = root / ('rpc-' + mode + '-events.log')
             wait_for(lambda: 'mining paused' in log.read_text())
-            assert a.submit().get('error'), 'Syncing node accepted work'
+            assert a.submit(commitment='02' * 32).get('error'), 'Syncing node accepted work'
             state['sync'] = False
             a.next_job(a.job['job_id'])
-            assert not a.submit().get('error')
+            assert not a.submit(commitment='02' * 32).get('error')
             print(f'PASS RPC {mode}: worker isolation, exact block encoding, rejection replies, cookie rotation, v1/v2, sync recovery, notification heights')
         finally:
             for worker in workers:
@@ -304,16 +307,104 @@ def pool_tests(binary, root, algo):
             worker = Worker(listen)
             assert worker.job['algo'] == algo and worker.job['seed_hash'] == job['seed_hash']
             assert worker.job['target'] == job['target']
-            assert worker.submit().get('error')
-            assert not worker.submit().get('error')
+            commitment = '02' * 32 if algo == 'rx/zecnero2' else None
+            if commitment is not None:
+                assert worker.submit().get('error'), 'v2 share without RandomX hash accepted'
+                assert worker.submit(commitment='zz' * 32).get('error'), 'malformed v2 RandomX hash accepted'
+                assert not submissions
+            assert worker.submit(commitment=commitment).get('error')
+            assert not worker.submit(commitment=commitment).get('error')
             assert len(submissions) == 2 and submissions[-1]['job_id'] == 'pool-1'
             assert submissions[-1]['algo'] == algo
             assert submissions[-1]['nonce'][6:] == worker.job['blob'][222:224]
+            if commitment is not None:
+                assert submissions[-1]['commitment'] == commitment
+            else:
+                assert 'commitment' not in submissions[-1]
             print(f'PASS pool {algo}: header/target/seed forwarding and accepted/rejected replies')
         finally:
             if worker:
                 worker.close()
             stop(proc)
+
+
+def miner_pool_test(binary, miner_binary, root):
+    """Mine across v1 -> v2 through the proxy and verify the v2 proof fields upstream."""
+    root.mkdir()
+    blob = bytearray(140)
+    blob[0] = 4
+    job_v1 = {'job_id': 'v1-integration', 'algo': 'rx/zecnero', 'blob': blob.hex(),
+              'target': 'ffffffff', 'height': 1, 'seed_hash': '00' * 32}
+    job_v2 = dict(job_v1, job_id='v2-integration', algo='rx/zecnero2', height=2)
+    state = {'v1': None, 'v2': None, 'error': None}
+
+    class Handler(socketserver.StreamRequestHandler):
+        def handle(self):
+            try:
+                for line in self.rfile:
+                    request = json.loads(line)
+                    next_job = None
+                    if request['method'] == 'login':
+                        result = {'id': 'v2-pool-session', 'job': job_v1, 'extensions': ['algo']}
+                    elif request['method'] == 'submit':
+                        params = request['params']
+                        if params['algo'] == 'rx/zecnero':
+                            assert 'commitment' not in params
+                            state['v1'] = params
+                            next_job = job_v2
+                        else:
+                            randomx_hash = bytes.fromhex(params['commitment'])
+                            proof_input = bytearray(blob)
+                            proof_input[108:112] = bytes.fromhex(params['nonce'])
+                            expected = hashlib.blake2b(proof_input + randomx_hash, digest_size=32).hexdigest()
+                            assert params['algo'] == 'rx/zecnero2'
+                            assert params['result'] == expected
+                            state['v2'] = params
+                        result = {'status': 'OK'}
+                    else:
+                        result = {'status': 'KEEPALIVED'}
+                    self.wfile.write(json.dumps({'id': request['id'], 'result': result, 'error': None}).encode() + b'\n')
+                    if next_job is not None:
+                        self.wfile.write(json.dumps({'jsonrpc': '2.0', 'method': 'job', 'params': next_job}).encode() + b'\n')
+                    self.wfile.flush()
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+            except Exception as exc:
+                state['error'] = exc
+
+    class TCPServer(socketserver.ThreadingTCPServer):
+        daemon_threads = True
+
+    proxy = miner = None
+    with server(TCPServer, Handler) as pool_port:
+        try:
+            listen = port()
+            upstream = {'algo': 'rx/zecnero', 'url': f'127.0.0.1:{pool_port}',
+                        'user': 'wallet', 'pass': 'x'}
+            proxy = launch(binary, root, 'v2-proxy', proxy_config(upstream, listen, 'simple'))
+            config = {'autosave': False, 'background': False, 'colors': False, 'watch': False,
+                      'donate-level': 0, 'dmi': False,
+                      'randomx': {'mode': 'light', 'init': 1, 'rdmsr': False, 'wrmsr': False, 'numa': False},
+                      'cpu': {'enabled': True, 'huge-pages': False,
+                              'rx/zecnero': [-1], 'rx/zecnero2': [-1]},
+                      'opencl': False, 'cuda': False, 'cc-client': {'enabled': False},
+                      'pools': [{'algo': 'rx/zecnero', 'url': f'127.0.0.1:{listen}',
+                                 'user': 'worker', 'pass': 'x'}]}
+            miner = launch(miner_binary, root, 'v2-miner', config, ['--daemonized'])
+
+            def submitted():
+                assert state['error'] is None, state['error']
+                assert proxy.poll() is None and miner.poll() is None, 'Proxy/miner exited early'
+                return state['v1'] and state['v2']
+
+            wait_for(submitted, 60)
+            miner_log = (root / 'v2-miner-events.log').read_text()
+            assert miner_log.count('init dataset') == 1, 'v1/v2 switch rebuilt the shared dataset'
+            assert 'algo rx/zecnero height 1' in miner_log and 'algo rx/zecnero2 height 2' in miner_log
+            print('PASS miner -> proxy -> pool v1/v2 switch, commitment and RandomX hash')
+        finally:
+            stop(miner)
+            stop(proxy)
 
 
 def regtest(binary, node_binary, miner_binary, root, mode, nu1_height=None):
@@ -418,8 +509,8 @@ def main():
     parser.add_argument('--nu1-height', type=int,
                         help='configure Regtest NU1 at this height and mine three blocks past it')
     args = parser.parse_args()
-    if bool(args.node) != bool(args.miner):
-        parser.error('--node and --miner must be supplied together')
+    if args.node and not args.miner:
+        parser.error('--node requires --miner')
     if args.nu1_height is not None and args.nu1_height < 2:
         parser.error('--nu1-height must be at least 2')
     root = pathlib.Path(tempfile.mkdtemp(prefix='zecnero-proxy-test-'))
@@ -429,6 +520,8 @@ def main():
         rpc_tests(binary, root, mode)
     for algo in ['rx/zecnero', 'rx/zecnero2']:
         pool_tests(binary, root, algo)
+    if args.miner:
+        miner_pool_test(binary, args.miner.resolve(), root / 'miner-pool-v2')
     if args.node:
         for mode in ['nicehash', 'simple', 'extra_nonce']:
             regtest(binary, args.node.resolve(), args.miner.resolve(), root / ('regtest-' + mode),

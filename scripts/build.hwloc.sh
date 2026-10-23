@@ -2,6 +2,9 @@
 
 cd "$(dirname "$0")"
 
+SCRIPT_DIR=$(pwd)
+DEPS_DIR="$SCRIPT_DIR/deps"
+
 mkdir -p deps/include
 mkdir -p deps/lib
 
@@ -40,10 +43,15 @@ HWLOC_VERSION="${HWLOC_TAG#hwloc-}"
 HWLOC_SHA256="${HWLOC_SHA256:-f54bbdfc9f8015308c2e7bbab3e7789e47436a4a016689e5749a0c35d6877619}"
 HWLOC_SERIES="${HWLOC_VERSION%.*}"
 HWLOC_URL="https://download.open-mpi.org/release/hwloc/v${HWLOC_SERIES}/hwloc-${HWLOC_VERSION}.tar.gz"
+. "$SCRIPT_DIR/dependency-cache.sh"
 
 if [ -z "$HWLOC_VERSION" ] || [ -z "$HWLOC_URL" ]; then
     printf '%s\n' "Unable to determine latest hwloc release." >&2
     exit 1
+fi
+
+if dependency_is_current hwloc "$HWLOC_VERSION" "$DEPS_DIR/include/hwloc.h" "$DEPS_DIR/lib/libhwloc.a"; then
+    exit 0
 fi
 
 printf 'Building hwloc %s\n' "$HWLOC_VERSION"
@@ -59,3 +67,4 @@ patch -p1 < ../../hwloc-visibility-notice.patch
 make -j"$(jobs)"
 cp -fr include ../../deps
 cp hwloc/.libs/libhwloc.a ../../deps/lib
+dependency_mark_current hwloc "$HWLOC_VERSION"

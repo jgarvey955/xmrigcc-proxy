@@ -24,7 +24,7 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install build tools
         run: |
@@ -54,7 +54,7 @@ jobs:
           } > "staging/${package}/BUILDINFO.txt"
           tar -C staging -czf "dist/${package}.tar.gz" "$package"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: linux-${{ matrix.arch }}
           path: dist/*.tar.gz
@@ -72,7 +72,7 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install build tools
         run: brew install automake libtool wget
@@ -110,7 +110,7 @@ jobs:
           } > "staging/${package}/BUILDINFO.txt"
           tar -C staging -czf "dist/${package}.tar.gz" "$package"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos-${{ matrix.arch }}
           path: dist/*.tar.gz
@@ -120,7 +120,7 @@ jobs:
     name: Windows x64
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download static dependencies
         shell: pwsh
@@ -185,7 +185,7 @@ jobs:
           ) | Set-Content -Encoding ASCII (Join-Path $packageDir "BUILDINFO.txt")
           Compress-Archive -Path $packageDir -DestinationPath "dist\$package.zip"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows-x64
           path: dist/*.zip
@@ -196,7 +196,7 @@ jobs:
     needs: [linux, macos, windows]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true

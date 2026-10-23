@@ -60,6 +60,13 @@ if [ -z "$PROFILE" ]; then
     PROFILE="$(detect_profile)"
 fi
 
+DEPS_DIR="$DEST_DIR"
+. "$SCRIPT_DIR/dependency-cache.sh"
+
+if dependency_is_current xmrig-deps "${DEPS_TAG}:${PROFILE}" "$DEST_DIR/include/uv.h" "$DEST_DIR/lib"; then
+    exit 0
+fi
+
 tmp_dir="${SCRIPT_DIR}/build/xmrig-deps.$$"
 rm -rf "$tmp_dir"
 mkdir -p "$tmp_dir"
@@ -87,5 +94,6 @@ rm -rf "$DEST_DIR"
 mkdir -p "$DEST_DIR"
 cp -R "${profile_dir}/include" "$DEST_DIR/"
 cp -R "${profile_dir}/lib" "$DEST_DIR/"
+dependency_mark_current xmrig-deps "${DEPS_TAG}:${PROFILE}"
 
 printf 'Installed %s profile %s into %s\n' "$REPO" "$PROFILE" "$DEST_DIR"

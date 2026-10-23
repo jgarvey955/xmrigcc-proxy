@@ -1,3 +1,18 @@
+# 3.7.0
+* Added `rx/zecnero2` and the official `rx/zmr2` alias for release-compatible
+  Zecnero RandomX v2 mining.
+* Required and forwarded the v2 raw RandomX hash in the Stratum `commitment`
+  field while preserving the Blake2b-256 proof in `result`.
+* Added end-to-end miner-to-proxy validation of v1/v2 same-seed transitions,
+  dataset reuse, malformed commitment rejection, and upstream proof checks.
+* Updated OpenSSL to 4.1.0 and verified the remaining pinned dependencies
+  against their current releases.
+* Updated the release workflow to the current official GitHub Actions majors.
+* Added exact-version dependency stamps so completed dependency builds and
+  matching prebuilt profiles are reused only when their artifacts are present.
+* Routed direct and relayed donation traffic for the fixed donation wallet to
+  HeroMiners US2 on port 1111 and accepted the US fallback endpoint.
+
 # 3.6.7
 * Fixed Zecnero daemon polling treating the rolling block-header timestamp as
   new work and broadcasting a replacement job to every miner once per second.

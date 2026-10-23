@@ -2,6 +2,9 @@
 
 cd "$(dirname "$0")"
 
+SCRIPT_DIR=$(pwd)
+DEPS_DIR="$SCRIPT_DIR/deps"
+
 mkdir -p deps/include
 mkdir -p deps/lib
 
@@ -35,14 +38,19 @@ verify_sha256() {
     [ "$actual" = "$2" ] || { printf 'SHA-256 mismatch for %s\n' "$1" >&2; exit 1; }
 }
 
-OPENSSL_TAG="${OPENSSL_VERSION:-4.0.3}"
+OPENSSL_TAG="${OPENSSL_VERSION:-4.1.0}"
 OPENSSL_VERSION="${OPENSSL_TAG#openssl-}"
-OPENSSL_SHA256="${OPENSSL_SHA256:-325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9}"
+OPENSSL_SHA256="${OPENSSL_SHA256:-50c17baf54cb008f6ce42d50deb4b28050a1aad711636cabd4b241c7e90cc2fd}"
 OPENSSL_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
+. "$SCRIPT_DIR/dependency-cache.sh"
 
 if [ -z "$OPENSSL_VERSION" ] || [ -z "$OPENSSL_URL" ]; then
     printf '%s\n' "Unable to determine latest OpenSSL release." >&2
     exit 1
+fi
+
+if dependency_is_current tls "openssl-$OPENSSL_VERSION" "$DEPS_DIR/include/openssl/ssl.h" "$DEPS_DIR/lib/libssl.a" "$DEPS_DIR/lib/libcrypto.a"; then
+    exit 0
 fi
 
 printf 'Building OpenSSL %s\n' "$OPENSSL_VERSION"
@@ -61,3 +69,4 @@ make -j"$(jobs)" build_libs
 cp -fr include ../../deps
 cp libcrypto.a ../../deps/lib
 cp libssl.a ../../deps/lib
+dependency_mark_current tls "openssl-$OPENSSL_VERSION"

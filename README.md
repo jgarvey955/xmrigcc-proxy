@@ -93,9 +93,9 @@ static-link checks do not guarantee independence from runtime-loaded libraries.
 
 For dynamic system-library linking, use the commands below.
 
-Linux builds libuv 1.53.0, hwloc 2.15.0, and OpenSSL 4.0.3 from source into
+Linux builds libuv 1.53.0, hwloc 2.15.0, and OpenSSL 4.1.0 from source into
 `scripts/deps`. These are the latest stable upstream releases verified on
-September 30, 2026; the defaults are pinned for reproducible builds:
+October 23, 2026; the defaults are pinned for reproducible builds:
 
 ```sh
 scripts/build_deps.sh
@@ -111,7 +111,7 @@ OpenSSL and TLS support remain enabled. Fully static system linking is still
 available with `BUILD_STATIC=ON`, with glibc's associated runtime limitations.
 
 The helper scripts also accept explicit version overrides, for example
-`UV_VERSION=1.53.0 HWLOC_VERSION=2.15.0 OPENSSL_VERSION=4.0.3 scripts/build_deps.sh`.
+`UV_VERSION=1.53.0 HWLOC_VERSION=2.15.0 OPENSSL_VERSION=4.1.0 scripts/build_deps.sh`.
 
 ## Usage
 :boom: If you are using Linux and need to manage over **1000 connections**, you must [increase the limits on open files](https://github.com/xmrig/xmrig-proxy/wiki/Ubuntu-setup).

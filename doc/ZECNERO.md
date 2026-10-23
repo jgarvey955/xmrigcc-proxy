@@ -1,7 +1,7 @@
 # Zecnero
 
 The proxy accepts `rx/zecnero` (RandomX v1) and `rx/zecnero2` (RandomX v2).
-`randomx/zecnero`, `randomx/zecnero2`, and `rx2/zecnero` are aliases.
+`randomx/zecnero`, `randomx/zecnero2`, `rx/zmr2`, and `rx2/zecnero` are aliases.
 Workers need a Zecnero-capable miner, such as xmrigCC4me-zecnero. The proxy
 forwards work and submissions; the worker performs the RandomX hashing.
 
@@ -31,6 +31,11 @@ inconsistent targets, malformed templates, and unsupported mandatory rules
 stop job distribution. Syncing nodes pause submissions and participate in
 normal backup-pool failover. Polling has a one-second minimum. ZMQ and
 CryptoNote self-select are not used for Zecnero RPC.
+
+For v2, workers compare and submit the Blake2b-256 commitment as `result` and
+include the underlying RandomX hash in the Stratum `commitment` field, matching
+the `rx/2` convention. Direct RPC submits the assembled block for the daemon to
+verify. Pool/bridge mode forwards both fields unchanged.
 
 All three proxy modes work with direct RPC:
 
@@ -64,12 +69,16 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DWITH_ZECNERO_TESTS=ON
 cmake --build build -j
 ctest --test-dir build --output-on-failure
 python3 tests/zecnero-proxy.py --proxy build/xmrigcc-proxy \
+  --miner /path/to/xmrigMiner
+python3 tests/zecnero-proxy.py --proxy build/xmrigcc-proxy \
   --node /path/to/zecnerod --miner /path/to/xmrigMiner
 ```
 
 The first test uses local mock RPC and Stratum servers to check serialization,
 worker isolation, cookie rotation, rejection replies, sync recovery, and v1/v2
-job forwarding. The optional node/miner test mines through the proxy on fresh,
+job forwarding. With `--miner`, it also mines through a controlled upstream
+across a same-seed v1-to-v2 switch and independently checks the submitted
+commitment and RandomX hash. The optional node/miner test mines through the proxy on fresh,
 isolated regtest chains with experimental v2 activation at height 2, in each
 proxy mode. It does not use an existing daemon, wallet, or database. Artifacts
 are kept in a temporary directory printed by the test.
