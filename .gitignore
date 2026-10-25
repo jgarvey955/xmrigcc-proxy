@@ -8,6 +8,7 @@ build/
 CMakeFiles/
 CMakeCache.txt
 Makefile
+!/Makefile
 compile_commands.json
 cmake_install.cmake
 
@@ -27,6 +28,7 @@ cmake_install.cmake
 /**/*.log
 /config.json
 /build/config.json
+/zecnero-proxy-miner.cookie
 
 # CMake file API scratch data
 .cmake/api/v1/query

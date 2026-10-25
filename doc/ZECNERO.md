@@ -7,8 +7,8 @@ forwards work and submissions; the worker performs the RandomX hashing.
 
 ## Direct daemon mining
 
-Copy `config-zecnero.example.json`, set the node's RPC address and the actual
-local cookie path, then run:
+Copy `config-zecnero.example.json`, choose one of its three daemon connection
+profiles, fill in that profile's credentials, and then run:
 
 ```sh
 ./build/xmrigcc-proxy -c config-zecnero.json
@@ -20,11 +20,24 @@ address for remote workers. The example uses a local testnet RPC endpoint;
 choose the endpoint for the network you intend to mine.
 
 The upstream `user` is the payout address. `x` uses the node's configured
-address. Worker logins do not change the payout. Cookie credentials are read
-from a local file on every request, including after rotation. For a node using
-static Basic authentication, omit `daemon-cookie-file` and use
-`daemon-rpc-user` plus `pass`. HTTPS RPC and certificate fingerprints use the
-existing `tls` and `tls-fingerprint` settings.
+address. Worker logins do not change the payout. The proxy supports all prior
+daemon and pool connection options plus these isolated miner-RPC choices:
+
+- TLS miner-only RPC (`HOST:18734`): set `tls`, an individual
+  `rpc-login` (`username:password`), `daemon-cookie-source`, and an owner-only local
+  `daemon-cookie-file`. Use normal CA/hostname verification or set the exact
+  64-hex `daemon-cookie-fingerprint`. The proxy retrieves and renews only its
+  short-lived `__miner__` cookie.
+- HTTP miner-only RPC (`HOST:18734`): leave TLS and all cookie/login fields
+  unset. Only zecnerod's strict mining methods are available.
+- Private full RPC (`HOST:18732`): retain the existing daemon-owned local
+  `daemon-cookie-file`, static Basic credentials, or `rpc-login` behavior. The
+  example uses verified TLS; plaintext remains compatible for a loopback-only
+  endpoint.
+
+Cookie bootstrap is accepted only from the exact HTTPS origin configured as
+the RPC endpoint. Full-RPC cookies are never downloaded or reused on the
+miner-only listener.
 
 The daemon's `powversion` selects v1 or v2 automatically. Unknown versions,
 inconsistent targets, malformed templates, and unsupported mandatory rules
@@ -73,6 +86,9 @@ python3 tests/zecnero-proxy.py --proxy build/xmrigcc-proxy \
 python3 tests/zecnero-proxy.py --proxy build/xmrigcc-proxy \
   --node /path/to/zecnerod --miner /path/to/xmrigMiner
 ```
+
+The real-node run exercises private full RPC, strict HTTP miner-only RPC, and
+authenticated TLS miner-only RPC on isolated disposable Regtest nodes.
 
 The first test uses local mock RPC and Stratum servers to check serialization,
 worker isolation, cookie rotation, rejection replies, sync recovery, and v1/v2

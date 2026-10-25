@@ -63,6 +63,11 @@
             "tls-fingerprint": null,
             "daemon": false,
             "rpc-login": null,
+            "daemon-cookie-file": null,
+            "daemon-cookie-source": null,
+            "daemon-cookie-fingerprint": null,
+            "daemon-poll-interval": 1000,
+            "daemon-job-timeout": 15000,
             "socks5": null,
             "self-select": null,
             "submit-to-origin": false

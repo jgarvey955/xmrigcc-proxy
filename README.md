@@ -150,7 +150,7 @@ After switching from a build without RPC login support, check the active config:
 that build's autosave may have removed `rpc-login`. Restore it in each protected
 Salvium daemon entry using the credentials from that daemon's config. Rebuilding
 alone cannot recover removed credentials. Zecnero uses `daemon-cookie-file` or
-`daemon-rpc-user` with `pass` instead.
+the same `rpc-login` field for authenticated TLS cookie bootstrap.
 
 For example, a local Salvium daemon followed by an ordinary pool as a backup:
 

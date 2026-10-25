@@ -11,12 +11,17 @@ import select
 import signal
 import socket
 import socketserver
+import ssl
 import subprocess
 import tempfile
 import threading
 import time
 import urllib.request
 from contextlib import contextmanager
+
+
+PROXY_RPC_USER = 'integration-proxy'
+PROXY_RPC_PASSWORD = 'integration-proxy-password-at-least-20-characters'
 
 
 def port():
@@ -43,6 +48,42 @@ def wait_for(check, seconds=10):
             return value
         time.sleep(0.05)
     raise AssertionError('Timed out waiting for test condition')
+
+
+def make_certificate(root):
+    ca = root / 'ca.pem'
+    ca_key = root / 'ca-key.pem'
+    cert = root / 'cert.pem'
+    key = root / 'key.pem'
+    request = root / 'cert.csr'
+    extensions = root / 'cert.ext'
+    extensions.write_text(
+        'subjectAltName=DNS:localhost,IP:127.0.0.1\n'
+        'basicConstraints=critical,CA:FALSE\n'
+        'keyUsage=critical,digitalSignature,keyEncipherment\n'
+        'extendedKeyUsage=serverAuth\n'
+        'subjectKeyIdentifier=hash\n'
+        'authorityKeyIdentifier=keyid,issuer\n')
+    subprocess.run([
+        'openssl', 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1',
+        '-subj', '/CN=Zecnero proxy integration test CA',
+        '-addext', 'basicConstraints=critical,CA:TRUE',
+        '-addext', 'keyUsage=critical,keyCertSign,cRLSign',
+        '-addext', 'subjectKeyIdentifier=hash',
+        '-addext', 'authorityKeyIdentifier=keyid:always',
+        '-keyout', str(ca_key), '-out', str(ca)], check=True,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run([
+        'openssl', 'req', '-new', '-newkey', 'rsa:2048', '-nodes',
+        '-subj', '/CN=localhost', '-keyout', str(key), '-out', str(request)],
+        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run([
+        'openssl', 'x509', '-req', '-in', str(request), '-CA', str(ca),
+        '-CAkey', str(ca_key), '-CAcreateserial', '-days', '1',
+        '-extfile', str(extensions), '-out', str(cert)], check=True,
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    der = ssl.PEM_cert_to_DER_cert(cert.read_text())
+    return cert, key, hashlib.sha256(der).hexdigest()
 
 
 def launch(binary, root, name, config, extra=()):
@@ -140,6 +181,7 @@ def rpc_tests(binary, root, mode):
              'submissions': [], 'auth': [], 'sync': False, 'requests': 0, 'notifications': []}
     cookie = root / (mode + '.cookie')
     cookie.write_text(state['cookie'])
+    cookie.chmod(0o600)
 
     class Handler(http.server.BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -237,6 +279,7 @@ def rpc_tests(binary, root, mode):
             state['cookie'] = 'test:rotated'
             replacement = cookie.with_suffix('.new')
             replacement.write_text(state['cookie'] + '\n')
+            replacement.chmod(0o600)
             replacement.replace(cookie)
             state['response'] = {'result': None}
             old = dict(a.job)
@@ -384,7 +427,7 @@ def miner_pool_test(binary, miner_binary, root):
             proxy = launch(binary, root, 'v2-proxy', proxy_config(upstream, listen, 'simple'))
             config = {'autosave': False, 'background': False, 'colors': False, 'watch': False,
                       'donate-level': 0, 'dmi': False,
-                      'randomx': {'mode': 'light', 'init': 1, 'rdmsr': False, 'wrmsr': False, 'numa': False},
+                      'randomx': {'mode': 'auto', 'init': 1, 'rdmsr': False, 'wrmsr': False, 'numa': False},
                       'cpu': {'enabled': True, 'huge-pages': False,
                               'rx/zecnero': [-1], 'rx/zecnero2': [-1]},
                       'opencl': False, 'cuda': False, 'cc-client': {'enabled': False},
@@ -407,10 +450,19 @@ def miner_pool_test(binary, miner_binary, root):
             stop(proxy)
 
 
-def regtest(binary, node_binary, miner_binary, root, mode, nu1_height=None):
+def regtest(binary, node_binary, miner_binary, root, mode, connection, nu1_height=None):
     root.mkdir()
-    rpc_port, listen = port(), port()
+    rpc_port, miner_rpc_port, listen = port(), port(), port()
     cookie = root / 'rpc/.cookie'
+    miner_cookie = root / 'proxy-miner.cookie'
+    cert, key, fingerprint = make_certificate(root)
+    credentials = root / 'miner-clients.toml'
+    credentials.write_text(f'''[[client]]
+username = "{PROXY_RPC_USER}"
+password = "{PROXY_RPC_PASSWORD}"
+profile = "pool"
+''')
+    credentials.chmod(0o600)
     activation_heights = ''
     if nu1_height is not None:
         activation_heights = f'''[network.testnet_parameters.activation_heights]
@@ -429,6 +481,23 @@ ephemeral = true
 listen_addr = "127.0.0.1:{rpc_port}"
 enable_cookie_auth = true
 cookie_dir = "{root}/rpc"
+debug_force_finished_sync = true
+[rpc.tls]
+mode = "auto"
+cert_path = "{cert}"
+key_path = "{key}"
+[rpc.miner]
+listen_addr = "127.0.0.1:{miner_rpc_port}"
+credentials_file = "{credentials}"
+cookie_ttl_seconds = 300
+max_connections = 32
+max_connections_per_ip = 16
+max_requests_per_minute = 6000
+max_bootstrap_attempts_per_minute = 100
+[rpc.miner.tls]
+mode = "auto"
+cert_path = "{cert}"
+key_path = "{key}"
 [mining]
 miner_address = "nmH2sBPxwa1KyUGqPf37WMsk9ZQrWM7uZ67"
 [tracing]
@@ -460,12 +529,27 @@ use_color = false
                 return None
         template = wait_for(ready, 60)
         assert template['height'] == 1 and template['powversion'] == 1
-        upstream = {'algo': 'rx/zecnero', 'url': f'127.0.0.1:{rpc_port}', 'daemon': True,
-                    'daemon-cookie-file': str(cookie), 'daemon-poll-interval': 1000}
+        upstream = {'algo': 'rx/zecnero', 'daemon': True,
+                    'user': 'x', 'daemon-poll-interval': 1000}
+        if connection == 'full':
+            upstream.update({'url': f'127.0.0.1:{rpc_port}',
+                             'tls': True, 'tls-fingerprint': fingerprint,
+                             'daemon-cookie-file': str(cookie)})
+        elif connection == 'http':
+            upstream.update({'url': f'127.0.0.1:{miner_rpc_port}', 'tls': False})
+        elif connection == 'tls':
+            upstream.update({
+                'url': f'127.0.0.1:{miner_rpc_port}', 'tls': True,
+                'rpc-login': f'{PROXY_RPC_USER}:{PROXY_RPC_PASSWORD}',
+                'daemon-cookie-source': f'https://127.0.0.1:{miner_rpc_port}/mining/cookie',
+                'daemon-cookie-file': str(miner_cookie),
+                'daemon-cookie-fingerprint': fingerprint})
+        else:
+            raise AssertionError(f'unknown connection profile: {connection}')
         proxy = launch(binary, root, 'proxy', proxy_config(upstream, listen, mode))
         config = {'autosave': False, 'background': False, 'colors': False, 'watch': False,
                   'donate-level': 0, 'dmi': False, 'log-file': str(root / 'miner-events.log'),
-                  'randomx': {'mode': 'light', 'init': 2, 'rdmsr': False, 'wrmsr': False, 'numa': False},
+                  'randomx': {'mode': 'auto', 'init': 2, 'rdmsr': False, 'wrmsr': False, 'numa': False},
                   'cpu': {'enabled': True, 'huge-pages': False, 'rx/zecnero': [-1], 'rx/zecnero2': [-1]},
                   'opencl': False, 'cuda': False, 'cc-client': {'enabled': False},
                   'pools': [{'algo': 'rx/zecnero', 'url': f'127.0.0.1:{listen}', 'user': 'worker', 'pass': 'x'}]}
@@ -493,8 +577,11 @@ use_color = false
         proxy_log = (root / 'proxy-events.log').read_text()
         assert proxy_log.count('Zecnero block accepted by node') >= 3
         assert 'rejected (' not in proxy_log, 'Daemon rejected a submitted block'
+        if connection == 'tls':
+            assert miner_cookie.read_text().startswith('__miner__:')
+            assert miner_cookie.stat().st_mode & 0o077 == 0
         boundary = f', NU1 activation at {nu1_height}' if nu1_height is not None else ''
-        print(f"PASS real regtest {mode}: {info['blocks']} PoW-validated blocks, v1/v2 activation{boundary}, intact coinbase, no daemon rejections; {len(rejected)} pending/stale candidates declined locally")
+        print(f"PASS real regtest {mode}/{connection}: {info['blocks']} PoW-validated blocks, v1/v2 activation{boundary}, intact coinbase, no daemon rejections; {len(rejected)} pending/stale candidates declined locally")
     finally:
         stop(miner)
         stop(proxy)
@@ -523,9 +610,10 @@ def main():
     if args.miner:
         miner_pool_test(binary, args.miner.resolve(), root / 'miner-pool-v2')
     if args.node:
-        for mode in ['nicehash', 'simple', 'extra_nonce']:
-            regtest(binary, args.node.resolve(), args.miner.resolve(), root / ('regtest-' + mode),
-                    mode, args.nu1_height)
+        scenarios = [('nicehash', 'full'), ('simple', 'http'), ('extra_nonce', 'tls')]
+        for mode, connection in scenarios:
+            regtest(binary, args.node.resolve(), args.miner.resolve(),
+                    root / f'regtest-{mode}-{connection}', mode, connection, args.nu1_height)
 
 
 if __name__ == '__main__':

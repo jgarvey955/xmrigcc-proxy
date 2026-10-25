@@ -59,7 +59,8 @@ public:
     static const char *kCoin;
     static const char *kDaemon;
     static const char *kDaemonCookieFile;
-    static const char *kDaemonRpcUser;
+    static const char *kDaemonCookieFingerprint;
+    static const char *kDaemonCookieSource;
     static const char *kRpcLogin;
     static const char *kDaemonPollInterval;
     static const char *kDaemonJobTimeout;
@@ -117,7 +118,8 @@ public:
     inline Mode mode() const                            { return m_mode; }
     inline uint16_t port() const                        { return m_url.port(); }
     inline const String &daemonCookieFile() const       { return m_daemonCookieFile; }
-    inline const String &daemonRpcUser() const          { return m_daemonRpcUser; }
+    inline const String &daemonCookieFingerprint() const { return m_daemonCookieFingerprint; }
+    inline const String &daemonCookieSource() const     { return m_daemonCookieSource; }
     inline int zmq_port() const                         { return m_zmqPort; }
     inline uint64_t pollInterval() const                { return m_pollInterval; }
     inline uint64_t jobTimeout() const                  { return m_jobTimeout; }
@@ -165,7 +167,8 @@ private:
     std::bitset<FLAG_MAX> m_flags   = 0;
     String m_fingerprint;
     String m_daemonCookieFile;
-    String m_daemonRpcUser;
+    String m_daemonCookieFingerprint;
+    String m_daemonCookieSource;
     String m_password;
     String m_rpcLogin;
     String m_rigId;

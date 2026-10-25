@@ -62,13 +62,15 @@ static inline const std::string &usage()
 
 #   ifdef XMRIG_FEATURE_HTTP
     u += "      --daemon                  use daemon RPC instead of pool for solo mining\n";
-    u += "      --rpc-login=USER:PASS     HTTP Digest credentials for the current daemon entry\n";
+    u += "      --rpc-login=USER:PASS     daemon credentials; also used for Zecnero TLS cookie bootstrap\n";
     u += "                               requires a TLS-enabled build; set after its --url\n";
     u += "      --daemon-zmq-port         daemon's zmq-pub port number (only use it if daemon has it enabled)\n";
     u += "      --daemon-poll-interval=N  daemon poll interval in milliseconds (default: 1000)\n";
     u += "      --daemon-job-timeout=N    daemon job timeout in milliseconds (default: 15000)\n";
     u += "      --daemon-cookie-file=PATH Zecnero local RPC cookie (reread for each request)\n";
-    u += "      --daemon-rpc-user=USER    Zecnero RPC login with --pass; --user is the payout address\n";
+    u += "      --daemon-cookie-source=URL retrieve a client-specific cookie from HTTPS /mining/cookie\n";
+    u += "      --daemon-cookie-fingerprint=HEX pin the miner RPC certificate (otherwise public CA trust is required)\n";
+    u += "                               --user remains the payout address\n";
     u += "                               use --algo=rx/zecnero; templates select v1 or v2\n";
     u += "      --self-select=URL         self-select block templates from URL\n";
     u += "      --submit-to-origin        also submit solution back to self-select URL\n";

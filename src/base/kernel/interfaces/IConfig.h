@@ -89,7 +89,8 @@ public:
         RotationKey          = 1058,
         DaemonJobTimeoutKey  = 1059,
         DaemonCookieFileKey  = 1060,
-        DaemonRpcUserKey     = 1064,
+        DaemonCookieSourceKey = 1061,
+        DaemonCookieFingerprintKey = 1063,
         RpcLoginKey          = 1065,
 
         // xmrig common

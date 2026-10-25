@@ -1,3 +1,12 @@
+# 3.8.0
+* Added secure remote mining through zecnerod's isolated miner-only RPC.
+* Added per-proxy HTTPS cookie bootstrap, verified TLS or certificate pinning,
+  automatic short-lived cookie renewal, and owner-only atomic cookie updates.
+* Preserved unauthenticated strict HTTP mining on the miner port and existing
+  local-cookie, Basic-auth, `rpc-login`, pool, bridge, and failover modes.
+* Added disposable Regtest coverage for TLS miner-only, HTTP miner-only, and
+  private full-RPC upstream connections.
+
 # 3.7.1
 * Synchronized the proxy patch version with the miners' direct upstream
   `v2x/rx-zecnero2` alignment. The proxy does not execute RandomX; its existing
