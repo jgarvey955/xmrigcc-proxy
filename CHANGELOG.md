@@ -1,3 +1,8 @@
+# 3.8.1
+* Synchronized the proxy patch version with the miners' deterministic Argon2
+  SIMD selection fix; the proxy does not execute RandomX or Argon2 itself.
+* Standardized `make release-static` output in the normal `build` directory.
+
 # 3.8.0
 * Added secure remote mining through zecnerod's isolated miner-only RPC.
 * Added per-proxy HTTPS cookie bootstrap, verified TLS or certificate pinning,
