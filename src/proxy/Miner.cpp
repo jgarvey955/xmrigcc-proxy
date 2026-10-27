@@ -481,10 +481,20 @@ void xmrig::Miner::send(int size)
         if (!m_tls->send(m_sendBuf, size)) {
             shutdown(true);
         }
+        else {
+            // Receiving a job is valid activity too.  Some miners reset their
+            // keepalive timer whenever the proxy sends a job, so at high share
+            // difficulty they may send neither a share nor a keepalive for the
+            // entire downstream socket timeout.  Renew the lease after a
+            // successful TLS write instead of disconnecting a healthy miner.
+            heartbeat();
+        }
         return;
     }
 #   endif
-    write(m_sendBuf, static_cast<size_t>(size));
+    if (write(m_sendBuf, static_cast<size_t>(size))) {
+        heartbeat();
+    }
 }
 
 

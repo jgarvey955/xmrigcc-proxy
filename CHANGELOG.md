@@ -1,3 +1,10 @@
+# 3.8.2
+* Fixed healthy downstream miner connections being closed after ten minutes
+  when frequent jobs suppressed client keepalives and no share had yet been
+  found at high difficulty.
+* Renewed the downstream connection lease after successful TLS and non-TLS
+  writes while retaining timeout cleanup, TCP keepalive, and bounded writes.
+
 # 3.8.1
 * Synchronized the proxy patch version with the miners' deterministic Argon2
   SIMD selection fix; the proxy does not execute RandomX or Argon2 itself.
