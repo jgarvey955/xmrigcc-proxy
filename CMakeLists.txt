@@ -223,6 +223,9 @@ if (WITH_ZECNERO_TESTS)
     add_test(NAME proxy-security COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/security-regressions.py --binary $<TARGET_FILE:${PROJECT_NAME}> --kind proxy)
     set_tests_properties(proxy-security PROPERTIES TIMEOUT 90)
+    add_test(NAME ordered-failback COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/ordered-failback.py --binary $<TARGET_FILE:${PROJECT_NAME}> --kind proxy)
+    set_tests_properties(ordered-failback PROPERTIES TIMEOUT 90)
     if (WITH_TLS)
         add_test(NAME proxy-tls-verification COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_CURRENT_SOURCE_DIR}/tests/tls-verification.py --binary $<TARGET_FILE:${PROJECT_NAME}> --proxy)

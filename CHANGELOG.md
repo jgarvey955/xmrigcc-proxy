@@ -1,3 +1,9 @@
+# 3.8.3
+* Restored ordered failback across every configured upstream priority instead
+  of allowing only the first entry to reclaim work after recovery.
+* Kept higher-priority upstreams in their retry loops while a lower-priority
+  fallback is active and added three-level failover/failback coverage.
+
 # 3.8.2
 * Fixed healthy downstream miner connections being closed after ten minutes
   when frequent jobs suppressed client keepalives and no share had yet been
