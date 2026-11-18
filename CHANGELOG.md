@@ -1,3 +1,10 @@
+# 3.9.0
+* Aligned the proxy release version with XMRigCC and XMRigCC4me 3.9.0.
+* Verified the existing Zecnero v1/v2 commitment forwarding and solo-RPC,
+  TLS, failover and miner interoperability paths with the updated miners.
+* Published release descriptions from the versioned changelog and added
+  protocol verification before packaging Linux release binaries.
+
 # 3.8.3
 * Restored ordered failback across every configured upstream priority instead
   of allowing only the first entry to reclaim work after recovery.

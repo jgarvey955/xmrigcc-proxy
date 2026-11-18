@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Release version (for example, 3.5.0)
+        description: Version matching src/version.h and CHANGELOG.md (for example, 3.9.0)
         required: true
         type: string
 
@@ -35,6 +35,11 @@ jobs:
         env:
           BUILD_DIR: ${{ github.workspace }}/build-release
         run: ./build-static.sh
+
+      - name: Verify proxy protocols
+        run: |
+          cmake -S . -B build-release -DWITH_ZECNERO_TESTS=ON
+          ctest --test-dir build-release --output-on-failure
 
       - name: Package
         env:
@@ -196,6 +201,7 @@ jobs:
     needs: [linux, macos, windows]
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v8
         with:
           path: dist
@@ -208,7 +214,7 @@ jobs:
           cd dist
           sha256sum *.tar.gz *.zip > SHA256SUMS.txt
           cd ..
-          printf 'xmrigcc-proxy %s\n' "$RELEASE_VERSION" > release-notes.md
+          python3 scripts/release-notes.py "$RELEASE_VERSION" > release-notes.md
 
       - name: Publish release
         env:
